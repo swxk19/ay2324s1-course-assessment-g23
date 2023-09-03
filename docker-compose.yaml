@@ -13,7 +13,13 @@ services:
       - server-side
       - client-side
     ports:
-      - 3000:3000
+      - 8000:8000
+    environment:
+      - POSTGRES_HOST: database
+      - POSTGRES_PORT: 3306
+      - POSTGRES_DB: ${POSTGRES_DB}
+      - POSTGRES_USER: ${POSTGRES_USER}
+      - POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   database:
     build: ./database
     ports:
@@ -23,10 +29,10 @@ services:
     volumes:
       - sql-data:./sql
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: ${PGDATA}
+      - POSTGRES_DB: ${POSTGRES_DB}
+      - POSTGRES_USER: ${POSTGRES_USER}
+      - POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      - PGDATA: ${PGDATA}
 volumes:
   sql-data:
     external:true
