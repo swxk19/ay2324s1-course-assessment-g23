@@ -1,0 +1,32 @@
+version: "3"
+services:
+  frontend:
+    build: 
+      context: ./frontend
+    ports:
+      - 80:80
+    networks:
+      - client-side
+  api:
+    build: ./api
+    networks:
+      - server-side
+      - client-side
+    ports:
+      - 3000:3000
+  database:
+    build: ./database
+    ports:
+      - 3306:3306
+    networks:
+      - server-side
+    volumes:
+      - sql-data:./sql
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: ${PGDATA}
+volumes:
+  sql-data:
+    external:true
