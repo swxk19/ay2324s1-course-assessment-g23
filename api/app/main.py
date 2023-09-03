@@ -25,3 +25,10 @@ async def create_user(r: rm.CreateUser):
 @app.get("/users", status_code=200)
 async def get_user(r: rm.GetUser):
     return db.get_user(r.user_id)
+
+@app.put("/users", status_code=200)
+async def update_user_info(r: rm.UpdateUserInfo):
+    if (db.update_user_info(r.user_id, r.username, r.password, r.email)):
+        return "Updated Successfully"
+    else:
+        return "Invalid update"

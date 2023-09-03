@@ -8,3 +8,9 @@ class CreateUser(BaseModel):
 
 class GetUser(BaseModel):
     user_id: str
+
+class UpdateUserInfo(BaseModel):
+    user_id: str
+    username: str
+    password: str
+    email: str

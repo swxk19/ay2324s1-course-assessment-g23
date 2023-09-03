@@ -31,3 +31,42 @@ def get_user(user_id):
             return cur.fetchone()
     except Exception:
         traceback.print_exc()
+
+def update_user_info(user_id, username, password, email):
+    values = []
+    set_clauses = []
+
+    if username is not None:
+        values.append(username)
+        set_clauses.append("username = %s")
+
+    if password is not None:
+        values.append(password)
+        set_clauses.append("password = %s")
+
+    if email is not None:
+        values.append(password)
+        set_clauses.append("email = %s")
+
+    set_clause = ", ".join(set_clauses)
+    if not set_clause:
+        return False
+
+    values.append(user_id)
+
+    try:
+        conn = _connect()
+        with conn, conn.cursor() as cur:
+            cur.execute("""UPDATE users
+                        SET {set_clause}
+                        WHERE user_id = %s""",
+                        tuple(values))
+            conn.commit()
+            if cur.statusmessage == "UPDATE 1":
+                return True
+            else:
+                return False
+    except Exception:
+        traceback.print_exc()
+        return False
+
