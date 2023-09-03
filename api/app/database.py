@@ -1,5 +1,4 @@
 import psycopg2
-from dotenv import load_dotenv
 import os
 
 conn = psycopg2.connect(
@@ -9,9 +8,9 @@ conn = psycopg2.connect(
     user=os.getenv("POSTGRES_USER"),
     password= os.getenv("POSTGRES_PASSWORD"))
 
-def create_user(user_id, name, email, password):
+def create_user(user_id, username, email, password):
     with conn.cursor() as cur:
-        cur.execute("INSERT INTO users (user_id, name, email, password) VALUES (%s, %s, %s, %s)", (user_id, name, email, password))
+        cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, password))
         conn.commit()
 
 def get_user(user_id):
