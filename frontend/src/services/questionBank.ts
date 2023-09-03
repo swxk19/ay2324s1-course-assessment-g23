@@ -85,3 +85,12 @@ export const deleteQuestion = async (id: number): Promise<void> => {
     const newQuestions = questions.filter((q) => q.id !== id)
     localStorage.setItem(QUESTIONS_STORAGE_KEY, JSON.stringify(newQuestions))
 }
+
+/**
+ * Deletes all questions from the localStorage.
+ *
+ * @returns {Promise<void>} Resolves when all questions are successfully deleted.
+ */
+export const deleteAllQuestions = async (): Promise<void> => {
+    localStorage.removeItem(QUESTIONS_STORAGE_KEY)
+}
