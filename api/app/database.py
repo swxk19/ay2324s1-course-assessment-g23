@@ -27,7 +27,20 @@ def get_user(user_id):
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
-            cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
-            return cur.fetchone()
+            if user_id == "all":
+                cur.execute("SELECT * FROM users")
+                return cur.fetchall()
+            else:
+                cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
+                return cur.fetchone()
+    except Exception:
+        traceback.print_exc()
+
+def del_user(user_id):
+    try:
+        conn = _connect()
+        with conn, conn.cursor() as cur:
+            cur.execute("DELETE * FROM users WHERE user_id = %s", (user_id,))
+            conn.commit()
     except Exception:
         traceback.print_exc()

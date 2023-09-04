@@ -25,3 +25,7 @@ async def create_user(r: rm.CreateUser):
 @app.get("/users", status_code=200)
 async def get_user(r: rm.GetUser):
     return db.get_user(r.user_id)
+
+@app.delete("/users/{user_id}", status_code=200)
+async def del_user(r: rm.DeleteUser):
+    return db.del_user(r.user_id)

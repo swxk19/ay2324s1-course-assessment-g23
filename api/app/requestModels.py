@@ -8,3 +8,6 @@ class CreateUser(BaseModel):
 
 class GetUser(BaseModel):
     user_id: str
+
+class DeleteUser(BaseModel):
+    user_id: str
