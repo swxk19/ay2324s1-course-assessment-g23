@@ -1,16 +1,25 @@
 
-/* Define a class for each table column */
+.id-col {
+  min-width: 60px;
+  text-align: left;
+}
+
 .title-col {
-  min-width: 150px; /* Adjust the minimum width as needed */
+  min-width: 170px; /* Adjust the minimum width as needed */
   text-align: left;
 }
 
 .description-col {
+  min-width: 140px;
   text-align: left;
+}
 
+td {
+  padding-right: 10px;
 }
 
 .category-col {
+  min-width: 160px;
   text-align: left;
 
 }
@@ -27,27 +36,32 @@
 }
 
 .custom-input {
-  width: 100px; /* Set the width here */
+  width: 120px; /* Set the width here */
 }
 
 .app-container {
+  min-width: 600px;
   padding: 100px
 }
 
 input {
-  padding: 10px
+  padding: 10px;
 }
 
 select {
   padding: 10px;
 }
 
+.custom-id-input {
+  width: 35px;
+}
+
 .custom-title-input {
-  min-width: 200px;
+  width: 150px;
 }
 
 .custom-cat-input {
-  min-width: 170px;
+  min-width: 120px;
 }
 
 .custom-desc-input {
@@ -56,3 +70,5 @@ select {
   min-width: 500px;
   min-height: 200px;
 }
+
+.

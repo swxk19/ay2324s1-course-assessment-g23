@@ -3,13 +3,13 @@ import React from "react";
 // Define a TypeScript interface for the props
 interface ReadOnlyRowProps {
     question: {
+        id: number; // Include ID field
         title: string;
         description: string;
         category: string;
         complexity: string;
-        id: number;
     };
-    handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, contact: any) => void;
+    handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, question: any) => void;
     handleDeleteClick: (id: number) => void;
 }
 
@@ -20,6 +20,7 @@ const ReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                                                  }) => {
     return (
         <tr>
+            <td>{question.id}</td> {/* Display the ID */}
             <td>{question.title}</td>
             <td>{question.description}</td>
             <td>{question.category}</td>
