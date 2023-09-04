@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    TextField,
+} from "@mui/material";
 
-// Define a TypeScript interface for the props
 interface ReadOnlyRowProps {
     question: {
         id: number; // Include ID field
@@ -16,13 +24,72 @@ interface ReadOnlyRowProps {
 const ReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                                                      question,
                                                      handleEditClick,
-                                                     handleDeleteClick
+                                                     handleDeleteClick,
                                                  }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editedDescription, setEditedDescription] = useState(question.description);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleClose = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleEditDescription = () => {
+        // Save the edited description and close the dialog
+        // You can also perform an API call to update the description on the server
+        // or dispatch an action if using Redux
+        // For now, we're just updating the state locally
+        question.description = editedDescription;
+        handleClose();
+    };
+
     return (
         <tr>
-            <td>{question.id}</td> {/* Display the ID */}
-            <td>{question.title}</td>
-            <td>{question.description}</td>
+            <td>{question.id}</td>
+            <td
+                onClick={openModal}
+                style={{
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    fontWeight: "bold",
+                }}
+            >
+                {question.title}
+            </td>
+            <Dialog
+                open={isModalOpen}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle style={{ backgroundColor: "#242424", color: "white"}}>Edit Description</DialogTitle>
+                <DialogContent style={{ backgroundColor: "#242424", width: "700px"}}>
+                    <DialogContentText id="alert-dialog-description" style={{ color: "white" }}>
+                        <TextField
+                            style={{width: "550px", paddingRight: "20px"}}
+                            fullWidth
+                            multiline
+                            rows={10}
+                            value={editedDescription}
+                            onChange={(e) => setEditedDescription(e.target.value)}
+                            InputProps={{
+                                style: { color: "white", borderColor: "white"},
+                            }}
+
+                        />
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions style={{ backgroundColor: "#242424", width: "590px"}}>
+                    <Button onClick={handleEditDescription} style={{ color: "white", paddingLeft:"25px", paddingRight: "25px"}}>
+                        Save and Close
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
+
             <td>{question.category}</td>
             <td>{question.complexity}</td>
             <td>

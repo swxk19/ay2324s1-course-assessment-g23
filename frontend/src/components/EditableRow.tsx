@@ -44,17 +44,7 @@ const EditableRow: React.FC<EditableRowProps> = ({
             </td>
             <td>
                 <input
-                    type="text"
-                    required
-                    placeholder="Description"
-                    name="description"
-                    className="custom-input"
-                    value={editFormData.description}
-                    onChange={handleEditFormChange}
-                />
-            </td>
-            <td>
-                <input
+                    className="custom-cat-input"
                     type="text"
                     required
                     placeholder="Category"

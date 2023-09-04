@@ -136,7 +136,6 @@ export const QuestionTable: React.FC = () => {
                     <tr>
                         <th className="id-col">ID</th>
                         <th className="title-col">Title</th>
-                        <th className="description-col">Description</th>
                         <th className="category-col">Category</th>
                         <th className="complexity-col">Complexity</th>
                         <th className ="actions-col">Actions</th>
