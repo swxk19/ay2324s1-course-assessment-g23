@@ -52,7 +52,7 @@ def update_user_info(user_id, username, password, email):
         set_clauses.append("password = %s")
 
     if email is not None:
-        values.append(password)
+        values.append(email)
         set_clauses.append("email = %s")
 
     set_clause = ", ".join(set_clauses)
@@ -64,15 +64,12 @@ def update_user_info(user_id, username, password, email):
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
-            cur.execute("""UPDATE users
+            cur.execute(f"""UPDATE users
                         SET {set_clause}
                         WHERE user_id = %s""",
                         tuple(values))
             conn.commit()
-            if cur.statusmessage == "UPDATE 1":
-                return True
-            else:
-                return False
+            return True
     except Exception:
         traceback.print_exc()
         return False
