@@ -20,15 +20,22 @@ def create_user(user_id, username, email, password):
         with conn, conn.cursor() as cur:
             cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, password))
             conn.commit()
+            return True
+
     except Exception:
         traceback.print_exc()
+        return False
 
 def get_user(user_id):
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
             cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
-            return cur.fetchone()
+            result = cur.fetchone()
+
+            if result is None:
+                return False
+            return result
     except Exception:
         traceback.print_exc()
 
