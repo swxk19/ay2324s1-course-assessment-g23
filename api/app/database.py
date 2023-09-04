@@ -14,6 +14,8 @@ def _connect():
     except Exception:
         traceback.print_exc()
 
+# command = "CREATE TABLE IF NOT EXISTS users(user_id VARCHAR(255) PRIMARY KEY, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, email VARCHAR(255) UNIQUE NOT NULL);"
+
 def create_user(user_id, username, email, password):
     try:
         conn = _connect()
@@ -40,7 +42,9 @@ def del_user(user_id):
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
-            cur.execute("DELETE * FROM users WHERE user_id = %s", (user_id,))
+            cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
             conn.commit()
+            return True
     except Exception:
         traceback.print_exc()
+        return False
