@@ -10,7 +10,7 @@ export interface Question {
     /** The description of the question. */
     description: string
     /** List of categories associated with the question. */
-    category: string[]
+    category: string
     /** The complexity level of the question. */
     complexity: 'Easy' | 'Medium' | 'Hard'
 }
