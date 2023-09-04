@@ -1,12 +1,18 @@
-import React, {ChangeEvent, FormEvent, Fragment, useState} from "react";
+import React, { ChangeEvent, FormEvent, Fragment, useState, useEffect } from "react";
 import EditableRow from "./EditableRow.tsx";
 import ReadOnlyRow from "./ReadOnlyRow.tsx";
-import {Question} from "../services/questionBank.ts";
-import data from "../assets/mock-data.json";
-import {nanoid} from "nanoid";
+import {
+    deleteQuestion,
+    Question,
+    updateQuestion,
+    getQuestions,
+    storeQuestion, // Import storeQuestion function
+} from "../services/questionBank.ts";
 
-export const QuestionTable : React.FC = () => {
-    const [questions, setQuestions] = useState<Question[]>(data);
+export const QuestionTable: React.FC = () => {
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [lastUsedId, setLastUsedId] = useState<number>(0);
+
     const [addFormData, setAddFormData] = useState<Question>({
         id: 0,
         title: "",
@@ -14,7 +20,6 @@ export const QuestionTable : React.FC = () => {
         category: "",
         complexity: "Easy",
     });
-
     const [editFormData, setEditFormData] = useState<Question>({
         id: 0,
         title: "",
@@ -22,8 +27,21 @@ export const QuestionTable : React.FC = () => {
         category: "",
         complexity: "Easy",
     });
-
     const [editQuestionId, setEditQuestionId] = useState<number | null>(null);
+
+    useEffect(() => {
+        const loadQuestions = async () => {
+            const loadedQuestions = await getQuestions();
+            setQuestions(loadedQuestions);
+
+            if (loadedQuestions.length > 0) {
+                const maxId = Math.max(...loadedQuestions.map((q) => q.id));
+                setLastUsedId(maxId);
+            }
+        };
+
+        loadQuestions();
+    }, []);
 
     const handleAddFormChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -41,23 +59,27 @@ export const QuestionTable : React.FC = () => {
         });
     };
 
-    const handleAddFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleAddFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        const newId = lastUsedId + 1;
+        setLastUsedId(newId);
+
         const newQuestion: Question = {
-            id: nanoid(),
             ...addFormData,
         };
 
         const newQuestions: Question[] = [...questions, newQuestion];
+
+        // Save the new question to localStorage
+        await storeQuestion(newQuestion);
         setQuestions(newQuestions);
     };
 
-    const handleEditFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleEditFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const editedContact: Question = {
-            id: editQuestionId!,
             ...editFormData,
         };
 
@@ -67,12 +89,19 @@ export const QuestionTable : React.FC = () => {
 
         if (index !== -1) {
             newQuestions[index] = editedContact;
+
+            // Update the edited question in localStorage
+            await updateQuestion(editedContact);
+
             setQuestions(newQuestions);
             setEditQuestionId(null);
         }
     };
 
-    const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>, question: Question) => {
+    const handleEditClick = (
+        event: React.MouseEvent<HTMLButtonElement>,
+        question: Question
+    ) => {
         event.preventDefault();
         setEditQuestionId(question.id);
         setEditFormData(question);
@@ -88,22 +117,29 @@ export const QuestionTable : React.FC = () => {
 
         if (index !== -1) {
             newQuestions.splice(index, 1);
+
+            // Delete the question from localStorage and save the updated list
+            deleteQuestion(questionId);
+
             setQuestions(newQuestions);
         }
     };
 
+
+
     return (
         <div className="app-container">
-            <h2>Question Bank</h2>
+            <h2>PeerPrep</h2>
             <form onSubmit={handleEditFormSubmit}>
-                <table>
+                <table className="question-table">
                     <thead>
                     <tr>
+                        <th className="id-col">ID</th>
                         <th className="title-col">Title</th>
                         <th className="description-col">Description</th>
                         <th className="category-col">Category</th>
                         <th className="complexity-col">Complexity</th>
-                        <th className="actions-col">Actions</th>
+                        <th className ="actions-col">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -131,12 +167,22 @@ export const QuestionTable : React.FC = () => {
             <h2>Add a Question</h2>
             <form onSubmit={handleAddFormSubmit}>
                 <input
+                    className="custom-id-input"
+                    type="text"
+                    name="id"
+                    required
+                    placeholder="ID"
+                    onChange={handleAddFormChange}
+                    value={addFormData.id}
+                />
+                <input
                     className="custom-title-input"
                     type="text"
                     name="title"
                     required
                     placeholder="Title"
                     onChange={handleAddFormChange}
+                    value={addFormData.title}
                 />
 
                 <input
@@ -146,6 +192,7 @@ export const QuestionTable : React.FC = () => {
                     required
                     placeholder="Category"
                     onChange={handleAddFormChange}
+                    value={addFormData.category}
                 />
                 <select
                     name="complexity"
@@ -158,19 +205,19 @@ export const QuestionTable : React.FC = () => {
                     <option value="Hard">Hard</option>
                 </select>
                 <div>
-                    <textarea
-                        className="custom-desc-input"
-                        name="description"
-                        required
-                        placeholder="Description"
-                        onChange={handleAddFormChange}
-                    />
+                <textarea
+                    className="custom-desc-input"
+                    name="description"
+                    required
+                    placeholder="Description"
+                    onChange={handleAddFormChange}
+                    value={addFormData.description}
+                />
                 </div>
-
+                <div>
                 <button type="submit">Add</button>
-
+                </div>
             </form>
         </div>
     );
-
-}
+};
