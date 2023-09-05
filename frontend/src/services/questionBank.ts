@@ -37,7 +37,7 @@ function _generateUUID(): string {
  */
 export async function storeQuestion(question: Omit<Question, 'id'>): Promise<void> {
     const id = _generateUUID()
-    const questions = await getQuestions()
+    const questions = await getAllQuestions()
     const newQuestion = { id, ...question }
 
     questions.push(newQuestion)
@@ -49,7 +49,7 @@ export async function storeQuestion(question: Omit<Question, 'id'>): Promise<voi
  *
  * @returns {Promise<Question[]>} An array of questions.
  */
-export async function getQuestions(): Promise<Question[]> {
+export async function getAllQuestions(): Promise<Question[]> {
     return JSON.parse(localStorage.getItem(QUESTIONS_STORAGE_KEY) || '[]')
 }
 
@@ -63,7 +63,7 @@ export async function getQuestions(): Promise<Question[]> {
 export async function updateQuestion(
     updatedQuestion: Pick<Question, 'id'> & Partial<Omit<Question, 'id'>>
 ): Promise<void> {
-    const questions: Question[] = await getQuestions()
+    const questions: Question[] = await getAllQuestions()
     const index = questions.findIndex((q) => q.id === updatedQuestion.id)
 
     if (index > -1) {
@@ -79,7 +79,7 @@ export async function updateQuestion(
  * @returns {Promise<void>} Resolves when the question is successfully deleted.
  */
 export async function deleteQuestion(id: string): Promise<void> {
-    const questions: Question[] = await getQuestions()
+    const questions: Question[] = await getAllQuestions()
     const newQuestions = questions.filter((q) => q.id !== id)
     localStorage.setItem(QUESTIONS_STORAGE_KEY, JSON.stringify(newQuestions))
 }
