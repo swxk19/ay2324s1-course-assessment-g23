@@ -1,14 +1,9 @@
-import "./App.css";
+import './App.css'
 
-import {QuestionTable} from "./components/QuestionTable.tsx";
-
-
+import { QuestionTable } from './components/QuestionTable.tsx'
 
 const App: React.FC = () => {
+    return <QuestionTable />
+}
 
-    return (
-        <QuestionTable />
-    );
-};
-
-export default App;
+export default App

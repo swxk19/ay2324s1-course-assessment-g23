@@ -36,9 +36,7 @@ const _getNextId = async (): Promise<number> => {
  * @param {Omit<Question, 'id'>} question The question object without the ID.
  * @returns {Promise<void>} Resolves when the question is stored successfully.
  */
-export const storeQuestion = async (
-    question: Omit<Question, 'id'>
-): Promise<void> => {
+export const storeQuestion = async (question: Omit<Question, 'id'>): Promise<void> => {
     const id: number = await _getNextId()
     const questions = await getQuestions()
     const newQuestion = { id, ...question }
