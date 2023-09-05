@@ -11,36 +11,17 @@ import {
 
 export const QuestionTable: React.FC = () => {
     const [questions, setQuestions] = useState<Question[]>([])
-    const [lastUsedId, setLastUsedId] = useState<number>(0)
-
-    const [addFormData, setAddFormData] = useState<Question>({
-        id: 0,
+    const [addFormData, setAddFormData] = useState<Omit<Question, 'id'>>({
         title: '',
         description: '',
         category: '',
         complexity: 'Easy',
     })
-    const [editFormData, setEditFormData] = useState<Question>({
-        id: 0,
-        title: '',
-        description: '',
-        category: '',
-        complexity: 'Easy',
-    })
-    const [editQuestionId, setEditQuestionId] = useState<number | null>(null)
+    const [editFormData, setEditFormData] = useState<Question | null>(null)
+    const [editQuestionId, setEditQuestionId] = useState<string | null>(null)
 
     useEffect(() => {
-        const loadQuestions = async () => {
-            const loadedQuestions = await getAllQuestions()
-            setQuestions(loadedQuestions)
-
-            if (loadedQuestions.length > 0) {
-                const maxId = Math.max(...loadedQuestions.map((q) => q.id))
-                setLastUsedId(maxId)
-            }
-        }
-
-        loadQuestions()
+        getAllQuestions().then(setQuestions)
     }, [])
 
     const handleAddFormChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +34,7 @@ export const QuestionTable: React.FC = () => {
 
     const handleEditFormChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target
+        // @ts-ignore
         setEditFormData({
             ...editFormData,
             [name]: value,
@@ -61,39 +43,18 @@ export const QuestionTable: React.FC = () => {
 
     const handleAddFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-
-        const newId = lastUsedId + 1
-        setLastUsedId(newId)
-
-        const newQuestion: Question = {
-            ...addFormData,
-        }
-
-        const newQuestions: Question[] = [...questions, newQuestion]
-
         // Save the new question to localStorage
-        await storeQuestion(newQuestion)
-        setQuestions(newQuestions)
+        await storeQuestion(addFormData)
+        await getAllQuestions().then(setQuestions)
     }
 
     const handleEditFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        const editedQuestion: Question = {
-            ...editFormData,
-        }
-
-        const newQuestions: Question[] = [...questions]
-
-        const index = questions.findIndex((question) => question.id === editQuestionId)
-
-        if (index !== -1) {
-            newQuestions[index] = editedQuestion
-
+        if (editQuestionId) {
             // Update the edited question in localStorage
-            await updateQuestion(editedQuestion)
-
-            setQuestions(newQuestions)
+            await updateQuestion(editFormData!)
+            await getAllQuestions().then(setQuestions)
             setEditQuestionId(null)
         }
     }
@@ -108,7 +69,7 @@ export const QuestionTable: React.FC = () => {
         setEditQuestionId(null)
     }
 
-    const handleDeleteClick = (questionId: number) => {
+    const handleDeleteClick = (questionId: string) => {
         const newQuestions: Question[] = [...questions]
         const index = questions.findIndex((question) => question.id === questionId)
 
@@ -141,7 +102,7 @@ export const QuestionTable: React.FC = () => {
                             <Fragment key={question.id}>
                                 {editQuestionId === question.id ? (
                                     <EditableRow
-                                        editFormData={editFormData}
+                                        editFormData={editFormData!}
                                         handleEditFormChange={handleEditFormChange}
                                         handleCancelClick={handleCancelClick}
                                     />
@@ -164,10 +125,10 @@ export const QuestionTable: React.FC = () => {
                     className='custom-id-input'
                     type='text'
                     name='id'
-                    required
+                    disabled
                     placeholder='ID'
                     onChange={handleAddFormChange}
-                    value={addFormData.id}
+                    value={'—'}
                 />
                 <input
                     className='custom-title-input'

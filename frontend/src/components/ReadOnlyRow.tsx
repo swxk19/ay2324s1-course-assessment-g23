@@ -8,18 +8,12 @@ import {
     DialogTitle,
     TextField,
 } from '@mui/material'
-import { updateQuestion } from '../services/questionBank.ts'
+import { type Question, updateQuestion } from '../services/questionBank.ts'
 
 interface ReadOnlyRowProps {
-    question: {
-        id: number // Include ID field
-        title: string
-        description: string
-        category: string
-        complexity: 'Easy' | 'Medium' | 'Hard'
-    }
+    question: Question
     handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, question: any) => void
-    handleDeleteClick: (id: number) => void
+    handleDeleteClick: (id: string) => void
 }
 
 const ReadOnlyRow: React.FC<ReadOnlyRowProps> = ({

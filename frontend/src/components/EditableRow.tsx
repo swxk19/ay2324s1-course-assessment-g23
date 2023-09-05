@@ -1,14 +1,9 @@
 import React from 'react'
+import { type Question } from '../services/questionBank'
 
 // Define a TypeScript interface for the props
 interface EditableRowProps {
-    editFormData: {
-        id: number // Include ID field
-        title: string
-        description: string
-        category: string
-        complexity: string
-    }
+    editFormData: Question
     handleEditFormChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     handleCancelClick: () => void
 }
@@ -23,12 +18,12 @@ const EditableRow: React.FC<EditableRowProps> = ({
             <td>
                 <input
                     className='custom-id-input'
-                    type='number' // Change to number type for ID
+                    type='text'
                     required
                     placeholder='ID'
                     name='id'
                     value={editFormData.id}
-                    onChange={handleEditFormChange}
+                    disabled
                 />
             </td>
             <td>
