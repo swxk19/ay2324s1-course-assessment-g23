@@ -30,10 +30,10 @@ function _generateUUID(): string {
 }
 
 /**
- * Stores a new question into the localStorage.
+ * Stores a new question.
  *
- * @param {Omit<Question, 'id'>} question The question object without the ID.
- * @returns {Promise<string>} Resolves when the question is stored successfully.
+ * @param {Omit<Question, 'id'>} question The question to store. All fields except ID are required.
+ * @returns {Promise<string>} Resolves with the UUID for the stored question.
  */
 export async function storeQuestion(question: Omit<Question, 'id'>): Promise<string> {
     const id = _generateUUID()
@@ -46,10 +46,10 @@ export async function storeQuestion(question: Omit<Question, 'id'>): Promise<str
 }
 
 /**
- * Retrieves a question by it's ID, from the localStorage.
+ * Retrieves a question by its ID.
  *
  * @param {string} id The ID of the question to retrieve.
- * @returns {Promise<Question>} Question with `id` as it's ID.
+ * @returns {Promise<Question>} Resolves with the Question object if found.
  */
 export async function getQuestion(id: string): Promise<Question> {
     const questions = await getAllQuestions()
@@ -57,7 +57,7 @@ export async function getQuestion(id: string): Promise<Question> {
 }
 
 /**
- * Retrieves all questions from the localStorage.
+ * Retrieves all questions.
  *
  * @returns {Promise<Question[]>} An array of questions.
  */
@@ -66,10 +66,10 @@ export async function getAllQuestions(): Promise<Question[]> {
 }
 
 /**
- * Updates an existing question in the localStorage.
+ * Updates an existing question by its ID.
  *
  * @param {Pick<Question, 'id'> & Partial<Omit<Question, 'id'>>} updatedQuestion
- * Question with the fields to update. All fields are optional except `id`.
+ * Question with the fields to update. All fields except `id` are optional.
  * @returns {Promise<void>} Resolves when the question is successfully updated.
  */
 export async function updateQuestion(
@@ -85,7 +85,7 @@ export async function updateQuestion(
 }
 
 /**
- * Deletes a question by its ID from the localStorage.
+ * Deletes a question by its ID.
  *
  * @param {string} id The ID of the question to be deleted.
  * @returns {Promise<void>} Resolves when the question is successfully deleted.
@@ -97,7 +97,7 @@ export async function deleteQuestion(id: string): Promise<void> {
 }
 
 /**
- * Deletes all questions from the localStorage.
+ * Deletes all questions.
  *
  * @returns {Promise<void>} Resolves when all questions are successfully deleted.
  */
