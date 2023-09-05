@@ -56,7 +56,8 @@ export async function getQuestions(): Promise<Question[]> {
 /**
  * Updates an existing question in the localStorage.
  *
- * @param {Pick<Question, 'id'> & Partial<Omit<Question, 'id'>>} updatedQuestion The partial question object, `id` must be included.
+ * @param {Pick<Question, 'id'> & Partial<Omit<Question, 'id'>>} updatedQuestion
+ * Question with the fields to update. All fields are optional except `id`.
  * @returns {Promise<void>} Resolves when the question is successfully updated.
  */
 export async function updateQuestion(
