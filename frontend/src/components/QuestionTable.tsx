@@ -18,7 +18,6 @@ export const QuestionTable: React.FC = () => {
         complexity: 'Easy',
     })
     const [editFormData, setEditFormData] = useState<Question | null>(null)
-    const [editQuestionId, setEditQuestionId] = useState<string | null>(null)
 
     useEffect(() => {
         getAllQuestions().then(setQuestions)
@@ -51,22 +50,21 @@ export const QuestionTable: React.FC = () => {
     const handleEditFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        if (editQuestionId) {
+        if (editFormData) {
             // Update the edited question in localStorage
-            await updateQuestion(editFormData!)
+            await updateQuestion(editFormData)
             await getAllQuestions().then(setQuestions)
-            setEditQuestionId(null)
+            setEditFormData(null)
         }
     }
 
     const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>, question: Question) => {
         event.preventDefault()
-        setEditQuestionId(question.id)
         setEditFormData(question)
     }
 
     const handleCancelClick = () => {
-        setEditQuestionId(null)
+        setEditFormData(null)
     }
 
     const handleDeleteClick = (questionId: string) => {
@@ -100,9 +98,9 @@ export const QuestionTable: React.FC = () => {
                     <tbody>
                         {questions.map((question) => (
                             <Fragment key={question.id}>
-                                {editQuestionId === question.id ? (
+                                {editFormData && editFormData.id === question.id ? (
                                     <EditableRow
-                                        editFormData={editFormData!}
+                                        editFormData={editFormData}
                                         handleEditFormChange={handleEditFormChange}
                                         handleCancelClick={handleCancelClick}
                                     />
