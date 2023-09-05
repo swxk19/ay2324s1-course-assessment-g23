@@ -72,6 +72,7 @@ def update_user_info(user_id, username, password, email):
                         SET {set_clause}
                         WHERE user_id = %s""",
                         tuple(values))
+            return True
     except Exception:
         traceback.print_exc()
         return False
