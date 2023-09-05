@@ -79,7 +79,7 @@ export const QuestionTable: React.FC = () => {
     const handleEditFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const editedContact: Question = {
+        const editedQuestion: Question = {
             ...editFormData,
         };
 
@@ -88,10 +88,10 @@ export const QuestionTable: React.FC = () => {
         const index = questions.findIndex((question) => question.id === editQuestionId);
 
         if (index !== -1) {
-            newQuestions[index] = editedContact;
+            newQuestions[index] = editedQuestion;
 
             // Update the edited question in localStorage
-            await updateQuestion(editedContact);
+            await updateQuestion(editedQuestion);
 
             setQuestions(newQuestions);
             setEditQuestionId(null);

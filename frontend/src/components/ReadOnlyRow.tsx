@@ -8,6 +8,7 @@ import {
     DialogTitle,
     TextField,
 } from "@mui/material";
+import { updateQuestion} from "../services/questionBank.ts";
 
 interface ReadOnlyRowProps {
     question: {
@@ -15,7 +16,7 @@ interface ReadOnlyRowProps {
         title: string;
         description: string;
         category: string;
-        complexity: string;
+        complexity: 'Easy' | "Medium" | "Hard";
     };
     handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, question: any) => void;
     handleDeleteClick: (id: number) => void;
@@ -37,12 +38,9 @@ const ReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
         setIsModalOpen(false);
     };
 
-    const handleEditDescription = () => {
-        // Save the edited description and close the dialog
-        // You can also perform an API call to update the description on the server
-        // or dispatch an action if using Redux
-        // For now, we're just updating the state locally
+    const handleEditDescription = async () => {
         question.description = editedDescription;
+        await updateQuestion(question);
         handleClose();
     };
 
