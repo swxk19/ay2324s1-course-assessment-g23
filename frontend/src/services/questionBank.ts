@@ -46,6 +46,17 @@ export async function storeQuestion(question: Omit<Question, 'id'>): Promise<str
 }
 
 /**
+ * Retrieves a question by it's ID, from the localStorage.
+ *
+ * @param {string} id The ID of the question to retrieve.
+ * @returns {Promise<Question>} Question with `id` as it's ID.
+ */
+export async function getQuestion(id: string): Promise<Question> {
+    const questions = await getAllQuestions()
+    return questions.find((q) => q.id === id)!
+}
+
+/**
  * Retrieves all questions from the localStorage.
  *
  * @returns {Promise<Question[]>} An array of questions.
