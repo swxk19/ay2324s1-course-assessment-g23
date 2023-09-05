@@ -30,7 +30,7 @@ def get_user(user_id):
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
-          if user_id == "all":
+            if user_id == "all":
                 cur.execute("SELECT * FROM users")
                 return cur.fetchall()
             else:
@@ -72,6 +72,9 @@ def update_user_info(user_id, username, password, email):
                         SET {set_clause}
                         WHERE user_id = %s""",
                         tuple(values))
+    except Exception:
+        traceback.print_exc()
+        return False
 
 def del_user(user_id):
     try:
