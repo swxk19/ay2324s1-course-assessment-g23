@@ -33,15 +33,16 @@ function _generateUUID(): string {
  * Stores a new question into the localStorage.
  *
  * @param {Omit<Question, 'id'>} question The question object without the ID.
- * @returns {Promise<void>} Resolves when the question is stored successfully.
+ * @returns {Promise<string>} Resolves when the question is stored successfully.
  */
-export async function storeQuestion(question: Omit<Question, 'id'>): Promise<void> {
+export async function storeQuestion(question: Omit<Question, 'id'>): Promise<string> {
     const id = _generateUUID()
     const questions = await getAllQuestions()
     const newQuestion = { id, ...question }
 
     questions.push(newQuestion)
     localStorage.setItem(QUESTIONS_STORAGE_KEY, JSON.stringify(questions))
+    return id
 }
 
 /**
