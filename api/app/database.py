@@ -30,12 +30,16 @@ def get_user(user_id):
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
-            cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
-            result = cur.fetchone()
+          if user_id == "all":
+                cur.execute("SELECT * FROM users")
+                return cur.fetchall()
+            else:
+                cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
+                result = cur.fetchone()
 
-            if result is None:
-                return False
-            return result
+                if result is None:
+                    return False
+                return result
     except Exception:
         traceback.print_exc()
 
@@ -68,9 +72,14 @@ def update_user_info(user_id, username, password, email):
                         SET {set_clause}
                         WHERE user_id = %s""",
                         tuple(values))
+
+def del_user(user_id):
+    try:
+        conn = _connect()
+        with conn, conn.cursor() as cur:
+            cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
             conn.commit()
             return True
     except Exception:
         traceback.print_exc()
         return False
-
