@@ -5,7 +5,7 @@ import {
     deleteQuestion,
     Question,
     updateQuestion,
-    getQuestions,
+    getAllQuestions,
     storeQuestion, // Import storeQuestion function
 } from '../services/questionBank.ts'
 
@@ -31,7 +31,7 @@ export const QuestionTable: React.FC = () => {
 
     useEffect(() => {
         const loadQuestions = async () => {
-            const loadedQuestions = await getQuestions()
+            const loadedQuestions = await getAllQuestions()
             setQuestions(loadedQuestions)
 
             if (loadedQuestions.length > 0) {
