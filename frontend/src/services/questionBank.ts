@@ -3,31 +3,30 @@ const QUESTIONS_STORAGE_KEY = 'questions'
 
 /** Represents a question in the question bank. */
 export interface Question {
-    /** The unique identifier for the question. */
-    id: number
+    /** The UUID for the question. */
+    id: string
     /** The title of the question. */
     title: string
     /** The description of the question. */
     description: string
-    /** List of categories associated with the question. */
+    /** Category associated with the question. */
     category: string
     /** The complexity level of the question. */
     complexity: 'Easy' | 'Medium' | 'Hard'
 }
 
 /**
- * Gets the next available ID for storing a new question.
- * This function finds the highest existing question ID and returns the next integer.
+ * Generates a UUID similar to that of UUID v4.
  *
  * @private
- * @returns {Promise<number>} The next available ID.
+ * @returns {string} Generated UUID.
  */
-const _getNextId = async (): Promise<number> => {
-    const questions: Question[] = await getQuestions()
-    if (questions.length === 0) return 1
-
-    const maxId = Math.max(...questions.map((q) => q.id))
-    return maxId + 1
+const _generateUUID = (): string => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0
+        const v = c === 'x' ? r : (r & 0x3) | 0x8
+        return v.toString(16)
+    })
 }
 
 /**
@@ -37,7 +36,7 @@ const _getNextId = async (): Promise<number> => {
  * @returns {Promise<void>} Resolves when the question is stored successfully.
  */
 export const storeQuestion = async (question: Omit<Question, 'id'>): Promise<void> => {
-    const id: number = await _getNextId()
+    const id = _generateUUID()
     const questions = await getQuestions()
     const newQuestion = { id, ...question }
 
@@ -75,10 +74,10 @@ export const updateQuestion = async (
 /**
  * Deletes a question by its ID from the localStorage.
  *
- * @param {number} id The ID of the question to be deleted.
+ * @param {string} id The ID of the question to be deleted.
  * @returns {Promise<void>} Resolves when the question is successfully deleted.
  */
-export const deleteQuestion = async (id: number): Promise<void> => {
+export const deleteQuestion = async (id: string): Promise<void> => {
     const questions: Question[] = await getQuestions()
     const newQuestions = questions.filter((q) => q.id !== id)
     localStorage.setItem(QUESTIONS_STORAGE_KEY, JSON.stringify(newQuestions))
