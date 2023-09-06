@@ -36,6 +36,7 @@ def get_user(user_id):
             else:
                 cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
                 result = cur.fetchone()
+                
                 if result is None:
                     return False
                 return result
@@ -86,7 +87,7 @@ def delete_user(user_id):
     except Exception:
         traceback.print_exc()
         return False
-
+      
 def create_question(question_id, title, description, category, complexity):
     try:
         conn = _connect()
