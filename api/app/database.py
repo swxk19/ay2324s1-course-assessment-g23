@@ -36,7 +36,6 @@ def get_user(user_id):
             else:
                 cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
                 result = cur.fetchone()
-
                 if result is None:
                     return False
                 return result
@@ -77,11 +76,87 @@ def update_user_info(user_id, username, password, email):
         traceback.print_exc()
         return False
 
-def del_user(user_id):
+def delete_user(user_id):
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
             cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
+            conn.commit()
+            return True
+    except Exception:
+        traceback.print_exc()
+        return False
+
+def create_question(question_id, title, description, category, complexity):
+    try:
+        conn = _connect()
+        with conn, conn.cursor() as cur:
+            cur.execute("INSERT INTO questions (question_id, title, description, category, complexity) VALUES (%s, %s, %s, %s, %s)", (question_id, title, description, category, complexity))
+            conn.commit()
+            return True
+    except Exception:
+        traceback.print_exc()
+        return False
+    
+def get_question(question_id):
+    try:
+        conn = _connect()
+        with conn, conn.cursor() as cur:
+            if question_id == "all":
+                cur.execute("SELECT * FROM questions")
+                return cur.fetchall()
+            else:
+                cur.execute("SELECT * FROM questions WHERE question_id = %s", (question_id,))
+                result = cur.fetchone()
+                if result is None:
+                    return False
+                return result
+    except Exception:
+        traceback.print_exc()
+
+def update_question_info(question_id, title, description, category, complexity):
+    values = []
+    set_clauses = []
+
+    if title is not None:
+        values.append(title)
+        set_clauses.append("title = %s")
+
+    if description is not None:
+        values.append(description)
+        set_clauses.append("description = %s")
+
+    if category is not None:
+        values.append(category)
+        set_clauses.append("category = %s")
+
+    if complexity is not None:
+        values.append(complexity)
+        set_clauses.append("complexity = %s")
+
+    set_clause = ", ".join(set_clauses)
+    if not set_clause:
+        return False
+
+    values.append(question_id)
+
+    try:
+        conn = _connect()
+        with conn, conn.cursor() as cur:
+            cur.execute(f"""UPDATE questions
+                        SET {set_clause}
+                        WHERE question_id = %s""",
+                        tuple(values))
+            return True
+    except Exception:
+        traceback.print_exc()
+        return False
+    
+def delete_question(question_id):
+    try:
+        conn = _connect()
+        with conn, conn.cursor() as cur:
+            cur.execute("DELETE FROM questions WHERE question_id = %s", (question_id,))
             conn.commit()
             return True
     except Exception:
