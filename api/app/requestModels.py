@@ -17,3 +17,22 @@ class UpdateUserInfo(BaseModel):
     username: str
     password: str
     email: str
+
+class CreateQuestion(BaseModel):
+    title: str
+    description: str
+    category: str
+    complexity: str
+
+class GetQuestion(BaseModel):
+    question_id: str
+
+class UpdateQuestionInfo(BaseModel):
+    question_id: str
+    title: str
+    description: str
+    category: str
+    complexity: str
+
+class DeleteQuestion(BaseModel):
+    question_id: str
