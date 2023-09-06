@@ -1,6 +1,7 @@
 import psycopg2
 import os
 import traceback
+import hashlib
 
 def _connect():
     try:
@@ -15,10 +16,11 @@ def _connect():
         traceback.print_exc()
 
 def create_user(user_id, username, email, password):
+    new_password = hashlib.md5(password.encode()).hexdigest()
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
-            cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, password))
+            cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, new_password))
             conn.commit()
             return True
 
@@ -52,7 +54,8 @@ def update_user_info(user_id, username, password, email):
         set_clauses.append("username = %s")
 
     if password is not None:
-        values.append(password)
+        new_password = hashlib.md5(password.encode()).hexdigest()
+        values.append(new_password)
         set_clauses.append("password = %s")
 
     if email is not None:
