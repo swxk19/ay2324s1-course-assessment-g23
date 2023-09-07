@@ -165,7 +165,10 @@ def delete_question(question_id):
     try:
         conn = _connect()
         with conn, conn.cursor() as cur:
-            cur.execute("DELETE FROM questions WHERE question_id = %s", (question_id,))
+            if question_id == "all":
+                cur.execute("DELETE FROM questions")
+            else:
+                cur.execute("DELETE FROM questions WHERE question_id = %s", (question_id,))
             conn.commit()
             return True
     except Exception:
