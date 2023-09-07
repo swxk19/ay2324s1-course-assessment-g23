@@ -105,16 +105,21 @@ def create_question(question_id, title, description, category, complexity):
 def get_question(question_id):
     try:
         conn = _connect()
+        FIELD_NAMES = ['question_id', 'title', 'description', 'category', 'complexity']
+
         with conn, conn.cursor() as cur:
             if question_id == "all":
-                cur.execute("SELECT * FROM questions")
-                return cur.fetchall()
-            else:
-                cur.execute("SELECT * FROM questions WHERE question_id = %s", (question_id,))
-                result = cur.fetchone()
-                if result is None:
-                    return False
-                return result
+                cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM questions")
+                rows = cur.fetchall()
+                questions = [dict(zip(FIELD_NAMES, row)) for row in rows]
+                return questions
+
+            cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM questions WHERE question_id = %s", (question_id,))
+            row = cur.fetchone()
+            if row is None:
+                return False
+            question = dict(zip(FIELD_NAMES, row))
+            return question
     except Exception:
         traceback.print_exc()
 
