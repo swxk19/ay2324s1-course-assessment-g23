@@ -22,7 +22,7 @@ const EditableRow: React.FC<EditableRowProps> = ({
                     required
                     placeholder='ID'
                     name='id'
-                    value={editFormData.id}
+                    value={editFormData.question_id}
                     disabled
                 />
             </td>

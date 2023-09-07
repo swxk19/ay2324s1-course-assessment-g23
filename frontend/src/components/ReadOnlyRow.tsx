@@ -40,7 +40,7 @@ const ReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
 
     return (
         <tr>
-            <td>{question.id}</td>
+            <td>{question.question_id}</td>
             <td
                 onClick={openModal}
                 style={{
@@ -91,7 +91,7 @@ const ReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 <button type='button' onClick={(event) => handleEditClick(event, question)}>
                     Edit
                 </button>
-                <button type='button' onClick={() => handleDeleteClick(question.id)}>
+                <button type='button' onClick={() => handleDeleteClick(question.question_id)}>
                     Delete
                 </button>
             </td>

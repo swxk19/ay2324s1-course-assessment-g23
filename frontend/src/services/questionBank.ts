@@ -4,7 +4,7 @@ const QUESTIONS_STORAGE_KEY = 'questions'
 /** Represents a question in the question bank. */
 export interface Question {
     /** The UUID for the question. */
-    id: string
+    question_id: string
     /** The title of the question. */
     title: string
     /** The description of the question. */
@@ -32,13 +32,14 @@ function _generateUUID(): string {
 /**
  * Stores a new question.
  *
- * @param {Omit<Question, 'id'>} question The question to store. All fields except ID are required.
+ * @param {Omit<Question, 'question_id'>} question
+ * The question to store. All fields except ID are required.
  * @returns {Promise<string>} Resolves with the UUID for the stored question.
  */
-export async function storeQuestion(question: Omit<Question, 'id'>): Promise<string> {
+export async function storeQuestion(question: Omit<Question, 'question_id'>): Promise<string> {
     const id = _generateUUID()
     const questions = await getAllQuestions()
-    const newQuestion = { id, ...question }
+    const newQuestion: Question = { question_id: id, ...question }
 
     // const headers: Headers = new Headers()
     // headers.set('Content-Type', 'application/json')
@@ -74,7 +75,7 @@ export async function getQuestion(id: string): Promise<Question> {
     // const res = fetch(request)
 
     const questions = await getAllQuestions()
-    return questions.find((q) => q.id === id)!
+    return questions.find((q) => q.question_id === id)!
 }
 
 /**
@@ -98,12 +99,12 @@ export async function getAllQuestions(): Promise<Question[]> {
 /**
  * Updates an existing question by its ID.
  *
- * @param {Pick<Question, 'id'> & Partial<Omit<Question, 'id'>>} updatedQuestion
+ * @param {Pick<Question, 'question_id'> & Partial<Omit<Question, 'question_id'>>} updatedQuestion
  * Question with the fields to update. All fields except `id` are optional.
  * @returns {Promise<void>} Resolves when the question is successfully updated.
  */
 export async function updateQuestion(
-    updatedQuestion: Pick<Question, 'id'> & Partial<Omit<Question, 'id'>>
+    updatedQuestion: Pick<Question, 'question_id'> & Partial<Omit<Question, 'question_id'>>
 ): Promise<void> {
     // const headers: Headers = new Headers()
     // headers.set('Content-Type', 'application/json')
@@ -116,7 +117,7 @@ export async function updateQuestion(
     // })
     // const res = fetch(request)
     const questions: Question[] = await getAllQuestions()
-    const index = questions.findIndex((q) => q.id === updatedQuestion.id)
+    const index = questions.findIndex((q) => q.question_id === updatedQuestion.question_id)
 
     if (index > -1) {
         questions[index] = { ...questions[index], ...updatedQuestion }
@@ -141,7 +142,7 @@ export async function deleteQuestion(id: string): Promise<void> {
     // })
     // const res = fetch(request)
     const questions: Question[] = await getAllQuestions()
-    const newQuestions = questions.filter((q) => q.id !== id)
+    const newQuestions = questions.filter((q) => q.question_id !== id)
     localStorage.setItem(QUESTIONS_STORAGE_KEY, JSON.stringify(newQuestions))
 }
 
