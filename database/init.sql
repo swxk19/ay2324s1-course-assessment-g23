@@ -4,3 +4,10 @@ CREATE TABLE IF NOT EXISTS users(
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL
 );
+CREATE TABLE IF NOT EXISTS questions(
+    question_id VARCHAR(255) PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    complexity VARCHAR(255) NOT NULL
+);

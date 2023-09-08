@@ -69,7 +69,7 @@ export const QuestionTable: React.FC = () => {
 
     const handleDeleteClick = (questionId: string) => {
         const newQuestions: Question[] = [...questions]
-        const index = questions.findIndex((question) => question.id === questionId)
+        const index = questions.findIndex((question) => question.question_id === questionId)
 
         if (index !== -1) {
             newQuestions.splice(index, 1)
@@ -97,8 +97,9 @@ export const QuestionTable: React.FC = () => {
                     </thead>
                     <tbody>
                         {questions.map((question) => (
-                            <Fragment key={question.id}>
-                                {editFormData && editFormData.id === question.id ? (
+                            <Fragment key={question.question_id}>
+                                {editFormData &&
+                                editFormData.question_id === question.question_id ? (
                                     <EditableRow
                                         editFormData={editFormData}
                                         handleEditFormChange={handleEditFormChange}

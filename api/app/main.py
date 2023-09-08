@@ -29,8 +29,8 @@ async def get_user(r: rm.GetUser):
     return db.get_user(r.user_id)
 
 @app.delete("/users", status_code=200)
-async def del_user(r: rm.DeleteUser):
-    return db.del_user(r.user_id)
+async def delete_user(r: rm.DeleteUser):
+    return db.delete_user(r.user_id)
 
 @app.put("/users", status_code=200)
 async def update_user_info(r: rm.UpdateUserInfo):
@@ -38,3 +38,26 @@ async def update_user_info(r: rm.UpdateUserInfo):
         return {"message": "Updated Successfully"}
     else:
         return {"message": "Invalid update"} # placeholder message. Better to specify why invalid
+
+@app.post("/questions", status_code=200)
+async def create_question(r: rm.CreateQuestion):
+    question_id = str(uuid.uuid4())
+    if (db.create_question(question_id, r.title, r.description, r.category, r.complexity)):
+        return {"question_id": question_id}
+    else:
+        return {"message": "Invalid creation"}
+
+@app.get("/questions/{question_id}", status_code=200)
+async def get_question(question_id: str):
+    return db.get_question(question_id)
+
+@app.put("/questions", status_code=200)
+async def update_question_info(r: rm.UpdateQuestionInfo):
+    if (db.update_question_info(r.question_id, r.title, r.description, r.category, r.complexity)):
+        return {"message": "Updated Successfully"}
+    else:
+        return {"message": "Invalid update"} # placeholder message. Better to specify why invalid
+    
+@app.delete("/questions/{question_id}", status_code=200)
+async def delete_question(question_id: str):
+    return db.delete_question(question_id)
