@@ -1,17 +1,20 @@
-import React, { ChangeEvent, FormEvent, Fragment, useState, useEffect } from 'react'
+import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import EditableRow from './EditableRow.tsx'
 import ReadOnlyRow from './ReadOnlyRow.tsx'
+import { type Question } from '../services/questionBank.ts'
 import {
-    deleteQuestion,
-    Question,
-    updateQuestion,
-    getAllQuestions,
-    storeQuestion, // Import storeQuestion function
-} from '../services/questionBank.ts'
+    useAllQuestions,
+    useDeleteQuestion,
+    useStoreQuestion,
+    useUpdateQuestion,
+} from '../stores/questionStore.ts'
 
 export const QuestionTable: React.FC = () => {
-    const [questions, setQuestions] = useState<Question[]>([])
-    const [addFormData, setAddFormData] = useState<Omit<Question, 'id'>>({
+    const { data: questions } = useAllQuestions()
+    const storeQuestionMutation = useStoreQuestion()
+    const updateQuestionMutation = useUpdateQuestion()
+    const deleteQuestionMutation = useDeleteQuestion()
+    const [addFormData, setAddFormData] = useState<Omit<Question, 'question_id'>>({
         title: '',
         description: '',
         category: '',
@@ -19,11 +22,9 @@ export const QuestionTable: React.FC = () => {
     })
     const [editFormData, setEditFormData] = useState<Question | null>(null)
 
-    useEffect(() => {
-        getAllQuestions().then(setQuestions)
-    }, [])
-
-    const handleAddFormChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleAddFormChange = (
+        event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    ) => {
         const { name, value } = event.target
         setAddFormData({
             ...addFormData,
@@ -31,7 +32,7 @@ export const QuestionTable: React.FC = () => {
         })
     }
 
-    const handleEditFormChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleEditFormChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
         // @ts-ignore
         setEditFormData({
@@ -42,20 +43,15 @@ export const QuestionTable: React.FC = () => {
 
     const handleAddFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        // Save the new question to localStorage
-        await storeQuestion(addFormData)
-        await getAllQuestions().then(setQuestions)
+        storeQuestionMutation.mutate(addFormData)
     }
 
     const handleEditFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        if (editFormData) {
-            // Update the edited question in localStorage
-            await updateQuestion(editFormData)
-            await getAllQuestions().then(setQuestions)
-            setEditFormData(null)
-        }
+        if (!editFormData) return
+        updateQuestionMutation.mutate(editFormData)
+        setEditFormData(null)
     }
 
     const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>, question: Question) => {
@@ -67,19 +63,7 @@ export const QuestionTable: React.FC = () => {
         setEditFormData(null)
     }
 
-    const handleDeleteClick = (questionId: string) => {
-        const newQuestions: Question[] = [...questions]
-        const index = questions.findIndex((question) => question.question_id === questionId)
-
-        if (index !== -1) {
-            newQuestions.splice(index, 1)
-
-            // Delete the question from localStorage and save the updated list
-            deleteQuestion(questionId)
-
-            setQuestions(newQuestions)
-        }
-    }
+    const handleDeleteClick = (questionId: string) => deleteQuestionMutation.mutate(questionId)
 
     return (
         <div className='app-container'>

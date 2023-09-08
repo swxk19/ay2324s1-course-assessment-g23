@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { ChangeEvent } from 'react'
 import { type Question } from '../services/questionBank'
 
 // Define a TypeScript interface for the props
 interface EditableRowProps {
     editFormData: Question
-    handleEditFormChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    handleEditFormChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
     handleCancelClick: () => void
 }
 
