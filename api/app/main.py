@@ -47,9 +47,9 @@ async def create_question(r: rm.CreateQuestion):
     else:
         return {"message": "Invalid creation"}
 
-@app.get("/questions", status_code=200)
-async def get_question(r: rm.GetQuestion):
-    return db.get_question(r.question_id)
+@app.get("/questions/{question_id}", status_code=200)
+async def get_question(question_id: str):
+    return db.get_question(question_id)
 
 @app.put("/questions", status_code=200)
 async def update_question_info(r: rm.UpdateQuestionInfo):
@@ -58,6 +58,6 @@ async def update_question_info(r: rm.UpdateQuestionInfo):
     else:
         return {"message": "Invalid update"} # placeholder message. Better to specify why invalid
     
-@app.delete("/questions", status_code=200)
-async def delete_question(r: rm.DeleteQuestion):
-    return db.delete_question(r.question_id)
+@app.delete("/questions/{question_id}", status_code=200)
+async def delete_question(question_id: str):
+    return db.delete_question(question_id)
