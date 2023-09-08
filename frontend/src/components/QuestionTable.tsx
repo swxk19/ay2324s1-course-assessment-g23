@@ -23,7 +23,9 @@ export const QuestionTable: React.FC = () => {
         getAllQuestions().then(setQuestions)
     }, [])
 
-    const handleAddFormChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleAddFormChange = (
+        event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    ) => {
         const { name, value } = event.target
         setAddFormData({
             ...addFormData,
@@ -31,7 +33,7 @@ export const QuestionTable: React.FC = () => {
         })
     }
 
-    const handleEditFormChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleEditFormChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
         // @ts-ignore
         setEditFormData({
