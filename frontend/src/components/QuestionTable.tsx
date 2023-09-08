@@ -11,7 +11,7 @@ import {
 
 export const QuestionTable: React.FC = () => {
     const [questions, setQuestions] = useState<Question[]>([])
-    const [addFormData, setAddFormData] = useState<Omit<Question, 'id'>>({
+    const [addFormData, setAddFormData] = useState<Omit<Question, 'question_id'>>({
         title: '',
         description: '',
         category: '',
