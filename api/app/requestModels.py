@@ -6,12 +6,6 @@ class CreateUser(BaseModel):
     password: str
     email: str
 
-class GetUser(BaseModel):
-    user_id: str
-
-class DeleteUser(BaseModel):
-    user_id: str
-
 class UpdateUserInfo(BaseModel):
     user_id: str
     username: str

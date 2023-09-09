@@ -24,13 +24,13 @@ async def create_user(r: rm.CreateUser):
     else:
         return {"message": "Invalid creation"} # placeholder message. Better to specify invalid fields
 
-@app.get("/users", status_code=200)
-async def get_user(r: rm.GetUser):
-    return db.get_user(r.user_id)
+@app.get("/users/{user_id}", status_code=200)
+async def get_user(user_id: str):
+    return db.get_user(user_id)
 
-@app.delete("/users", status_code=200)
-async def delete_user(r: rm.DeleteUser):
-    return db.delete_user(r.user_id)
+@app.delete("/users/{user_id}", status_code=200)
+async def delete_user(user_id: str):
+    return db.delete_user(user_id)
 
 @app.put("/users", status_code=200)
 async def update_user_info(r: rm.UpdateUserInfo):

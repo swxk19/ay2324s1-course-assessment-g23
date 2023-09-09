@@ -31,17 +31,21 @@ def create_user(user_id, username, email, password):
 def get_user(user_id):
     try:
         conn = _connect()
+        FIELD_NAMES = ['user_id', 'username', 'email', 'password']
+
         with conn, conn.cursor() as cur:
             if user_id == "all":
-                cur.execute("SELECT * FROM users")
-                return cur.fetchall()
-            else:
-                cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
-                result = cur.fetchone()
-                
-                if result is None:
-                    return False
-                return result
+                cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM users")
+                rows = cur.fetchall()
+                users = [dict(zip(FIELD_NAMES, row)) for row in rows]
+                return users
+
+            cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s", (user_id,))
+            row = cur.fetchone()
+            if row is None:
+                return False
+            user = dict(zip(FIELD_NAMES, row))
+            return user
     except Exception:
         traceback.print_exc()
 
