@@ -6,15 +6,10 @@ const QUESTION_API_HEADER = { 'Content-Type': 'application/json' }
 
 /** Represents a question in the question bank. */
 export interface Question {
-    /** The UUID for the question. */
     question_id: string
-    /** The title of the question. */
     title: string
-    /** The description of the question. */
     description: string
-    /** Category associated with the question. */
     category: string
-    /** The complexity level of the question. */
     complexity: 'Easy' | 'Medium' | 'Hard'
 }
 
@@ -35,7 +30,7 @@ export async function storeQuestion(question: Omit<Question, 'question_id'>): Pr
 
         if (!response.ok) throw new Error(response.statusText)
 
-        const data: { question_id: string } = await response.json()
+        const data: Pick<Question, 'question_id'> = await response.json()
         return data.question_id
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error)
