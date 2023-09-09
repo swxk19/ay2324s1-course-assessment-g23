@@ -67,7 +67,7 @@ export const QuestionTable: React.FC = () => {
 
     return (
         <div className='app-container'>
-            <h2>PeerPrep</h2>
+            <h2>Questions</h2>
             <form onSubmit={handleEditFormSubmit}>
                 <table className='question-table'>
                     <thead>
@@ -159,3 +159,5 @@ export const QuestionTable: React.FC = () => {
         </div>
     )
 }
+
+export default QuestionTable;
