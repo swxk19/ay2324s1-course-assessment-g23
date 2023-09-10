@@ -133,7 +133,10 @@ def delete_user(user_id):
     try:
         conn = db.connect()
         with conn, conn.cursor() as cur:
-            cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
+            if user_id == "all":
+                cur.execute("DELETE FROM users")
+            else:
+                cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
             conn.commit()
         return {'message': f'User id {user_id} deleted'}
     except Exception:
