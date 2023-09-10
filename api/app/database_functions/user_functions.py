@@ -117,7 +117,7 @@ def delete_user(user_id):
         with conn, conn.cursor() as cur:
             cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
             conn.commit()
-        return {'message': f'User id {user_id} deleted.'}
+        return {'message': f'User id {user_id} deleted'}
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error")

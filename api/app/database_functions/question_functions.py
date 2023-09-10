@@ -101,15 +101,21 @@ def update_question_info(question_id, title, description, category, complexity):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 def delete_question(question_id):
+    if not _qid_exists(question_id):
+        raise HTTPException(status_code=404, detail="Question does not exist")
     try:
         conn = db.connect()
         with conn, conn.cursor() as cur:
+            message = ""
             if question_id == "all":
                 cur.execute("DELETE FROM questions")
+                message = "All questions deleted"
             else:
                 cur.execute("DELETE FROM questions WHERE question_id = %s", (question_id,))
+                message = f"Question({question_id}) deleted"
             conn.commit()
-            return True
+            return {'message': message}
+
     except Exception:
         traceback.print_exc()
-        return False
+        raise HTTPException(status_code=500, detail="Internal server error")
