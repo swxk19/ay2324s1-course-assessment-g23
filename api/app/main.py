@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import requestModels as rm
 import database as db
+from database_functions import user_functions as uf, question_functions as qf
 
 # create app
 app = FastAPI()
@@ -16,48 +17,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/users", status_code=200)
+@app.post("/users")
 async def create_user(r: rm.CreateUser):
     user_id = str(uuid.uuid4())
-    if (db.create_user(user_id, r.username, r.email, r.password)):
-        return {"user_id": user_id}
-    else:
-        return {"message": "Invalid creation"} # placeholder message. Better to specify invalid fields
+    return uf.create_user(user_id, r.username, r.email, r.password)
 
-@app.get("/users/{user_id}", status_code=200)
+
+@app.get("/users/{user_id}")
 async def get_user(user_id: str):
-    return db.get_user(user_id)
+    return uf.get_user(user_id)
 
 @app.delete("/users/{user_id}", status_code=200)
 async def delete_user(user_id: str):
-    return db.delete_user(user_id)
+    return uf.delete_user(user_id)
 
 @app.put("/users", status_code=200)
 async def update_user_info(r: rm.UpdateUserInfo):
-    if (db.update_user_info(r.user_id, r.username, r.password, r.email)):
-        return {"message": "Updated Successfully"}
-    else:
-        return {"message": "Invalid update"} # placeholder message. Better to specify why invalid
+    return uf.update_user_info(r.id, r.username, r.password, r.email)
 
 @app.post("/questions", status_code=200)
 async def create_question(r: rm.CreateQuestion):
     question_id = str(uuid.uuid4())
-    if (db.create_question(question_id, r.title, r.description, r.category, r.complexity)):
-        return {"question_id": question_id}
-    else:
-        return {"message": "Invalid creation"}
+    return qf.create_question(question_id, r.title, r.description, r.category, r.complexity)
 
 @app.get("/questions/{question_id}", status_code=200)
 async def get_question(question_id: str):
-    return db.get_question(question_id)
+    return qf.get_question(question_id)
 
 @app.put("/questions", status_code=200)
 async def update_question_info(r: rm.UpdateQuestionInfo):
-    if (db.update_question_info(r.question_id, r.title, r.description, r.category, r.complexity)):
+    if (qf.update_question_info(r.id, r.title, r.description, r.category, r.complexity)):
         return {"message": "Updated Successfully"}
     else:
         return {"message": "Invalid update"} # placeholder message. Better to specify why invalid
-    
+
 @app.delete("/questions/{question_id}", status_code=200)
 async def delete_question(question_id: str):
-    return db.delete_question(question_id)
+    return qf.delete_question(question_id)
