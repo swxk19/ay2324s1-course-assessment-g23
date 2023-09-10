@@ -8,7 +8,7 @@ import {
     DialogTitle,
     TextField,
 } from '@mui/material'
-import { type Question, updateQuestion } from '../services/questionBank.ts'
+import { type Question, updateQuestion } from '../../services/questionBank.ts'
 
 interface ReadOnlyRowProps {
     question: Question
@@ -16,7 +16,7 @@ interface ReadOnlyRowProps {
     handleDeleteClick: (id: string) => void
 }
 
-const ReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
+const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     question,
     handleEditClick,
     handleDeleteClick,
@@ -99,4 +99,4 @@ const ReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     )
 }
 
-export default ReadOnlyRow
+export default QuestionReadOnlyRow

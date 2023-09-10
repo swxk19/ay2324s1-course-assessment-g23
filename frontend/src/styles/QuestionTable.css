@@ -1,59 +1,25 @@
-.id-col {
-    min-width: 70px;
+.question-container {
+    padding: 5rem;
+}
+
+.question-container td {
+    padding-right: 1rem;
+}
+
+.question-container th {
+    padding-right: 2rem;
     text-align: left;
+    min-width: 7rem;
 }
 
-.title-col {
-    min-width: 170px; /* Adjust the minimum width as needed */
-    text-align: left;
+
+.question-container input {
+    padding: 0.5rem 0rem 0.5rem 0.5rem;
+    width: 100%;
 }
 
-td {
-    padding-right: 15px;
-}
-
-.category-col {
-    min-width: 190px;
-    text-align: left;
-}
-
-.complexity-col {
-    min-width: 120px; /* Adjust the minimum width as needed */
-    text-align: left;
-}
-
-.actions-col {
-    min-width: 200px; /* Adjust the minimum width as needed */
-    text-align: left;
-}
-
-.custom-input {
-    width: 120px; /* Set the width here */
-}
-
-.app-container {
-    min-width: 600px;
-    padding: 100px;
-}
-
-input {
-    padding: 10px;
-}
-
-select {
-    padding: 10px;
-}
-
-.custom-id-input {
-    width: 32px;
-}
-
-.custom-title-input {
-    min-width: 173px;
-}
-
-.custom-cat-input {
-    min-width: 180px;
+.question-container select {
+    padding: 0.55rem;
 }
 
 .custom-desc-input {
@@ -62,6 +28,11 @@ select {
     min-width: 525px;
     min-height: 200px;
 }
+
+.questionForm input {
+    width: 10rem;
+}
+
 
 /* QuestionModal.css */
 .modal {

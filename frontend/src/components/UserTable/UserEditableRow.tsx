@@ -1,64 +1,56 @@
 import React, { ChangeEvent } from 'react'
-import { type Question } from '../services/questionBank'
+import {User} from "../../services/users.ts";
+import  '../../styles/UserTable.css'
 
 // Define a TypeScript interface for the props
 interface EditableRowProps {
-    editFormData: Question
+    editFormData: User
     handleEditFormChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
     handleCancelClick: () => void
 }
 
-const EditableRow: React.FC<EditableRowProps> = ({
+const UserEditableRow: React.FC<EditableRowProps> = ({
     editFormData,
     handleEditFormChange,
     handleCancelClick,
 }) => {
     return (
-        <tr>
+        <tr className="user-container">
             <td>
                 <input
-                    className='custom-id-input'
-                    type='text'
                     required
                     placeholder='ID'
                     name='id'
-                    value={editFormData.question_id}
+                    value={editFormData.user_id}
                     disabled
                 />
             </td>
             <td>
                 <input
-                    className='custom-title-input'
-                    type='text'
                     required
-                    placeholder='Title'
-                    name='title'
-                    value={editFormData.title}
+                    placeholder='Username'
+                    name='username'
+                    value={editFormData.username}
                     onChange={handleEditFormChange}
                 />
             </td>
             <td>
                 <input
-                    className='custom-cat-input'
-                    type='text'
                     required
-                    placeholder='Category'
-                    name='category'
-                    value={editFormData.category}
+                    placeholder='Password'
+                    name='passsword'
+                    value={editFormData.password}
                     onChange={handleEditFormChange}
                 />
             </td>
             <td>
-                <select
-                    name='complexity'
+                <input
                     required
-                    value={editFormData.complexity}
+                    placeholder='Email'
+                    name='email'
+                    value={editFormData.email}
                     onChange={handleEditFormChange}
-                >
-                    <option value='Easy'>Easy</option>
-                    <option value='Medium'>Medium</option>
-                    <option value='Hard'>Hard</option>
-                </select>
+                />
             </td>
             <td>
                 <button type='submit'>Save</button>
@@ -70,4 +62,4 @@ const EditableRow: React.FC<EditableRowProps> = ({
     )
 }
 
-export default EditableRow
+export default UserEditableRow

@@ -1,13 +1,15 @@
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
-import EditableRow from './EditableRow.tsx'
-import ReadOnlyRow from './ReadOnlyRow.tsx'
-import { type Question } from '../services/questionBank.ts'
+import QuestionEditableRow from './QuestionEditableRow.tsx'
+import QuestionReadOnlyRow from './QuestionReadOnlyRow.tsx'
+import { type Question } from '../../services/questionBank.ts'
 import {
     useAllQuestions,
     useDeleteQuestion,
     useStoreQuestion,
     useUpdateQuestion,
-} from '../stores/questionStore.ts'
+} from '../../stores/questionStore.ts'
+import '../../styles/QuestionTable.css'
+
 
 export const QuestionTable: React.FC = () => {
     const { data: questions } = useAllQuestions()
@@ -44,7 +46,14 @@ export const QuestionTable: React.FC = () => {
     const handleAddFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         storeQuestionMutation.mutate(addFormData)
+        setAddFormData({
+            title: '',
+            description: '',
+            category: '',
+            complexity: 'Easy',
+        })
     }
+
 
     const handleEditFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -66,17 +75,17 @@ export const QuestionTable: React.FC = () => {
     const handleDeleteClick = (questionId: string) => deleteQuestionMutation.mutate(questionId)
 
     return (
-        <div className='app-container'>
-            <h2>PeerPrep</h2>
+        <div className='question-container'>
+            <h2>Questions</h2>
             <form onSubmit={handleEditFormSubmit}>
                 <table className='question-table'>
                     <thead>
                         <tr>
-                            <th className='id-col'>ID</th>
-                            <th className='title-col'>Title</th>
-                            <th className='category-col'>Category</th>
-                            <th className='complexity-col'>Complexity</th>
-                            <th className='actions-col'>Actions</th>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Complexity</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,13 +93,13 @@ export const QuestionTable: React.FC = () => {
                             <Fragment key={question.question_id}>
                                 {editFormData &&
                                 editFormData.question_id === question.question_id ? (
-                                    <EditableRow
+                                    <QuestionEditableRow
                                         editFormData={editFormData}
                                         handleEditFormChange={handleEditFormChange}
                                         handleCancelClick={handleCancelClick}
                                     />
                                 ) : (
-                                    <ReadOnlyRow
+                                    <QuestionReadOnlyRow
                                         question={question}
                                         handleEditClick={handleEditClick}
                                         handleDeleteClick={handleDeleteClick}
@@ -103,10 +112,8 @@ export const QuestionTable: React.FC = () => {
             </form>
 
             <h2>Add a Question</h2>
-            <form onSubmit={handleAddFormSubmit}>
+            <form className='questionForm' onSubmit={handleAddFormSubmit}>
                 <input
-                    className='custom-id-input'
-                    type='text'
                     name='id'
                     disabled
                     placeholder='ID'
@@ -114,8 +121,6 @@ export const QuestionTable: React.FC = () => {
                     value={'—'}
                 />
                 <input
-                    className='custom-title-input'
-                    type='text'
                     name='title'
                     required
                     placeholder='Title'
@@ -124,8 +129,6 @@ export const QuestionTable: React.FC = () => {
                 />
 
                 <input
-                    className='custom-cat-input'
-                    type='text'
                     name='category'
                     required
                     placeholder='Category'
@@ -153,9 +156,11 @@ export const QuestionTable: React.FC = () => {
                     />
                 </div>
                 <div>
-                    <button type='submit'>Add</button>
+                    <button id='addButton' type='submit'>Add</button>
                 </div>
             </form>
         </div>
     )
 }
+
+export default QuestionTable;
