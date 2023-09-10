@@ -2,16 +2,16 @@ import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react';
 import UserEditableRow from './UserEditableRow.tsx';
 import { User } from '../../services/users.ts';
 import {
-    useAllUsers, // Update hook name
-    useDeleteUser, // Update hook name
-    useStoreUser, // Update hook name
-    useUpdateUser, // Update hook name
+    useAllUsers,
+    useDeleteUser,
+    useStoreUser,
+    useUpdateUser,
 } from '../../stores/userStore.ts';
 import UserReadOnlyRow from "./UserReadOnlyRow.tsx";
 import '../../styles/UserTable.css'
 
 export const UserTable: React.FC = () => {
-    const { data: users } = useAllUsers(); // Update variable name
+    const { data: users } = useAllUsers();
     const storeUserMutation = useStoreUser();
     const updateUserMutation = useUpdateUser();
     const deleteUserMutation = useDeleteUser();
@@ -68,19 +68,19 @@ export const UserTable: React.FC = () => {
         setEditFormData(null);
     }
 
-    const handleDeleteClick = (userId: string) => deleteUserMutation.mutate(userId); // Update variable name
+    const handleDeleteClick = (userId: string) => deleteUserMutation.mutate(userId);
 
     return (
         <div className='user-container'>
             <h2>Users</h2>
             <form onSubmit={handleEditFormSubmit}>
-                <table className='user-table'> {/* Update class name */}
+                <table className='user-table'>
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th> {/* Update column names */}
+                        <th>Name</th>
                         <th>Password</th>
-                        <th>Email</th> {/* Update column names */}
+                        <th>Email</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -110,7 +110,6 @@ export const UserTable: React.FC = () => {
             <h2>Add a User</h2>
             <form className='userForm' onSubmit={handleAddFormSubmit}>
                 <input
-                    type='text'
                     name='id'
                     disabled
                     placeholder='ID'
@@ -118,7 +117,6 @@ export const UserTable: React.FC = () => {
                     value={'—'}
                 />
                 <input
-                    type='text'
                     name='username'
                     required
                     placeholder='Username'
@@ -126,7 +124,6 @@ export const UserTable: React.FC = () => {
                     value={addFormData.username}
                 />
                 <input
-                    type='text'
                     name='password'
                     required
                     placeholder='Password'
@@ -134,7 +131,6 @@ export const UserTable: React.FC = () => {
                     value={addFormData.password}
                 />
                 <input
-                    type='text'
                     name='email'
                     required
                     placeholder='Email'
