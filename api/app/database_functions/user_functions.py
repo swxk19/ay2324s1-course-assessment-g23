@@ -21,22 +21,32 @@ def _uid_exists(uid):
         cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s)", (uid,))
         return cur.fetchone()[0]
 
-def create_user(user_id, username, email, password):
-    # missing fields check
-
+def _create_user_check_args(user_id, username, email, password):
+    if user_id is None:
+        raise HTTPException(status_code=422, detail='Missing user id')
+    if username is None:
+        raise HTTPException(status_code=422, detail='Missing username')
+    if email is None:
+        raise HTTPException(status_code=422, detail='Missing email')
+    if password is None:
+        raise HTTPException(status_code=422, detail='Missing password')
     if _uid_exists(user_id):
-        raise HTTPException(status_code=500, detail='Internal server error (uid already exists')
+        raise HTTPException(status_code=500, detail='Internal server error (uid already exists)')
     if _username_exists(username):
         raise HTTPException(status_code=409, detail='Username already exists')
     if _email_exists(email):
         raise HTTPException(status_code=409, detail='Email already exists')
 
-    new_password = hashlib.md5(password.encode()).hexdigest()
+def create_user(user_id, username, email, password):
+
+    _create_user_check_args(user_id, username, email, password)
+
+    hashed_password = hashlib.md5(password.encode()).hexdigest()
 
     try:
         conn = db.connect()
         with conn, conn.cursor() as cur:
-            cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, new_password))
+            cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, hashed_password))
             conn.commit()
             return {'message': f'User({user_id}) successfully created'}
     except Exception:
@@ -44,6 +54,9 @@ def create_user(user_id, username, email, password):
         raise HTTPException(status_code=500, detail='Internal server error')
 
 def get_user(user_id):
+    if user_id is None:
+        raise HTTPException(status_code=422, detail='Missing user id')
+
     result = None
     try:
         conn = db.connect()
@@ -67,17 +80,22 @@ def get_user(user_id):
     user = dict(zip(FIELD_NAMES, result))
     return user
 
-
-def update_user_info(user_id, username, password, email):
+def _update_user_info_check_args(user_id, username, email):
     if not _uid_exists(user_id):
         raise HTTPException(status_code=404, detail="User does not exist")
+    if username is not None and _username_exists(username):
+            raise HTTPException(status_code=409, detail='Username already exists')
+    if email is not None and _email_exists(email):
+            raise HTTPException(status_code=409, detail='Email already exists')
+
+def update_user_info(user_id, username, password, email):
+
+    _update_user_info_check_args(user_id, username, email)
 
     values = []
     set_clauses = []
 
     if username is not None:
-        if _username_exists(username):
-            raise HTTPException(status_code=409, detail='Username already exists')
         values.append(username)
         set_clauses.append("username = %s")
 
@@ -87,8 +105,6 @@ def update_user_info(user_id, username, password, email):
         set_clauses.append("password = %s")
 
     if email is not None:
-        if _email_exists(email):
-            raise HTTPException(status_code=409, detail='Email already exists')
         values.append(email)
         set_clauses.append("email = %s")
 
