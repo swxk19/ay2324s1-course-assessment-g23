@@ -1,4 +1,4 @@
-import {QuestionTable} from "../components/QuestionTable.tsx";
+import {QuestionTable} from "../components/QuestionTable/QuestionTable.tsx";
 
 const Questions = () => {
     return (

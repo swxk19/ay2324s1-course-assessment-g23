@@ -1,4 +1,3 @@
-import './App.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Navbar from "./components/Navbar.tsx";
 import Questions from "./pages/Questions.tsx";

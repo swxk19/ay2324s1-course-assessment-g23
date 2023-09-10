@@ -1,4 +1,4 @@
-import UserTable from '../components/UserTable.tsx'
+import UserTable from '../components/UserTable/UserTable.tsx'
 
 const Users = () => {
     return (

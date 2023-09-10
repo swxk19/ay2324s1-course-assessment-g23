@@ -11,6 +11,7 @@ const Navbar: React.FC = () => {
             <ul>
                 <CustomLink to="/questions">Questions</CustomLink>
                 <CustomLink to="/users">Users</CustomLink>
+                <div>Profile</div>
             </ul>
         </nav>
     );

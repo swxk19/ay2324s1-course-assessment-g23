@@ -1,0 +1,24 @@
+.user-container {
+    padding: 5rem;
+}
+
+.user-container td {
+    padding-right: 1rem;
+}
+
+.user-container th {
+    padding-right: 2rem;
+    text-align: left;
+min-width: 7rem;
+}
+
+
+.user-container input {
+    padding: 0.5rem 0rem 0.5rem 0.5rem;
+    width: 100%;
+}
+
+.userForm input {
+    width: 10rem;
+}
+
