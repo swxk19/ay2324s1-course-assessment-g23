@@ -1,5 +1,5 @@
 .id-col {
-    min-width: 70px;
+    min-width: 50px;
     text-align: left;
 }
 
@@ -45,7 +45,7 @@ select {
 }
 
 .custom-id-input {
-    width: 32px;
+    width: 70px;
 }
 
 .custom-title-input {

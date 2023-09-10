@@ -1,8 +1,21 @@
+import React from "react";
+
 const UserTable = () => {
     return (
-        <h2 style={{textAlign: "center", paddingTop: "3rem"}}>
-            UserTable Placeholder
-        </h2>
+        <div className='app-container'>
+            <h2>Users</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th className='id-col'>ID</th>
+                        <th className='title-col'>Name</th>
+                        <th className='category-col'>Password</th>
+                        <th className='complexity-col'>Email</th>
+                    </tr>
+                    </thead>
+                </table>
+        </div>
+
     )
 }
 
