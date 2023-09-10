@@ -9,20 +9,21 @@ def _is_valid_complexity(complexity):
 def _qid_exists(qid):
     conn = db.connect()
     with conn, conn.cursor() as cur:
-        cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE question_id = %s)", (qid,))
+        cur.execute("SELECT EXISTS (SELECT 1 FROM questions WHERE question_id = %s)", (qid,))
         return cur.fetchone()[0]
 
 def _title_exists(title):
     conn = db.connect()
     with conn, conn.cursor() as cur:
-        cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE title = %s)", (title,))
+        cur.execute("SELECT EXISTS (SELECT 1 FROM questions WHERE title = %s)", (title,))
         return cur.fetchone()[0]
 
 def create_question(question_id, title, description, category, complexity):
     if _qid_exists(question_id):
         raise HTTPException(status_code=500, detail='Internal server error (qid already exists')
     if _title_exists(title):
-        raise HTTPException(status_code=409, detail='Username already exists')
+        raise HTTPException(status_code=409, detail='Title already exists')
+    print(question_id, title, description)
     try:
         conn = db.connect()
         with conn, conn.cursor() as cur:
