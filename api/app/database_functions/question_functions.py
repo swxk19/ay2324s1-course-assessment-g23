@@ -18,12 +18,29 @@ def _title_exists(title):
         cur.execute("SELECT EXISTS (SELECT 1 FROM questions WHERE title = %s)", (title,))
         return cur.fetchone()[0]
 
-def create_question(question_id, title, description, category, complexity):
+def _create_question_check_args(question_id, title, description, category, complexity):
+    if question_id is None:
+        raise HTTPException(status_code=422, detail='Missing question id')
+    if title is None:
+        raise HTTPException(status_code=422, detail='Missing title')
+    if description is None:
+        raise HTTPException(status_code=422, detail='Missing description')
+    if category is None:
+        raise HTTPException(status_code=422, detail='Missing category')
+    if complexity is None:
+        raise HTTPException(status_code=422, detail='Missing complexity')
+    if not _is_valid_complexity(complexity):
+        raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
     if _qid_exists(question_id):
-        raise HTTPException(status_code=500, detail='Internal server error (qid already exists')
+        raise HTTPException(status_code=500, detail='Internal server error (qid already exists)')
     if _title_exists(title):
         raise HTTPException(status_code=409, detail='Title already exists')
-    print(question_id, title, description)
+
+
+def create_question(question_id, title, description, category, complexity):
+
+    _create_question_check_args(question_id, title, description, category, complexity)
+
     try:
         conn = db.connect()
         with conn, conn.cursor() as cur:
@@ -35,6 +52,9 @@ def create_question(question_id, title, description, category, complexity):
         raise HTTPException(status_code=500, detail='Internal server error')
 
 def get_question(question_id):
+    if question_id is None:
+        raise HTTPException(status_code=422, detail='Missing question id')
+
     result = None
     try:
         conn = db.connect()
@@ -56,16 +76,22 @@ def get_question(question_id):
     question = dict(zip(FIELD_NAMES, result))
     return question
 
-def update_question_info(question_id, title, description, category, complexity):
+def _check_args_update_question_info(question_id, title, complexity):
     if not _qid_exists(question_id):
         raise HTTPException(status_code=404, detail="Question does not exist")
+    if title is not None and _title_exists(title):
+            raise HTTPException(status_code=409, detail="Title already exists")
+    if complexity is not None and not _is_valid_complexity(complexity):
+            raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
+
+def update_question_info(question_id, title, description, category, complexity):
+
+    _check_args_update_question_info(question_id, title, complexity)
 
     values = []
     set_clauses = []
 
     if title is not None:
-        if _title_exists(title):
-            raise HTTPException(status_code=409, detail="Title already exists")
         values.append(title)
         set_clauses.append("title = %s")
 
@@ -78,8 +104,6 @@ def update_question_info(question_id, title, description, category, complexity):
         set_clauses.append("category = %s")
 
     if complexity is not None:
-        if not _is_valid_complexity(complexity):
-            raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
         values.append(complexity)
         set_clauses.append("complexity = %s")
 

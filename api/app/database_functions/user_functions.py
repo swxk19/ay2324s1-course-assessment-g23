@@ -21,7 +21,7 @@ def _uid_exists(uid):
         cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s)", (uid,))
         return cur.fetchone()[0]
 
-def _create_user_check_args(user_id, username, email, password):
+def _check_args_create_user(user_id, username, email, password):
     if user_id is None:
         raise HTTPException(status_code=422, detail='Missing user id')
     if username is None:
@@ -39,7 +39,7 @@ def _create_user_check_args(user_id, username, email, password):
 
 def create_user(user_id, username, email, password):
 
-    _create_user_check_args(user_id, username, email, password)
+    _check_args_create_user(user_id, username, email, password)
 
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
@@ -80,7 +80,7 @@ def get_user(user_id):
     user = dict(zip(FIELD_NAMES, result))
     return user
 
-def _update_user_info_check_args(user_id, username, email):
+def _check_args_update_user_info(user_id, username, email):
     if not _uid_exists(user_id):
         raise HTTPException(status_code=404, detail="User does not exist")
     if username is not None and _username_exists(username):
@@ -90,7 +90,7 @@ def _update_user_info_check_args(user_id, username, email):
 
 def update_user_info(user_id, username, password, email):
 
-    _update_user_info_check_args(user_id, username, email)
+    _check_args_update_user_info(user_id, username, email)
 
     values = []
     set_clauses = []
