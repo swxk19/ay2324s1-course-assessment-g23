@@ -24,7 +24,7 @@ async def create_user(r: rm.CreateUser):
     else:
         return {"message": "Invalid creation"} # placeholder message. Better to specify invalid fields
 
-@app.get("/users/{user_id}", status_code=200)
+@app.get("/users/{user_id}")
 async def get_user(user_id: str):
     return db.get_user(user_id)
 
@@ -57,7 +57,7 @@ async def update_question_info(r: rm.UpdateQuestionInfo):
         return {"message": "Updated Successfully"}
     else:
         return {"message": "Invalid update"} # placeholder message. Better to specify why invalid
-    
+
 @app.delete("/questions/{question_id}", status_code=200)
 async def delete_question(question_id: str):
     return db.delete_question(question_id)

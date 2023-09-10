@@ -2,6 +2,7 @@ import psycopg2
 import os
 import traceback
 import hashlib
+from fastapi import HTTPException
 
 def _connect():
     try:
@@ -43,11 +44,11 @@ def get_user(user_id):
             cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s", (user_id,))
             row = cur.fetchone()
             if row is None:
-                return False
+                raise HTTPException(status_code=404, detail="User not found")
             user = dict(zip(FIELD_NAMES, row))
             return user
     except Exception:
-        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 def update_user_info(user_id, username, password, email):
     values = []
@@ -97,7 +98,7 @@ def delete_user(user_id):
     except Exception:
         traceback.print_exc()
         return False
-      
+
 def create_question(question_id, title, description, category, complexity):
     try:
         conn = _connect()
@@ -108,7 +109,7 @@ def create_question(question_id, title, description, category, complexity):
     except Exception:
         traceback.print_exc()
         return False
-    
+
 def get_question(question_id):
     try:
         conn = _connect()
@@ -167,7 +168,7 @@ def update_question_info(question_id, title, description, category, complexity):
     except Exception:
         traceback.print_exc()
         return False
-    
+
 def delete_question(question_id):
     try:
         conn = _connect()
