@@ -36,7 +36,7 @@ def create_user(user_id, username, email, password):
         with conn, conn.cursor() as cur:
             cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, new_password))
             conn.commit()
-            return {'message': 'User successfully created'}
+            return {'message': 'User({user_id}) successfully created'}
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail='Internal server error')

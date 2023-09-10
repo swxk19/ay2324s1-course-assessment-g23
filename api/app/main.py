@@ -39,9 +39,6 @@ async def update_user_info(r: rm.UpdateUserInfo):
 async def create_question(r: rm.CreateQuestion):
     question_id = str(uuid.uuid4())
     return qf.create_question(question_id, r.title, r.description, r.category, r.complexity)
-        return {"question_id": question_id}
-    else:
-        return {"message": "Invalid creation"}
 
 @app.get("/questions/{question_id}", status_code=200)
 async def get_question(question_id: str):

@@ -24,7 +24,7 @@ def create_question(question_id, title, description, category, complexity):
         with conn, conn.cursor() as cur:
             cur.execute("INSERT INTO questions (question_id, title, description, category, complexity) VALUES (%s, %s, %s, %s, %s)", (question_id, title, description, category, complexity))
             conn.commit()
-            return {'message': 'Question successfully created'}
+            return {'message': 'Question({question_id}) successfully created'}
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail='Internal server error')
