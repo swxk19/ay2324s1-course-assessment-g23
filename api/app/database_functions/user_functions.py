@@ -36,7 +36,7 @@ def create_user(user_id, username, email, password):
         with conn, conn.cursor() as cur:
             cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, new_password))
             conn.commit()
-            return {'message': 'User({user_id}) successfully created'}
+            return {'message': f'User({user_id}) successfully created'}
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail='Internal server error')
@@ -103,7 +103,7 @@ def update_user_info(user_id, username, password, email):
                         SET {set_clause}
                         WHERE user_id = %s""",
                         tuple(values))
-            return {'message': 'Successfully updated {set_clause}'}
+            return {'message': f'Successfully updated {set_clause}'}
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -117,7 +117,7 @@ def delete_user(user_id):
         with conn, conn.cursor() as cur:
             cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
             conn.commit()
-        return {'message': 'User id {user_id} deleted.'}
+        return {'message': f'User id {user_id} deleted.'}
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal server error")
