@@ -4,22 +4,16 @@ import hashlib
 from fastapi import HTTPException
 
 def _username_exists(username):
-    conn = db.connect()
-    with conn, conn.cursor() as cur:
-        cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE username = %s)", (username,))
-        return cur.fetchone()[0]
+    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE username = %s)", params=(username,))
+    return cur[0]
 
 def _email_exists(email):
-    conn = db.connect()
-    with conn, conn.cursor() as cur:
-        cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE email = %s)", (email,))
-        return cur.fetchone()[0]
+    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE email = %s)", params=(email,))
+    return cur[0]
 
 def _uid_exists(uid):
-    conn = db.connect()
-    with conn, conn.cursor() as cur:
-        cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s)", (uid,))
-        return cur.fetchone()[0]
+    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s)", params=(uid,))
+    return cur[0]
 
 def _check_args_create_user(user_id, username, email, password):
     if user_id is None:
@@ -43,15 +37,10 @@ def create_user(user_id, username, email, password):
 
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
-    try:
-        conn = db.connect()
-        with conn, conn.cursor() as cur:
-            cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, hashed_password))
-            conn.commit()
-            return {'message': f'User({user_id}) successfully created'}
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail='Internal server error')
+    db.execute_sql_write("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)",
+                         params=(user_id, username, email, hashed_password))
+    return {'message': f'User({user_id}) successfully created'}
+
 
 def get_user(user_id):
     if user_id is None:
@@ -127,7 +116,7 @@ def update_user_info(user_id, username, password, email):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 def delete_user(user_id):
-    if not _uid_exists(user_id):
+    if user_id != "all" and not _uid_exists(user_id):
         raise HTTPException(status_code=404, detail="User does not exist")
 
     try:
