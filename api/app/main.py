@@ -33,10 +33,7 @@ async def delete_user(user_id: str):
 
 @app.put("/users", status_code=200)
 async def update_user_info(r: rm.UpdateUserInfo):
-    if (uf.update_user_info(r.user_id, r.username, r.password, r.email)):
-        return {"message": "Updated Successfully"}
-    else:
-        return {"message": "Invalid update"} # placeholder message. Better to specify why invalid
+    return uf.update_user_info(r.user_id, r.username, r.password, r.email)
 
 @app.post("/questions", status_code=200)
 async def create_question(r: rm.CreateQuestion):

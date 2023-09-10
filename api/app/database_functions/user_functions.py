@@ -107,12 +107,15 @@ def update_user_info(user_id, username, password, email):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 def delete_user(user_id):
+    if not _uid_exists(user_id):
+        raise HTTPException(status_code=404, detail="User does not exist")
+
     try:
         conn = db.connect()
         with conn, conn.cursor() as cur:
             cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
             conn.commit()
-            return True
+        return {'message': 'User id {user_id} deleted.'}
     except Exception:
         traceback.print_exc()
-        return False
+        raise HTTPException(status_code=500, detail="Internal server error")
