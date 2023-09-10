@@ -16,17 +16,22 @@ def _email_exists(email):
         return cur.fetchone()[0]
 
 def create_user(user_id, username, email, password):
+    if _username_exists(username):
+        raise HTTPException(status_code=409, detail='Username already exists')
+    if _email_exists(email):
+        raise HTTPException(status_code=409, detail='Email already exists')
+
     new_password = hashlib.md5(password.encode()).hexdigest()
+
     try:
         conn = db.connect()
         with conn, conn.cursor() as cur:
             cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, new_password))
             conn.commit()
-            return True
-
+            return {'message': 'User successfully created'}
     except Exception:
         traceback.print_exc()
-        return False
+        raise HTTPException(status_code=500, detail='Internal server error')
 
 def get_user(user_id):
     try:
