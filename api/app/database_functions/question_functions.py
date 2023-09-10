@@ -30,6 +30,7 @@ def create_question(question_id, title, description, category, complexity):
         raise HTTPException(status_code=500, detail='Internal server error')
 
 def get_question(question_id):
+    result = None
     try:
         conn = db.connect()
         FIELD_NAMES = ['question_id', 'title', 'description', 'category', 'complexity']
@@ -42,13 +43,13 @@ def get_question(question_id):
                 return questions
 
             cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM questions WHERE question_id = %s", (question_id,))
-            row = cur.fetchone()
-            if row is None:
-                return False
-            question = dict(zip(FIELD_NAMES, row))
-            return question
+            result = cur.fetchone()
     except Exception:
         traceback.print_exc()
+    if result is None:
+        raise HTTPException(status_code=404, detail="Question not found")
+    question = dict(zip(FIELD_NAMES, result))
+    return question
 
 def update_question_info(question_id, title, description, category, complexity):
     values = []
