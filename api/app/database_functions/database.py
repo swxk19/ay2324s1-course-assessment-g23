@@ -1,10 +1,8 @@
 import psycopg2
 import os
 import traceback
-import hashlib
-from fastapi import HTTPException
 
-def _connect():
+def connect():
     try:
         conn = psycopg2.connect(
             host=os.getenv("POSTGRES_HOST"),
@@ -16,92 +14,9 @@ def _connect():
     except Exception:
         traceback.print_exc()
 
-def create_user(user_id, username, email, password):
-    new_password = hashlib.md5(password.encode()).hexdigest()
-    try:
-        conn = _connect()
-        with conn, conn.cursor() as cur:
-            cur.execute("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)", (user_id, username, email, new_password))
-            conn.commit()
-            return True
-
-    except Exception:
-        traceback.print_exc()
-        return False
-
-def get_user(user_id):
-    try:
-        conn = _connect()
-        FIELD_NAMES = ['user_id', 'username', 'email', 'password']
-
-        with conn, conn.cursor() as cur:
-            if user_id == "all":
-                cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM users")
-                rows = cur.fetchall()
-                users = [dict(zip(FIELD_NAMES, row)) for row in rows]
-                return users
-
-            cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s", (user_id,))
-            row = cur.fetchone()
-            if row is None:
-                raise HTTPException(status_code=404, detail="User not found")
-            user = dict(zip(FIELD_NAMES, row))
-            return user
-    except Exception:
-        raise HTTPException(status_code=500, detail="Internal server error")
-
-def update_user_info(user_id, username, password, email):
-    values = []
-    set_clauses = []
-
-    if username is not None:
-        values.append(username)
-        set_clauses.append("username = %s")
-
-    if password is not None:
-        new_password = hashlib.md5(password.encode()).hexdigest()
-        values.append(new_password)
-        set_clauses.append("password = %s")
-
-    if email is not None:
-        values.append(email)
-        set_clauses.append("email = %s")
-
-    set_clause = ", ".join(set_clauses)
-    if not set_clause:
-        return False
-
-    values.append(user_id)
-
-    try:
-        conn = _connect()
-        with conn, conn.cursor() as cur:
-            cur.execute(f"""UPDATE users
-                        SET {set_clause}
-                        WHERE user_id = %s""",
-                        tuple(values))
-            return True
-    except Exception:
-        traceback.print_exc()
-        return False
-
-def delete_user(user_id):
-    try:
-        conn = _connect()
-        with conn, conn.cursor() as cur:
-            if user_id == "all":
-                cur.execute("DELETE FROM users")
-            else:
-                cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
-            conn.commit()
-            return True
-    except Exception:
-        traceback.print_exc()
-        return False
-
 def create_question(question_id, title, description, category, complexity):
     try:
-        conn = _connect()
+        conn = connect()
         with conn, conn.cursor() as cur:
             cur.execute("INSERT INTO questions (question_id, title, description, category, complexity) VALUES (%s, %s, %s, %s, %s)", (question_id, title, description, category, complexity))
             conn.commit()
@@ -112,7 +27,7 @@ def create_question(question_id, title, description, category, complexity):
 
 def get_question(question_id):
     try:
-        conn = _connect()
+        conn = connect()
         FIELD_NAMES = ['question_id', 'title', 'description', 'category', 'complexity']
 
         with conn, conn.cursor() as cur:
@@ -158,7 +73,7 @@ def update_question_info(question_id, title, description, category, complexity):
     values.append(question_id)
 
     try:
-        conn = _connect()
+        conn = connect()
         with conn, conn.cursor() as cur:
             cur.execute(f"""UPDATE questions
                         SET {set_clause}
@@ -171,7 +86,7 @@ def update_question_info(question_id, title, description, category, complexity):
 
 def delete_question(question_id):
     try:
-        conn = _connect()
+        conn = connect()
         with conn, conn.cursor() as cur:
             if question_id == "all":
                 cur.execute("DELETE FROM questions")
