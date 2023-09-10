@@ -2,10 +2,10 @@ import unittest
 import requests
 
 data = {
-            "user_id": "d5fbb2d6-954f-4381-b795-f093cffed175",
-            "username": "testuser1101",
+            "user_id": "121d480c-de96-4f72-abca-0a31586ccb28",
+            "username": "testuser1102",
             "password": "testpassword",
-            "email": "test100@example.com"
+            "email": "test10102@example.com"
         }
 
 response = requests.put("http://localhost:8000/users", json=data)

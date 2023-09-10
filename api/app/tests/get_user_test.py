@@ -1,10 +1,8 @@
 import unittest
 import requests
 
-data = {
-    "user_id": "d5fbb2d6-954f-4381-b795-f093cffed175"
-}
-
-response = requests.get("http://localhost:8000/users", json=data)
+user_id = "all"
+# user_id="121d480c-de96-4f72-abca-0a31586ccb28"
+response = requests.get(f"http://localhost:8000/users/{user_id}")
 print(response.content)
 
