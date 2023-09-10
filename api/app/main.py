@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import requestModels as rm
 import database as db
-from database_functions import user_functions as uf
+from database_functions import user_functions as uf, question_functions as qf
 
 # create app
 app = FastAPI()
@@ -38,7 +38,7 @@ async def update_user_info(r: rm.UpdateUserInfo):
 @app.post("/questions", status_code=200)
 async def create_question(r: rm.CreateQuestion):
     question_id = str(uuid.uuid4())
-    if (db.create_question(question_id, r.title, r.description, r.category, r.complexity)):
+    return qf.create_question(question_id, r.title, r.description, r.category, r.complexity)
         return {"question_id": question_id}
     else:
         return {"message": "Invalid creation"}

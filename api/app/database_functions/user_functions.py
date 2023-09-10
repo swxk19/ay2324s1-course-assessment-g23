@@ -22,6 +22,8 @@ def _uid_exists(uid):
         return cur.fetchone()[0]
 
 def create_user(user_id, username, email, password):
+    if _uid_exists(user_id):
+        raise HTTPException(status_code=500, detail='Internal server error (uid already exists')
     if _username_exists(username):
         raise HTTPException(status_code=409, detail='Username already exists')
     if _email_exists(email):

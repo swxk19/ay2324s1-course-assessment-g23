@@ -1,0 +1,103 @@
+import database as db
+import traceback
+from fastapi import HTTPException
+
+def _qid_exists(qid):
+    conn = db.connect()
+    with conn, conn.cursor() as cur:
+        cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE question_id = %s)", (qid,))
+        return cur.fetchone()[0]
+
+def _title_exists(title):
+    conn = db.connect()
+    with conn, conn.cursor() as cur:
+        cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE title = %s)", (title,))
+        return cur.fetchone()[0]
+
+def create_question(question_id, title, description, category, complexity):
+    if _qid_exists(question_id):
+        raise HTTPException(status_code=500, detail='Internal server error (qid already exists')
+    if _title_exists(title):
+        raise HTTPException(status_code=409, detail='Username already exists')
+    try:
+        conn = db.connect()
+        with conn, conn.cursor() as cur:
+            cur.execute("INSERT INTO questions (question_id, title, description, category, complexity) VALUES (%s, %s, %s, %s, %s)", (question_id, title, description, category, complexity))
+            conn.commit()
+            return {'message': 'Question successfully created'}
+    except Exception:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail='Internal server error')
+
+def get_question(question_id):
+    try:
+        conn = db.connect()
+        FIELD_NAMES = ['question_id', 'title', 'description', 'category', 'complexity']
+
+        with conn, conn.cursor() as cur:
+            if question_id == "all":
+                cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM questions")
+                rows = cur.fetchall()
+                questions = [dict(zip(FIELD_NAMES, row)) for row in rows]
+                return questions
+
+            cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM questions WHERE question_id = %s", (question_id,))
+            row = cur.fetchone()
+            if row is None:
+                return False
+            question = dict(zip(FIELD_NAMES, row))
+            return question
+    except Exception:
+        traceback.print_exc()
+
+def update_question_info(question_id, title, description, category, complexity):
+    values = []
+    set_clauses = []
+
+    if title is not None:
+        values.append(title)
+        set_clauses.append("title = %s")
+
+    if description is not None:
+        values.append(description)
+        set_clauses.append("description = %s")
+
+    if category is not None:
+        values.append(category)
+        set_clauses.append("category = %s")
+
+    if complexity is not None:
+        values.append(complexity)
+        set_clauses.append("complexity = %s")
+
+    set_clause = ", ".join(set_clauses)
+    if not set_clause:
+        return False
+
+    values.append(question_id)
+
+    try:
+        conn = db.connect()
+        with conn, conn.cursor() as cur:
+            cur.execute(f"""UPDATE questions
+                        SET {set_clause}
+                        WHERE question_id = %s""",
+                        tuple(values))
+            return True
+    except Exception:
+        traceback.print_exc()
+        return False
+
+def delete_question(question_id):
+    try:
+        conn = db.connect()
+        with conn, conn.cursor() as cur:
+            if question_id == "all":
+                cur.execute("DELETE FROM questions")
+            else:
+                cur.execute("DELETE FROM questions WHERE question_id = %s", (question_id,))
+            conn.commit()
+            return True
+    except Exception:
+        traceback.print_exc()
+        return False
