@@ -1,3 +1,10 @@
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'user') THEN
+        CREATE USER "user" WITH PASSWORD 'password';
+    END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS users(
     user_id VARCHAR(255) PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
