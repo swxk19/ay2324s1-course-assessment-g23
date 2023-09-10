@@ -7,16 +7,14 @@ def _is_valid_complexity(complexity):
     return complexity in valid_complexities
 
 def _qid_exists(qid):
-    conn = db.connect()
-    with conn, conn.cursor() as cur:
-        cur.execute("SELECT EXISTS (SELECT 1 FROM questions WHERE question_id = %s)", (qid,))
-        return cur.fetchone()[0]
+    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM questions WHERE question_id = %s)",
+                                       params=(qid,))
+    return cur[0]
 
 def _title_exists(title):
-    conn = db.connect()
-    with conn, conn.cursor() as cur:
-        cur.execute("SELECT EXISTS (SELECT 1 FROM questions WHERE title = %s)", (title,))
-        return cur.fetchone()[0]
+    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM questions WHERE title = %s)",
+                                       params=(title,))
+    return cur[0]
 
 def _create_question_check_args(question_id, title, description, category, complexity):
     if question_id is None:
@@ -41,40 +39,21 @@ def create_question(question_id, title, description, category, complexity):
 
     _create_question_check_args(question_id, title, description, category, complexity)
 
-    try:
-        conn = db.connect()
-        with conn, conn.cursor() as cur:
-            cur.execute("INSERT INTO questions (question_id, title, description, category, complexity) VALUES (%s, %s, %s, %s, %s)", (question_id, title, description, category, complexity))
-            conn.commit()
-            return {'message': f'Question({question_id}) successfully created'}
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail='Internal server error')
+    db.execute_sql_write("INSERT INTO questions (question_id, title, description, category, complexity) VALUES (%s, %s, %s, %s, %s)",
+                         params=(question_id, title, description, category, complexity))
+    return {'message': f'Question({question_id}) successfully created'}
 
 def get_question(question_id):
-    if question_id is None:
-        raise HTTPException(status_code=422, detail='Missing question id')
+    if question_id != "all" and not _qid_exists(question_id):
+        raise HTTPException(status_code=404, detail='Question id does not exist')
 
-    result = None
-    try:
-        conn = db.connect()
-        FIELD_NAMES = ['question_id', 'title', 'description', 'category', 'complexity']
-
-        with conn, conn.cursor() as cur:
-            if question_id == "all":
-                cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM questions")
-                rows = cur.fetchall()
-                questions = [dict(zip(FIELD_NAMES, row)) for row in rows]
-                return questions
-
-            cur.execute(f"SELECT {', '.join(FIELD_NAMES)} FROM questions WHERE question_id = %s", (question_id,))
-            result = cur.fetchone()
-    except Exception:
-        traceback.print_exc()
-    if result is None:
-        raise HTTPException(status_code=404, detail="Question not found")
-    question = dict(zip(FIELD_NAMES, result))
-    return question
+    FIELD_NAMES = ['question_id', 'title', 'description', 'category', 'complexity']
+    if question_id == "all":
+        rows = db.execute_sql_read_fetchall(f"SELECT {', '.join(FIELD_NAMES)} FROM questions")
+        questions = [dict(zip(FIELD_NAMES, row)) for row in rows]
+        return questions
+    return db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM questions WHERE question_id = %s",
+                                        params=(question_id,))
 
 def _check_args_update_question_info(question_id, title, complexity):
     if not _qid_exists(question_id):
@@ -90,22 +69,27 @@ def update_question_info(question_id, title, description, category, complexity):
 
     values = []
     set_clauses = []
+    message = []
 
     if title is not None:
         values.append(title)
         set_clauses.append("title = %s")
+        message.append(f"title = {title}")
 
     if description is not None:
         values.append(description)
         set_clauses.append("description = %s")
+        message.append(f"description = {description}")
 
     if category is not None:
         values.append(category)
         set_clauses.append("category = %s")
+        message.append(f"category = {category}")
 
     if complexity is not None:
         values.append(complexity)
         set_clauses.append("complexity = %s")
+        message.append(f"complexity = {complexity}")
 
     set_clause = ", ".join(set_clauses)
     if not set_clause:
@@ -113,34 +97,20 @@ def update_question_info(question_id, title, description, category, complexity):
 
     values.append(question_id)
 
-    try:
-        conn = db.connect()
-        with conn, conn.cursor() as cur:
-            cur.execute(f"""UPDATE questions
+    db.execute_sql_write(f"""UPDATE questions
                         SET {set_clause}
                         WHERE question_id = %s""",
                         tuple(values))
-            return {'message': f'Successfully updated {set_clause}'}
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="Internal server error")
+    message = ", ".join(message)
+    return {'message': f'Successfully updated {message}'}
 
 def delete_question(question_id):
-    if not _qid_exists(question_id):
+    if question_id != "all" and not _qid_exists(question_id):
         raise HTTPException(status_code=404, detail="Question does not exist")
-    try:
-        conn = db.connect()
-        with conn, conn.cursor() as cur:
-            message = ""
-            if question_id == "all":
-                cur.execute("DELETE FROM questions")
-                message = "All questions deleted"
-            else:
-                cur.execute("DELETE FROM questions WHERE question_id = %s", (question_id,))
-                message = f"Question({question_id}) deleted"
-            conn.commit()
-            return {'message': message}
 
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="Internal server error")
+    if question_id == "all":
+        db.execute_sql_write("DELETE FROM questions")
+        return {'message': 'All questions deleted'}
+    else:
+        db.execute_sql_write("DELETE FROM questions WHERE question_id = %s", params=(question_id,))
+        return {'message': f"Question({question_id}) deleted"}
