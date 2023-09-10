@@ -42,15 +42,15 @@ async def create_question(r: rm.CreateQuestion):
 
 @app.get("/questions/{question_id}", status_code=200)
 async def get_question(question_id: str):
-    return db.get_question(question_id)
+    return qf.get_question(question_id)
 
 @app.put("/questions", status_code=200)
 async def update_question_info(r: rm.UpdateQuestionInfo):
-    if (db.update_question_info(r.question_id, r.title, r.description, r.category, r.complexity)):
+    if (qf.update_question_info(r.question_id, r.title, r.description, r.category, r.complexity)):
         return {"message": "Updated Successfully"}
     else:
         return {"message": "Invalid update"} # placeholder message. Better to specify why invalid
 
 @app.delete("/questions/{question_id}", status_code=200)
 async def delete_question(question_id: str):
-    return db.delete_question(question_id)
+    return qf.delete_question(question_id)
