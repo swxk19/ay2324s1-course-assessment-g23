@@ -33,7 +33,7 @@ async def delete_user(user_id: str):
 
 @app.put("/users", status_code=200)
 async def update_user_info(r: rm.UpdateUserInfo):
-    return uf.update_user_info(r.id, r.username, r.password, r.email)
+    return uf.update_user_info(r.user_id, r.username, r.password, r.email)
 
 @app.post("/questions", status_code=200)
 async def create_question(r: rm.CreateQuestion):
@@ -46,7 +46,7 @@ async def get_question(question_id: str):
 
 @app.put("/questions", status_code=200)
 async def update_question_info(r: rm.UpdateQuestionInfo):
-    return qf.update_question_info(r.id, r.title, r.description, r.category, r.complexity)
+    return qf.update_question_info(r.question_id, r.title, r.description, r.category, r.complexity)
 
 @app.delete("/questions/{question_id}", status_code=200)
 async def delete_question(question_id: str):
