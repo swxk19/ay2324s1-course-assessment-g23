@@ -7,7 +7,7 @@ class CreateUser(BaseModel):
     email: str
 
 class UpdateUserInfo(BaseModel):
-    id: str
+    user_id: str
     username: str
     password: str
     email: str
@@ -19,7 +19,7 @@ class CreateQuestion(BaseModel):
     complexity: str
 
 class UpdateQuestionInfo(BaseModel):
-    id: str
+    question_id: str
     title: str
     description: str
     category: str
