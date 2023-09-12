@@ -18,3 +18,8 @@ CREATE TABLE IF NOT EXISTS questions(
     category VARCHAR(255) NOT NULL,
     complexity VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS active_logins(
+    session_id VARCHAR(255) PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(user_id)
+)
