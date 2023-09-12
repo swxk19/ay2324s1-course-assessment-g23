@@ -16,14 +16,6 @@ def _uid_exists(uid):
     return cur[0]
 
 def _check_args_create_user(user_id, username, email, password):
-    if user_id is None:
-        raise HTTPException(status_code=422, detail='Missing user id')
-    if username is None:
-        raise HTTPException(status_code=422, detail='Missing username')
-    if email is None:
-        raise HTTPException(status_code=422, detail='Missing email')
-    if password is None:
-        raise HTTPException(status_code=422, detail='Missing password')
     if _uid_exists(user_id):
         raise HTTPException(status_code=500, detail='Internal server error (uid already exists)')
     if _username_exists(username):

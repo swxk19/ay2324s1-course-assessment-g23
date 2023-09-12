@@ -17,16 +17,7 @@ def _title_exists(title):
     return cur[0]
 
 def _create_question_check_args(question_id, title, description, category, complexity):
-    if question_id is None:
-        raise HTTPException(status_code=422, detail='Missing question id')
-    if title is None:
-        raise HTTPException(status_code=422, detail='Missing title')
-    if description is None:
-        raise HTTPException(status_code=422, detail='Missing description')
-    if category is None:
-        raise HTTPException(status_code=422, detail='Missing category')
-    if complexity is None:
-        raise HTTPException(status_code=422, detail='Missing complexity')
+
     if not _is_valid_complexity(complexity):
         raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
     if _qid_exists(question_id):
