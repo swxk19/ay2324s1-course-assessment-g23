@@ -21,6 +21,6 @@ CREATE TABLE IF NOT EXISTS questions(
 
 CREATE TABLE IF NOT EXISTS sessions(
     session_id VARCHAR(255) PRIMARY KEY,
-    user_id VARCHAR(255) REFERENCES users(user_id)
+    user_id VARCHAR(255) REFERENCES users(user_id),
     role VARCHAR(255)
 )

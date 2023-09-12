@@ -5,7 +5,7 @@ import asyncio
 
 import requestModels as rm
 import database as db
-from database_functions import user_functions as uf, question_functions as qf
+from database_functions import user_functions as uf, question_functions as qf, session_functions as sf
 
 # create app
 app = FastAPI()
@@ -57,9 +57,9 @@ async def update_question_info(r: rm.UpdateQuestionInfo):
 async def delete_question(question_id: str):
     return qf.delete_question(question_id)
 
-@app.post("sessions/",  status_code=200)
-async def create_session(user_id: str):
-    return
+@app.post("/sessions",  status_code=200)
+async def user_login(r: rm.UserLogin):
+    return sf.user_login(r.username, r.password)
 
 # Initialised once on fastAPI startup
 async def background_tasks():
