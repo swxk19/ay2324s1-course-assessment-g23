@@ -5,9 +5,10 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,
-    TextField,
+    DialogTitle, IconButton,
+    TextField, Typography,
 } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close';
 import { type Question, updateQuestion } from '../../services/questionBank.ts'
 
 interface ReadOnlyRowProps {
@@ -69,9 +70,22 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 aria-labelledby='alert-dialog-title'
                 aria-describedby='alert-dialog-description'
             >
-                <DialogTitle style={{ backgroundColor: '#242424', color: 'white' }}>
+                <DialogTitle style={{ backgroundColor: '#242424', color: 'white'}}>
                     Edit Description
                 </DialogTitle>
+                <IconButton
+                    aria-label="close"
+                    disableRipple
+                    onClick={handleClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 10,
+                        top: 10,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
                 <DialogContent style={{ backgroundColor: '#242424', width: '700px' }}>
                     <DialogContentText id='alert-dialog-description' style={{ color: 'white' }} />
                     <TextField
@@ -88,10 +102,15 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 </DialogContent>
                 <DialogActions style={{ backgroundColor: '#242424', width: '38rem' }}>
                     <Button
+                        disableFocusRipple
+                        disableRipple
+                        size='medium'
                         onClick={handleEditDescription}
-                        style={{ color: 'white', paddingLeft: '25px', paddingRight: '25px' }}
+                        style={{ color: 'white', paddingLeft: '25px', paddingRight: '25px', textTransform: 'none' }}
                     >
-                        Save and Close
+                        <Typography variant="subtitle1">
+                            Save
+                        </Typography>
                     </Button>
                 </DialogActions>
             </Dialog>
