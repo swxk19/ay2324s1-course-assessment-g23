@@ -17,11 +17,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+#check
 @app.post("/users")
 async def create_user(r: rm.CreateUser):
-    user_id = str(uuid.uuid4())
-    return uf.create_user(user_id, r.username, r.email, r.password)
-
+    # user_id = str(uuid.uuid4())
+    return uf.create_user(r.username, r.email, r.password)
 
 @app.get("/users/{user_id}")
 async def get_user(user_id: str):
