@@ -5,6 +5,7 @@ import database as db
 def is_valid_login(username, hashed_password):
     user_id = db.execute_sql_read_fetchone("SELECT user_id FROM users where username = %s AND password = %s",
                                         params=(username, hashed_password))
+    # TODO: also return the role
     return user_id[0] if user_id else False
 
 def create_session(user_id, role):

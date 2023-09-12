@@ -24,6 +24,7 @@ def user_login(username: str, password: str):
     if user_id:
         session_id = sessions_util.create_session(user_id, hashed_password)
         return {'session_id': f'{session_id}',
+                'role': 'placeholder',
                 'message': f'User {username} successfully logged in'}
     else:
         if users_util.username_exists(username):

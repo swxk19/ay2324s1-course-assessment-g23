@@ -44,9 +44,8 @@ def update_user_info(user_id, username, password, email):
     db.execute_sql_write("""UPDATE users
                         SET username = %s, password = %s, email = %s
                         WHERE user_id = %s""",
-                        params=(username, password, email, user_id))
-    message = ", ".join(message)
-    return {'message': f'Successfully updated {message}'}
+                        params=(username, new_password, email, user_id))
+    return {'message': 'Successfully updated'}
 
 def delete_user(user_id):
     if user_id != "all" and not users_util.uid_exists(user_id):
