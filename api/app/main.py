@@ -2,11 +2,12 @@ import uuid
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
+from fastapi import HTTPException
 
 import requestModels as rm
 import database as db
 from database_functions import user_functions as uf, question_functions as qf, session_functions as sf
-
+from database_functions.utils.sessions_util import Session
 # create app
 app = FastAPI()
 
@@ -17,6 +18,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+active_sessions = [] # list of Session objects (see session_util.py for Session class)
 
 @app.on_event("startup")
 async def startup_event():
@@ -59,14 +62,33 @@ async def delete_question(question_id: str):
 
 @app.post("/sessions",  status_code=200)
 async def user_login(r: rm.UserLogin):
-    return sf.user_login(r.username, r.password)
+    session_id, user_id = sf.user_login(r.username, r.password)
+    active_sessions.append(Session(session_id, user_id, 'placeholder-role'))
+
+    return {
+                'session_id': f'{session_id}',
+                'role': 'placeholder',
+                'message': f'User {r.username} successfully logged in'
+            }
+
+@app.get("/sessions/{session_id}",  status_code=200)
+async def get_session(session_id: str):
+    requested_session = None
+    for session in active_sessions:
+        if session.is_session(session_id):
+            requested_session = session
+    if requested_session:
+        return { 'role': requested_session.role }
+    else:
+        raise HTTPException(status_code=401, detail='Unauthorized session')
 
 # Initialised once on fastAPI startup
 async def background_tasks():
     manage_sessions()
 
 async def manage_sessions():
-    active_sessions = []
+    global active_sessions
+
     while True:
         for session in active_sessions:
             if session.is_expired():
