@@ -28,9 +28,9 @@ def execute_sql_write(sql_command: str, params: tuple=None):
 
     except psycopg2.DatabaseError as e:
         conn.rollback()
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail=str(e))
 
 def execute_sql_read_fetchone(sql_command: str, params: tuple=None):
     conn = connect()
@@ -43,9 +43,9 @@ def execute_sql_read_fetchone(sql_command: str, params: tuple=None):
             return cur.fetchone()
 
     except psycopg2.DatabaseError as e:
-        raise HTTPException(status_code=500, detail="Internal server error1")
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error2")
+        raise HTTPException(status_code=500, detail=str(e))
 
 def execute_sql_read_fetchall(sql_command: str, params: tuple=None):
     conn = connect()
@@ -58,6 +58,6 @@ def execute_sql_read_fetchall(sql_command: str, params: tuple=None):
             return cur.fetchall()
 
     except psycopg2.DatabaseError as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail=str(e))
