@@ -15,6 +15,16 @@ def _uid_exists(uid):
     cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s)", params=(uid,))
     return cur[0]
 
+def _check_duplicate_username(uid, username):
+    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE username = %s AND user_id != %s)",
+                                       params=(username, uid,))
+    return cur[0]
+
+def _check_duplicate_email(uid, email):
+    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE email = %s AND user_id != %s)",
+                                       params=(email, uid,))
+    return cur[0]
+
 def _check_args_create_user(user_id, username, email, password):
     if _uid_exists(user_id):
         raise HTTPException(status_code=500, detail='Internal server error (uid already exists)')
@@ -49,9 +59,9 @@ def get_user(user_id):
 def _check_args_update_user_info(user_id, username, email):
     if not _uid_exists(user_id):
         raise HTTPException(status_code=404, detail="User does not exist")
-    if username is not None and _username_exists(username):
+    if _check_duplicate_username(user_id, username):
             raise HTTPException(status_code=409, detail='Username already exists')
-    if email is not None and _email_exists(email):
+    if _check_duplicate_email(user_id, email):
             raise HTTPException(status_code=409, detail='Email already exists')
 
 def update_user_info(user_id, username, password, email):
