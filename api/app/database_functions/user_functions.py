@@ -39,35 +39,12 @@ def update_user_info(user_id, username, password, email):
     if users_util.check_duplicate_email(user_id, email):
             raise HTTPException(status_code=409, detail='Email already exists')
 
-    values = []
-    set_clauses = []
-    message = []
+    new_password = hashlib.md5(password.encode()).hexdigest()
 
-    if username is not None:
-        values.append(username)
-        set_clauses.append("username = %s")
-        message.append(f"username = {username}")
-
-    if password is not None:
-        new_password = hashlib.md5(password.encode()).hexdigest()
-        values.append(new_password)
-        set_clauses.append("password = %s")
-
-    if email is not None:
-        values.append(email)
-        set_clauses.append("email = %s")
-        message.append(f"email = {email}")
-
-    set_clause = ", ".join(set_clauses)
-    if not set_clause:
-        raise HTTPException(status_code=204, detail="No information was provided for updating")
-
-    values.append(user_id)
-
-    db.execute_sql_write(f"""UPDATE users
-                        SET {set_clause}
+    db.execute_sql_write("""UPDATE users
+                        SET username = %s, password = %s, email = %s
                         WHERE user_id = %s""",
-                        params=tuple(values))
+                        params=(username, password, email, user_id))
     message = ", ".join(message)
     return {'message': f'Successfully updated {message}'}
 

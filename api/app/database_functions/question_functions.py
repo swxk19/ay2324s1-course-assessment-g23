@@ -38,42 +38,11 @@ def update_question_info(question_id, title, description, category, complexity):
     if not questions_util.is_valid_complexity(complexity):
         raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
 
-    values = []
-    set_clauses = []
-    message = []
-
-    if title is not None:
-        values.append(title)
-        set_clauses.append("title = %s")
-        message.append(f"title = {title}")
-
-    if description is not None:
-        values.append(description)
-        set_clauses.append("description = %s")
-        message.append(f"description = {description}")
-
-    if category is not None:
-        values.append(category)
-        set_clauses.append("category = %s")
-        message.append(f"category = {category}")
-
-    if complexity is not None:
-        values.append(complexity)
-        set_clauses.append("complexity = %s")
-        message.append(f"complexity = {complexity}")
-
-    set_clause = ", ".join(set_clauses)
-    if not set_clause:
-        raise HTTPException(status_code=204, detail="No information was provided for updating")
-
-    values.append(question_id)
-
-    db.execute_sql_write(f"""UPDATE questions
-                        SET {set_clause}
+    db.execute_sql_write("""UPDATE questions
+                        SET title = %s, description = %s, category = %s, complexity = %s
                         WHERE question_id = %s""",
-                        tuple(values))
-    message = ", ".join(message)
-    return {'message': f'Successfully updated {message}'}
+                        params=(title, description, category, complexity, question_id))
+    return {'message': f'Successfully updated'}
 
 def delete_question(question_id):
     if question_id != "all" and not questions_util.qid_exists(question_id):
