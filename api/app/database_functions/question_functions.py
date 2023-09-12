@@ -1,46 +1,24 @@
-import database as db
 import traceback
 from fastapi import HTTPException
 
-def _is_valid_complexity(complexity):
-    valid_complexities =['Easy', 'Medium', 'Hard']
-    return complexity in valid_complexities
-
-def _qid_exists(qid):
-    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM questions WHERE question_id = %s)",
-                                       params=(qid,))
-    return cur[0]
-
-def _title_exists(title):
-    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM questions WHERE title = %s)",
-                                       params=(title,))
-    return cur[0]
-
-def _check_duplicate_title(qid, title):
-    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM questions WHERE title = %s AND question_id != %s)",
-                                       params=(title, qid,))
-    return cur[0]
-
-def _create_question_check_args(question_id, title, complexity):
-
-    if not _is_valid_complexity(complexity):
-        raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
-    if _qid_exists(question_id):
-        raise HTTPException(status_code=500, detail='Internal server error (qid already exists)')
-    if _title_exists(title):
-        raise HTTPException(status_code=409, detail='Title already exists')
-
+import database as db
+from utils import questions_util
 
 def create_question(question_id, title, description, category, complexity):
 
-    _create_question_check_args(question_id, title, complexity)
+    if not questions_util.is_valid_complexity(complexity):
+        raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
+    if questions_util.qid_exists(question_id):
+        raise HTTPException(status_code=500, detail='Internal server error (qid already exists)')
+    if questions_util.title_exists(title):
+        raise HTTPException(status_code=409, detail='Title already exists')
 
     db.execute_sql_write("INSERT INTO questions (question_id, title, description, category, complexity) VALUES (%s, %s, %s, %s, %s)",
                          params=(question_id, title, description, category, complexity))
     return {'message': f'Question({question_id}) successfully created'}
 
 def get_question(question_id):
-    if question_id != "all" and not _qid_exists(question_id):
+    if question_id != "all" and not questions_util.qid_exists(question_id):
         raise HTTPException(status_code=404, detail='Question id does not exist')
 
     FIELD_NAMES = ['question_id', 'title', 'description', 'category', 'complexity']
@@ -51,17 +29,14 @@ def get_question(question_id):
     return db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM questions WHERE question_id = %s",
                                         params=(question_id,))
 
-def _check_args_update_question_info(question_id, title, complexity):
-    if not _qid_exists(question_id):
-        raise HTTPException(status_code=404, detail="Question does not exist")
-    if _check_duplicate_title(question_id, title):
-        raise HTTPException(status_code=409, detail="Title already exists")
-    if not _is_valid_complexity(complexity):
-        raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
-
 def update_question_info(question_id, title, description, category, complexity):
 
-    _check_args_update_question_info(question_id, title, complexity)
+    if not questions_util.qid_exists(question_id):
+        raise HTTPException(status_code=404, detail="Question does not exist")
+    if questions_util.check_duplicate_title(question_id, title):
+        raise HTTPException(status_code=409, detail="Title already exists")
+    if not questions_util.is_valid_complexity(complexity):
+        raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
 
     values = []
     set_clauses = []
@@ -101,7 +76,7 @@ def update_question_info(question_id, title, description, category, complexity):
     return {'message': f'Successfully updated {message}'}
 
 def delete_question(question_id):
-    if question_id != "all" and not _qid_exists(question_id):
+    if question_id != "all" and not questions_util.qid_exists(question_id):
         raise HTTPException(status_code=404, detail="Question does not exist")
 
     if question_id == "all":
