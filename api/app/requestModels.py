@@ -24,3 +24,7 @@ class UpdateQuestionInfo(BaseModel):
     description: str
     category: str
     complexity: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str

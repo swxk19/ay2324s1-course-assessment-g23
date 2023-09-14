@@ -20,4 +20,11 @@ CREATE TABLE IF NOT EXISTS questions(
     category VARCHAR(255) NOT NULL,
     complexity VARCHAR(255) NOT NULL
 );
-INSERT INTO users (username, password, email, role) VALUES ('admin', 'password', 'admin@email.com', 'maintainer');
+
+CREATE TABLE IF NOT EXISTS sessions(
+    session_id VARCHAR(255) PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(user_id),
+    role VARCHAR(255),
+    creation_time VARCHAR(255),
+    expiration_time VARCHAR(255)
+)

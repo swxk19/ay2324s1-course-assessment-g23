@@ -1,41 +1,16 @@
-import database as db
-import traceback
 import hashlib
 from fastapi import HTTPException
 
-def _username_exists(username):
-    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE username = %s)", params=(username,))
-    return cur[0]
+import database as db
+from .utils import users_util
 
-def _email_exists(email):
-    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE email = %s)", params=(email,))
-    return cur[0]
-
-def _uid_exists(uid):
-    cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s)", params=(uid,))
-    return cur[0]
-
-#check
-def _check_args_create_user(username, email, password):
-    # if user_id is None:
-    #     raise HTTPException(status_code=422, detail='Missing user id')
-    if username is None:
-        raise HTTPException(status_code=422, detail='Missing username')
-    if email is None:
-        raise HTTPException(status_code=422, detail='Missing email')
-    if password is None:
-        raise HTTPException(status_code=422, detail='Missing password')
-    # if _uid_exists(user_id):
-    #     raise HTTPException(status_code=500, detail='Internal server error (uid already exists)')
-    if _username_exists(username):
+def create_user(user_id, username, email, password):
+    if users_util.uid_exists(user_id):
+        raise HTTPException(status_code=500, detail='Internal server error (uid already exists)')
+    if users_util.username_exists(username):
         raise HTTPException(status_code=409, detail='Username already exists')
-    if _email_exists(email):
+    if users_util.email_exists(email):
         raise HTTPException(status_code=409, detail='Email already exists')
-
-#check
-def create_user(username, email, password):
-
-    _check_args_create_user(username, email, password)
 
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
@@ -46,7 +21,7 @@ def create_user(username, email, password):
 
 
 def get_user(user_id):
-    if user_id != "all" and not _uid_exists(user_id):
+    if user_id != "all" and not users_util.uid_exists(user_id):
         raise HTTPException(status_code=404, detail='User does not exist')
 
     FIELD_NAMES = ['user_id', 'username', 'email', 'password', 'role']
@@ -57,52 +32,24 @@ def get_user(user_id):
     return db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s",
                                         params=(user_id,))
 
-def _check_args_update_user_info(user_id, username, email):
-    if not _uid_exists(user_id):
-        raise HTTPException(status_code=404, detail="User does not exist")
-    if username is not None and _username_exists(username):
-        raise HTTPException(status_code=409, detail='Username already exists')
-    if email is not None and _email_exists(email):
-        raise HTTPException(status_code=409, detail='Email already exists')
-
 def update_user_info(user_id, username, password, email):
+    if not users_util.uid_exists(user_id):
+        raise HTTPException(status_code=404, detail="User does not exist")
+    if users_util.check_duplicate_username(user_id, username):
+            raise HTTPException(status_code=409, detail='Username already exists')
+    if users_util.check_duplicate_email(user_id, email):
+            raise HTTPException(status_code=409, detail='Email already exists')
 
-    _check_args_update_user_info(user_id, username, email)
+    new_password = hashlib.md5(password.encode()).hexdigest()
 
-    values = []
-    set_clauses = []
-    message = []
-
-    if username is not None:
-        values.append(username)
-        set_clauses.append("username = %s")
-        message.append(f"username = {username}")
-
-    if password is not None:
-        new_password = hashlib.md5(password.encode()).hexdigest()
-        values.append(new_password)
-        set_clauses.append("password = %s")
-
-    if email is not None:
-        values.append(email)
-        set_clauses.append("email = %s")
-        message.append(f"email = {email}")
-
-    set_clause = ", ".join(set_clauses)
-    if not set_clause:
-        raise HTTPException(status_code=204, detail="No information was provided for updating")
-
-    values.append(user_id)
-
-    db.execute_sql_write(f"""UPDATE users
-                        SET {set_clause}
+    db.execute_sql_write("""UPDATE users
+                        SET username = %s, password = %s, email = %s
                         WHERE user_id = %s""",
-                        params=tuple(values))
-    message = ", ".join(message)
-    return {'message': f'Successfully updated {message}'}
+                        params=(username, new_password, email, user_id))
+    return {'message': 'Successfully updated'}
 
 def delete_user(user_id):
-    if user_id != "all" and not _uid_exists(user_id):
+    if user_id != "all" and not users_util.uid_exists(user_id):
         raise HTTPException(status_code=404, detail="User does not exist")
 
     if user_id == "all":

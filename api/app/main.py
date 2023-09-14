@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import requestModels as rm
 import database as db
-from database_functions import user_functions as uf, question_functions as qf
+from database_functions import user_functions as uf, question_functions as qf, session_functions as sf
 
 # create app
 app = FastAPI()
@@ -17,13 +17,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#check
-@app.post("/users")
+@app.post("/users", status_code=200)
 async def create_user(r: rm.CreateUser):
     # user_id = str(uuid.uuid4())
     return uf.create_user(r.username, r.email, r.password)
 
-@app.get("/users/{user_id}")
+@app.get("/users/{user_id}", status_code=200)
 async def get_user(user_id: str):
     return uf.get_user(user_id)
 
@@ -51,3 +50,11 @@ async def update_question_info(r: rm.UpdateQuestionInfo):
 @app.delete("/questions/{question_id}", status_code=200)
 async def delete_question(question_id: str):
     return qf.delete_question(question_id)
+
+@app.post("/sessions",  status_code=200)
+async def user_login(r: rm.UserLogin):
+    return sf.user_login(r.username, r.password)
+
+@app.get("/sessions/{session_id}",  status_code=200)
+async def get_session(session_id: str):
+    return sf.get_session(session_id)
