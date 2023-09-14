@@ -12,6 +12,7 @@ def user_login(username: str, password: str):
     if user_id:
         session_id = sessions_util.create_session(user_id, role)
         return {
+            'user_id': f'{user_id}',
             'session_id': f'{session_id}',
             'role': f'{role}',
             'message': f'User {username} successfully logged in'

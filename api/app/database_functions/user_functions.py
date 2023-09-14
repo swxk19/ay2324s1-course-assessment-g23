@@ -2,6 +2,9 @@ import hashlib
 from fastapi import HTTPException
 import database as db
 from .utils import users_util
+from .utils import sessions_util
+from database_functions import session_functions
+import requests
 
 def create_user(user_id, username, email, password):
     if users_util.uid_exists(user_id):
@@ -20,6 +23,18 @@ def create_user(user_id, username, email, password):
 
 
 def get_user(user_id):
+    # check if logged in
+    try:
+        session_user = requests.get('http://localhost:8000/sessions/all')
+    except:
+        raise HTTPException(status_code=401, detail='Currently not logged in')
+    # if not sessions_util.is_logged_in(session_user[0]):
+    #     raise HTTPException(status_code=401, detail='Currently not logged in')
+
+    # check if maintainer
+    if not session_user[4] == "maintainer":
+        raise HTTPException(status_code=401, detail='You do not have read access to users')
+
     if user_id != "all" and not users_util.uid_exists(user_id):
         raise HTTPException(status_code=404, detail='User does not exist')
 
