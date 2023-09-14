@@ -1,69 +1,11 @@
-.home-page-container {
+.homepage h1 {
     text-align: center;
-    margin: auto;
+    padding-top: 40%;
 }
 
-
-.info-container {
-    margin-top: auto;
-    float:left;
-    text-align: left;
-    width: 50%;
-    padding: 20vh 10rem 20vh 15vh;
-}
-
-.login-container {
-    float:right;
-    margin:auto;
-    text-align: center;
-    width: 50%;
-    height: 100vh;
-    min-width: 500px;
-    padding-top: 20vh;
-}
-
-.login-container h2 {
-    padding-bottom: 1.5rem;
-}
-
-.login-container input {
+.homepage img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 1rem;
-    padding: 1rem;
-    width: 20rem;
-    border-radius: 0.25rem;
-    border-color: transparent;
-}
-
-.login-container button {
-    margin-top: 1rem;
-    margin-left: auto;
-    margin-right: auto;
-    width: 20rem;
-    display: block;
-}
-
-.sign-up-link {
-    margin-top: 0;
-    background: transparent;
-    color: #46afe0;
-    cursor: pointer;
-    display: inline;
-    margin-left: 1rem;
-}
-
-.sign-up-link:hover {
-    text-decoration: underline;
-    color: #46afe0;
-}
-
-@media only screen and (max-width: 1000px) {
-    .info-container {
-        display: none;
-    }
-    .login-container {
-        width: 100%;
-    }
+    width: 50%;
 }
