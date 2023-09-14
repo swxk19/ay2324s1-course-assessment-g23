@@ -1,4 +1,4 @@
-import { User } from '../../services/users.ts'
+import { User } from '../../api/users.ts'
 interface ReadOnlyRowProps {
     user: User
     handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, user: any) => void

@@ -8,7 +8,7 @@ import {
     DialogTitle,
     TextField,
 } from '@mui/material'
-import { type Question, updateQuestion } from '../../services/questionBank.ts'
+import { type Question, updateQuestion } from '../../api/questions.ts'
 
 interface ReadOnlyRowProps {
     question: Question

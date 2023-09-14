@@ -6,7 +6,7 @@ import {
     updateQuestion,
     deleteQuestion,
     deleteAllQuestions,
-} from '../services/questionBank'
+} from '../api/questions'
 
 /**
  * Hook for getting questions state from backend.

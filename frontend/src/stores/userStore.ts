@@ -6,7 +6,7 @@ import {
     updateUser,
     deleteUser,
     deleteAllUsers,
-} from '../services/users'
+} from '../api/users'
 
 /**
  * Hook for getting users state from backend.
