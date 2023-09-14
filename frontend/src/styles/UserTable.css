@@ -9,9 +9,8 @@
 .user-container th {
     padding-right: 2rem;
     text-align: left;
-min-width: 7rem;
+    min-width: 7rem;
 }
-
 
 .user-container input {
     padding: 0.5rem 0rem 0.5rem 0.5rem;
@@ -21,4 +20,3 @@ min-width: 7rem;
 .userForm input {
     width: 10rem;
 }
-

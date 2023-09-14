@@ -1,9 +1,7 @@
-import {QuestionTable} from "../components/QuestionTable/QuestionTable.tsx";
+import { QuestionTable } from '../components/QuestionTable/QuestionTable.tsx'
 
 const Questions = () => {
-    return (
-        <QuestionTable />
-    )
-};
+    return <QuestionTable />
+}
 
-export default Questions;
+export default Questions
