@@ -18,6 +18,10 @@ class UpdateUserInfo(BaseModel):
 
 class UpdateUserRole(BaseModel):
     role: str
+    session_id: str
+
+class DeleteUser(BaseModel):
+    session_id: str
 
 class CreateQuestion(BaseModel):
     title: str

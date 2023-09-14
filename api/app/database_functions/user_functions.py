@@ -33,8 +33,8 @@ def get_user(user_id, session_id):
     #     raise HTTPException(status_code=401, detail='You do not have read access to users')
     if not sessions_util.is_logged_in(session_id):
         raise HTTPException(status_code=401, detail='You are not logged in')
-
-    if not users_util.is_maintainer(user_id):
+    
+    if not users_util.is_maintainer(session_id):
         raise HTTPException(status_code=401, detail='You do not have access')
 
     if user_id != "all" and not users_util.uid_exists(user_id):
@@ -52,7 +52,7 @@ def update_user_info(user_id, username, password, email, session_id):
     if not sessions_util.is_logged_in(session_id):
         raise HTTPException(status_code=401, detail='You are not logged in')
 
-    if not users_util.is_maintainer(user_id):
+    if not users_util.is_maintainer(session_id):
         raise HTTPException(status_code=401, detail='You do not have access')
 
     if not users_util.uid_exists(user_id):
@@ -70,7 +70,13 @@ def update_user_info(user_id, username, password, email, session_id):
                         params=(username, new_password, email, user_id))
     return {'message': 'Successfully updated'}
 
-def delete_user(user_id):
+def delete_user(user_id, session_id):
+    if not sessions_util.is_logged_in(session_id):
+        raise HTTPException(status_code=401, detail='You are not logged in')
+
+    if not users_util.is_maintainer(session_id):
+        raise HTTPException(status_code=401, detail='You do not have access')
+
     if user_id != "all" and not users_util.uid_exists(user_id):
         raise HTTPException(status_code=404, detail="User does not exist")
 
@@ -81,7 +87,13 @@ def delete_user(user_id):
         db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))
         return {'message': f'User id {user_id} deleted'}
     
-def update_user_role(user_id, role):
+def update_user_role(user_id, role, session_id):
+    if not sessions_util.is_logged_in(session_id):
+        raise HTTPException(status_code=401, detail='You are not logged in')
+
+    if not users_util.is_maintainer(session_id):
+        raise HTTPException(status_code=401, detail='You do not have access')
+
     curr_role = get_user(user_id)[4]
 
     if curr_role == "maintainer" and role == "normal":

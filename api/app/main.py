@@ -27,8 +27,8 @@ async def get_user(user_id: str, r: rm.GetUser):
     return uf.get_user(user_id, r.session_id)
 
 @app.delete("/users/{user_id}", status_code=200)
-async def delete_user(user_id: str):
-    return uf.delete_user(user_id)
+async def delete_user(user_id: str, r: rm.DeleteUser):
+    return uf.delete_user(user_id, r.session_id)
 
 @app.put("/users", status_code=200)
 async def update_user_info(r: rm.UpdateUserInfo):
@@ -36,7 +36,7 @@ async def update_user_info(r: rm.UpdateUserInfo):
 
 @app.put("/users/{user_id}", status_code=200)
 async def update_user_role(user_id: str, r: rm.UpdateUserRole):
-    return uf.update_user_role(user_id, r.role)
+    return uf.update_user_role(user_id, r.role, r.session_id)
 
 @app.post("/questions", status_code=200)
 async def create_question(r: rm.CreateQuestion):
