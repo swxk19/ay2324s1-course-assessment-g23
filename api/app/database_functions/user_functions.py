@@ -14,8 +14,8 @@ def create_user(user_id, username, email, password):
 
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
-    db.execute_sql_write("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-                         params=(username, email, hashed_password))
+    db.execute_sql_write("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)",
+                         params=(user_id, username, email, hashed_password))
     # return {'message': f'User({user_id}) successfully created'}
     return {'message': f'User successfully created'}
 

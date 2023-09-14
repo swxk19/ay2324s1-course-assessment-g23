@@ -19,8 +19,8 @@ app.add_middleware(
 
 @app.post("/users", status_code=200)
 async def create_user(r: rm.CreateUser):
-    # user_id = str(uuid.uuid4())
-    return uf.create_user(r.username, r.email, r.password)
+    user_id = str(uuid.uuid4())
+    return uf.create_user(user_id, r.username, r.email, r.password)
 
 @app.get("/users/{user_id}", status_code=200)
 async def get_user(user_id: str):
