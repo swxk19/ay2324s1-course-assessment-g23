@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import UserEditableRow from './UserEditableRow.tsx'
-import { User } from '../../services/users.ts'
+import { User } from '../../api/users.ts'
 import { useAllUsers, useDeleteUser, useStoreUser, useUpdateUser } from '../../stores/userStore.ts'
 import UserReadOnlyRow from './UserReadOnlyRow.tsx'
 import '../../styles/UserTable.css'

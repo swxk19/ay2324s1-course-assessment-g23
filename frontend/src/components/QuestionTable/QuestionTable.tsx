@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import QuestionEditableRow from './QuestionEditableRow.tsx'
 import QuestionReadOnlyRow from './QuestionReadOnlyRow.tsx'
-import { type Question } from '../../services/questionBank.ts'
+import { type Question } from '../../api/questionBank.ts'
 import {
     useAllQuestions,
     useDeleteQuestion,
