@@ -17,11 +17,7 @@ const QuestionEditableRow: React.FC<EditableRowProps> = ({
     return (
         <tr>
             <td>
-                <input
-                    required
-                    value={editFormData.question_id}
-                    disabled
-                />
+                <input required value={editFormData.question_id} disabled />
             </td>
             <td>
                 <input

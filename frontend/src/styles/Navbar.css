@@ -27,7 +27,7 @@ body {
     display: flex;
     gap: 2rem;
     font-size: 1.25rem;
-    color: #c2c2c2
+    color: #c2c2c2;
 }
 
 .nav a {
@@ -41,6 +41,6 @@ body {
 }
 
 .nav a:hover {
-    color:white;
+    color: white;
     transition: 0.3s;
 }

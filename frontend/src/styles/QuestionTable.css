@@ -12,7 +12,6 @@
     min-width: 7rem;
 }
 
-
 .question-container input {
     padding: 0.5rem 0rem 0.5rem 0.5rem;
     width: 100%;
@@ -32,7 +31,6 @@
 .questionForm input {
     width: 10rem;
 }
-
 
 /* QuestionModal.css */
 .modal {
