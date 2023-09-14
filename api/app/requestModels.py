@@ -12,6 +12,9 @@ class UpdateUserInfo(BaseModel):
     password: str
     email: str
 
+class UpdateUserRole(BaseModel):
+    role: str
+
 class CreateQuestion(BaseModel):
     title: str
     description: str

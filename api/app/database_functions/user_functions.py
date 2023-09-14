@@ -1,6 +1,5 @@
 import hashlib
 from fastapi import HTTPException
-
 import database as db
 from .utils import users_util
 
@@ -58,3 +57,14 @@ def delete_user(user_id):
     else:
         db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))
         return {'message': f'User id {user_id} deleted'}
+    
+def update_user_role(user_id, role):
+    curr_role = get_user(user_id)[4]
+
+    if curr_role == "maintainer" and role == "normal":
+        if db.execute_sql_read_fetchone("SELECT COUNT(*) FROM users WHERE role = 'maintainer'")[0] <= 1:
+            raise HTTPException(status_code=409, detail='Only one maintainer left')
+
+    db.execute_sql_write("UPDATE users SET role = %s WHERE user_id = %s", params=(role, user_id))
+
+    return {'message': 'Successfully updated'}
