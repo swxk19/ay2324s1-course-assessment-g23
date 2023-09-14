@@ -10,7 +10,6 @@ import {
 } from '../../stores/questionStore.ts'
 import '../../styles/QuestionTable.css'
 
-
 export const QuestionTable: React.FC = () => {
     const { data: questions } = useAllQuestions()
     const storeQuestionMutation = useStoreQuestion()
@@ -53,7 +52,6 @@ export const QuestionTable: React.FC = () => {
             complexity: 'Easy',
         })
     }
-
 
     const handleEditFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -156,11 +154,13 @@ export const QuestionTable: React.FC = () => {
                     />
                 </div>
                 <div>
-                    <button id='addButton' type='submit'>Add</button>
+                    <button id='addButton' type='submit'>
+                        Add
+                    </button>
                 </div>
             </form>
         </div>
     )
 }
 
-export default QuestionTable;
+export default QuestionTable

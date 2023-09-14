@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react'
-import {User} from "../../services/users.ts";
-import  '../../styles/UserTable.css'
+import { User } from '../../services/users.ts'
+import '../../styles/UserTable.css'
 
 // Define a TypeScript interface for the props
 interface EditableRowProps {
@@ -15,15 +15,9 @@ const UserEditableRow: React.FC<EditableRowProps> = ({
     handleCancelClick,
 }) => {
     return (
-        <tr className="user-container">
+        <tr className='user-container'>
             <td>
-                <input
-                    required
-                    placeholder='ID'
-                    name='id'
-                    value={editFormData.user_id}
-                    disabled
-                />
+                <input required placeholder='ID' name='id' value={editFormData.user_id} disabled />
             </td>
             <td>
                 <input

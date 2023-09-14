@@ -1,9 +1,7 @@
 import UserTable from '../components/UserTable/UserTable.tsx'
 
 const Users = () => {
-    return (
-        <UserTable/>
-    )
+    return <UserTable />
 }
 
-export default Users;
+export default Users
