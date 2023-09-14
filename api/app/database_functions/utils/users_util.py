@@ -22,3 +22,6 @@ def check_duplicate_email(uid, email):
     cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE email = %s AND user_id != %s)",
                                        params=(email, uid,))
     return cur[0]
+
+def is_maintainer(user_id):
+    return db.execute_sql_read_fetchone("SELECT role FROM sessions WHERE user_id = %s", params=(user_id,))[0] == "maintainer"

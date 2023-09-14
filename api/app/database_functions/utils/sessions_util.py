@@ -26,5 +26,5 @@ def create_session(user_id, role):
                          params=(session_id, user_id, role, str(creation_time), str(expiration_time)))
     return session_id
 
-def is_logged_in(user_id):
-    return db.execute_sql_read_fetchone("SELECT COUNT(*) FROM users WHERE user_id = %s", params=(user_id,))[0] > 0
+def is_logged_in(session_id):
+    return db.execute_sql_read_fetchone("SELECT COUNT(*) FROM sessions WHERE session_id = %s", params=(session_id,))[0] > 0

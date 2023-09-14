@@ -6,11 +6,15 @@ class CreateUser(BaseModel):
     password: str
     email: str
 
+class GetUser(BaseModel):
+    session_id: str
+
 class UpdateUserInfo(BaseModel):
     user_id: str
     username: str
     password: str
     email: str
+    session_id: str
 
 class UpdateUserRole(BaseModel):
     role: str

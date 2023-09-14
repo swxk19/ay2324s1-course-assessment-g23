@@ -37,6 +37,7 @@ def get_session(session_id):
     if result != None and not sessions_util.is_expired_session(result):
         return result
     else:
-        raise HTTPException(status_code=401, detail="Unauthorized session")
+        # raise HTTPException(status_code=401, detail="Unauthorized session")
+        return None
 
 

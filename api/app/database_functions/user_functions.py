@@ -4,7 +4,7 @@ import database as db
 from .utils import users_util
 from .utils import sessions_util
 from database_functions import session_functions
-import requests
+# import requests
 
 def create_user(user_id, username, email, password):
     if users_util.uid_exists(user_id):
@@ -22,18 +22,20 @@ def create_user(user_id, username, email, password):
     return {'message': f'User successfully created'}
 
 
-def get_user(user_id):
+def get_user(user_id, session_id):
     # check if logged in
-    try:
-        session_user = requests.get('http://localhost:8000/sessions/all')
-    except:
-        raise HTTPException(status_code=401, detail='Currently not logged in')
-    # if not sessions_util.is_logged_in(session_user[0]):
-    #     raise HTTPException(status_code=401, detail='Currently not logged in')
+    # session_user = session_functions.get_session('all')
+    # if len(session_user) < 1:
+    #     raise HTTPException(status_code=401, detail='You are not logged in')
 
     # check if maintainer
-    if not session_user[4] == "maintainer":
-        raise HTTPException(status_code=401, detail='You do not have read access to users')
+    # if not session_user[0]['role'] == "maintainer":
+    #     raise HTTPException(status_code=401, detail='You do not have read access to users')
+    if not sessions_util.is_logged_in(session_id):
+        raise HTTPException(status_code=401, detail='You are not logged in')
+
+    if not users_util.is_maintainer(user_id):
+        raise HTTPException(status_code=401, detail='You do not have access')
 
     if user_id != "all" and not users_util.uid_exists(user_id):
         raise HTTPException(status_code=404, detail='User does not exist')
@@ -46,7 +48,13 @@ def get_user(user_id):
     return db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s",
                                         params=(user_id,))
 
-def update_user_info(user_id, username, password, email):
+def update_user_info(user_id, username, password, email, session_id):
+    if not sessions_util.is_logged_in(session_id):
+        raise HTTPException(status_code=401, detail='You are not logged in')
+
+    if not users_util.is_maintainer(user_id):
+        raise HTTPException(status_code=401, detail='You do not have access')
+
     if not users_util.uid_exists(user_id):
         raise HTTPException(status_code=404, detail="User does not exist")
     if users_util.check_duplicate_username(user_id, username):
