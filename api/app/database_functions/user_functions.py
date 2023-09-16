@@ -94,7 +94,7 @@ def update_user_role(user_id, role, session_id):
     if not users_util.is_maintainer(session_id):
         raise HTTPException(status_code=401, detail='You do not have access')
 
-    curr_role = get_user(user_id)[4]
+    curr_role = get_user(user_id, session_id)[4]
 
     if curr_role == "maintainer" and role == "normal":
         if db.execute_sql_read_fetchone("SELECT COUNT(*) FROM users WHERE role = 'maintainer'")[0] <= 1:

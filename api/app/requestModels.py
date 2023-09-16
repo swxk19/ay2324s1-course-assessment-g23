@@ -28,7 +28,7 @@ class CreateQuestion(BaseModel):
     description: str
     category: str
     complexity: str
-    session_id: str\
+    session_id: str
     
 class GetQuestion(BaseModel):
     session_id: str
