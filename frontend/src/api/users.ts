@@ -15,8 +15,7 @@ export interface User {
 /**
  * Stores a new user.
  *
- * @param {Omit<User, 'user_id'>} user
- * The user to store. All fields except ID are required.
+ * @param {Omit<User, 'user_id'>} user The user to store. All fields except ID are required.
  * @returns {Promise<string>} Resolves with the UUID for the stored user.
  */
 export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {

@@ -16,8 +16,7 @@ export interface Question {
 /**
  * Stores a new question.
  *
- * @param {Omit<Question, 'question_id'>} question
- * The question to store. All fields except ID are required.
+ * @param {Omit<Question, 'question_id'>} question The question to store. All fields except ID are required.
  * @returns {Promise<string>} Resolves with the UUID for the stored question.
  */
 export async function storeQuestion(question: Omit<Question, 'question_id'>): Promise<string> {
