@@ -22,21 +22,16 @@ export interface User {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {
-    try {
-        const response = await fetch(USERS_API_URL, {
-            method: 'POST',
-            headers: USERS_API_HEADER,
-            body: JSON.stringify(user),
-        })
+    const response = await fetch(USERS_API_URL, {
+        method: 'POST',
+        headers: USERS_API_HEADER,
+        body: JSON.stringify(user),
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: Pick<User, 'user_id'> = await response.json()
-        return data.user_id
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: Pick<User, 'user_id'> = await response.json()
+    return data.user_id
 }
 
 /**
@@ -47,20 +42,15 @@ export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getUser(id: string): Promise<User> {
-    try {
-        const response = await fetch(`${USERS_API_URL}/${id}`, {
-            method: 'GET',
-            headers: USERS_API_HEADER,
-        })
+    const response = await fetch(`${USERS_API_URL}/${id}`, {
+        method: 'GET',
+        headers: USERS_API_HEADER,
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: User = await response.json()
-        return data
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: User = await response.json()
+    return data
 }
 
 /**
@@ -70,20 +60,15 @@ export async function getUser(id: string): Promise<User> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getAllUsers(): Promise<User[]> {
-    try {
-        const response = await fetch(`${USERS_API_URL}/all`, {
-            method: 'GET',
-            headers: USERS_API_HEADER,
-        })
+    const response = await fetch(`${USERS_API_URL}/all`, {
+        method: 'GET',
+        headers: USERS_API_HEADER,
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: User[] = await response.json()
-        return data
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: User[] = await response.json()
+    return data
 }
 
 /**
@@ -97,18 +82,13 @@ export async function getAllUsers(): Promise<User[]> {
 export async function updateUser(
     updatedUser: Pick<User, 'user_id'> & Partial<Omit<User, 'user_id'>>
 ): Promise<void> {
-    try {
-        const response = await fetch(USERS_API_URL, {
-            method: 'PUT',
-            headers: USERS_API_HEADER,
-            body: JSON.stringify(updatedUser),
-        })
+    const response = await fetch(USERS_API_URL, {
+        method: 'PUT',
+        headers: USERS_API_HEADER,
+        body: JSON.stringify(updatedUser),
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }
 
 /**
@@ -119,17 +99,12 @@ export async function updateUser(
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteUser(id: string): Promise<void> {
-    try {
-        const response = await fetch(`${USERS_API_URL}/${id}`, {
-            method: 'DELETE',
-            headers: USERS_API_HEADER,
-        })
+    const response = await fetch(`${USERS_API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: USERS_API_HEADER,
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }
 
 /**
@@ -139,15 +114,10 @@ export async function deleteUser(id: string): Promise<void> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteAllUsers(): Promise<void> {
-    try {
-        const response = await fetch(`${USERS_API_URL}/all`, {
-            method: 'DELETE',
-            headers: USERS_API_HEADER,
-        })
+    const response = await fetch(`${USERS_API_URL}/all`, {
+        method: 'DELETE',
+        headers: USERS_API_HEADER,
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }

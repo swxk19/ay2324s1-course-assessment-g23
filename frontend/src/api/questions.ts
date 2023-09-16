@@ -23,21 +23,16 @@ export interface Question {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function storeQuestion(question: Omit<Question, 'question_id'>): Promise<string> {
-    try {
-        const response = await fetch(QUESTION_API_URL, {
-            method: 'POST',
-            headers: QUESTION_API_HEADER,
-            body: JSON.stringify(question),
-        })
+    const response = await fetch(QUESTION_API_URL, {
+        method: 'POST',
+        headers: QUESTION_API_HEADER,
+        body: JSON.stringify(question),
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: Pick<Question, 'question_id'> = await response.json()
-        return data.question_id
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: Pick<Question, 'question_id'> = await response.json()
+    return data.question_id
 }
 
 /**
@@ -48,20 +43,15 @@ export async function storeQuestion(question: Omit<Question, 'question_id'>): Pr
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getQuestion(id: string): Promise<Question> {
-    try {
-        const response = await fetch(`${QUESTION_API_URL}/${id}`, {
-            method: 'GET',
-            headers: QUESTION_API_HEADER,
-        })
+    const response = await fetch(`${QUESTION_API_URL}/${id}`, {
+        method: 'GET',
+        headers: QUESTION_API_HEADER,
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: Question = await response.json()
-        return data
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: Question = await response.json()
+    return data
 }
 
 /**
@@ -71,20 +61,15 @@ export async function getQuestion(id: string): Promise<Question> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getAllQuestions(): Promise<Question[]> {
-    try {
-        const response = await fetch(`${QUESTION_API_URL}/all`, {
-            method: 'GET',
-            headers: QUESTION_API_HEADER,
-        })
+    const response = await fetch(`${QUESTION_API_URL}/all`, {
+        method: 'GET',
+        headers: QUESTION_API_HEADER,
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: Question[] = await response.json()
-        return data
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: Question[] = await response.json()
+    return data
 }
 
 /**
@@ -98,18 +83,13 @@ export async function getAllQuestions(): Promise<Question[]> {
 export async function updateQuestion(
     updatedQuestion: Pick<Question, 'question_id'> & Partial<Omit<Question, 'question_id'>>
 ): Promise<void> {
-    try {
-        const response = await fetch(QUESTION_API_URL, {
-            method: 'PUT',
-            headers: QUESTION_API_HEADER,
-            body: JSON.stringify(updatedQuestion),
-        })
+    const response = await fetch(QUESTION_API_URL, {
+        method: 'PUT',
+        headers: QUESTION_API_HEADER,
+        body: JSON.stringify(updatedQuestion),
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }
 
 /**
@@ -120,17 +100,12 @@ export async function updateQuestion(
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteQuestion(id: string): Promise<void> {
-    try {
-        const response = await fetch(`${QUESTION_API_URL}/${id}`, {
-            method: 'DELETE',
-            headers: QUESTION_API_HEADER,
-        })
+    const response = await fetch(`${QUESTION_API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: QUESTION_API_HEADER,
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }
 
 /**
@@ -140,15 +115,10 @@ export async function deleteQuestion(id: string): Promise<void> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteAllQuestions(): Promise<void> {
-    try {
-        const response = await fetch(`${QUESTION_API_URL}/all`, {
-            method: 'DELETE',
-            headers: QUESTION_API_HEADER,
-        })
+    const response = await fetch(`${QUESTION_API_URL}/all`, {
+        method: 'DELETE',
+        headers: QUESTION_API_HEADER,
+    })
 
-        if (!response.ok) throw await ApiError.parseResponse(response)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }
