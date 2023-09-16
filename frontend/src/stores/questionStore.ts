@@ -6,7 +6,9 @@ import {
     updateQuestion,
     deleteQuestion,
     deleteAllQuestions,
+    Question,
 } from '../api/questions'
+import { ApiError } from '../api/error'
 
 /**
  * Hook for getting questions state from backend.
@@ -23,7 +25,7 @@ import {
  * ```
  */
 export function useAllQuestions() {
-    return useQuery({
+    return useQuery<Question[], ApiError>({
         queryKey: ['question'],
         queryFn: getAllQuestions,
         initialData: [],
@@ -47,7 +49,7 @@ export function useAllQuestions() {
  * ```
  */
 export function useQuestion(id: string) {
-    return useQuery({
+    return useQuery<Question, ApiError>({
         queryKey: ['question', id],
         queryFn: () => getQuestion(id),
     })
@@ -78,6 +80,7 @@ export function useStoreQuestion() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['question'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -106,6 +109,7 @@ export function useUpdateQuestion() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['question'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -134,6 +138,7 @@ export function useDeleteQuestion() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['question'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -162,5 +167,6 @@ export function useDeleteAllQuestions() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['question'] })
         },
+        onError: (error: ApiError) => {},
     })
 }

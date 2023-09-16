@@ -6,7 +6,9 @@ import {
     updateUser,
     deleteUser,
     deleteAllUsers,
+    User,
 } from '../api/users'
+import { ApiError } from '../api/error'
 
 /**
  * Hook for getting users state from backend.
@@ -23,7 +25,7 @@ import {
  * ```
  */
 export function useAllUsers() {
-    return useQuery({
+    return useQuery<User[], ApiError>({
         queryKey: ['user'],
         queryFn: getAllUsers,
         initialData: [],
@@ -47,7 +49,7 @@ export function useAllUsers() {
  * ```
  */
 export function useUser(id: string) {
-    return useQuery({
+    return useQuery<User, ApiError>({
         queryKey: ['user', id],
         queryFn: () => getUser(id),
     })
@@ -78,6 +80,7 @@ export function useStoreUser() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -106,6 +109,7 @@ export function useUpdateUser() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -134,6 +138,7 @@ export function useDeleteUser() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -162,5 +167,6 @@ export function useDeleteAllUsers() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
