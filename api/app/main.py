@@ -41,19 +41,19 @@ async def update_user_role(user_id: str, r: rm.UpdateUserRole):
 @app.post("/questions", status_code=200)
 async def create_question(r: rm.CreateQuestion):
     question_id = str(uuid.uuid4())
-    return qf.create_question(question_id, r.title, r.description, r.category, r.complexity)
+    return qf.create_question(question_id, r.title, r.description, r.category, r.complexity, r.session_id)
 
 @app.get("/questions/{question_id}", status_code=200)
-async def get_question(question_id: str):
-    return qf.get_question(question_id)
+async def get_question(question_id: str, r: rm.GetQuestion):
+    return qf.get_question(question_id, r.session_id)
 
 @app.put("/questions", status_code=200)
 async def update_question_info(r: rm.UpdateQuestionInfo):
-    return qf.update_question_info(r.question_id, r.title, r.description, r.category, r.complexity)
+    return qf.update_question_info(r.question_id, r.title, r.description, r.category, r.complexity, r.session_id)
 
 @app.delete("/questions/{question_id}", status_code=200)
-async def delete_question(question_id: str):
-    return qf.delete_question(question_id)
+async def delete_question(question_id: str, r: rm.DeleteQuestion):
+    return qf.delete_question(question_id, r.session_id)
 
 @app.post("/sessions",  status_code=200)
 async def user_login(r: rm.UserLogin):

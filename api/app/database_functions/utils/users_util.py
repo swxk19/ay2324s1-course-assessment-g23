@@ -25,3 +25,6 @@ def check_duplicate_email(uid, email):
 
 def is_maintainer(user_id):
     return db.execute_sql_read_fetchone("SELECT role FROM sessions WHERE session_id = %s", params=(user_id,))[0] == "maintainer"
+
+def is_account_owner(user_id, session_id):
+    return db.execute_sql_read_fetchone("SELECT user_id FROM sessions WHERE session_id = %s", params=(session_id))[0] == user_id

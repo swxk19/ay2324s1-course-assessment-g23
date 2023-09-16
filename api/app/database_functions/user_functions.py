@@ -18,8 +18,8 @@ def create_user(user_id, username, email, password):
 
     db.execute_sql_write("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)",
                          params=(user_id, username, email, hashed_password))
-    # return {'message': f'User({user_id}) successfully created'}
-    return {'message': f'User successfully created'}
+    return {'message': f'User({user_id}) successfully created'}
+    # return {'message': f'User successfully created'}
 
 
 def get_user(user_id, session_id):
@@ -52,7 +52,7 @@ def update_user_info(user_id, username, password, email, session_id):
     if not sessions_util.is_logged_in(session_id):
         raise HTTPException(status_code=401, detail='You are not logged in')
 
-    if not users_util.is_maintainer(session_id):
+    if not users_util.is_maintainer(session_id) and not users_util.is_account_owner(user_id, session_id):
         raise HTTPException(status_code=401, detail='You do not have access')
 
     if not users_util.uid_exists(user_id):
@@ -74,7 +74,7 @@ def delete_user(user_id, session_id):
     if not sessions_util.is_logged_in(session_id):
         raise HTTPException(status_code=401, detail='You are not logged in')
 
-    if not users_util.is_maintainer(session_id):
+    if not users_util.is_maintainer(session_id) and not users_util.is_account_owner(user_id, session_id):
         raise HTTPException(status_code=401, detail='You do not have access')
 
     if user_id != "all" and not users_util.uid_exists(user_id):
