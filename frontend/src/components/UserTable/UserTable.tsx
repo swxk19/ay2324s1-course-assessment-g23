@@ -4,6 +4,7 @@ import { User } from '../../api/users.ts'
 import { useAllUsers, useDeleteUser, useStoreUser, useUpdateUser } from '../../stores/userStore.ts'
 import UserReadOnlyRow from './UserReadOnlyRow.tsx'
 import '../../styles/UserTable.css'
+import { Alert } from '@mui/material'
 
 export const UserTable: React.FC = () => {
     const { data: users } = useAllUsers()
@@ -101,6 +102,13 @@ export const UserTable: React.FC = () => {
                 </table>
             </form>
 
+            {updateUserMutation.isError && (
+                <Alert severity='error'>{updateUserMutation.error.detail}</Alert>
+            )}
+            {deleteUserMutation.isError && (
+                <Alert severity='error'>{deleteUserMutation.error.detail}</Alert>
+            )}
+
             <h2>Add a User</h2>
             <form className='userForm' onSubmit={handleAddFormSubmit}>
                 <input
@@ -135,6 +143,9 @@ export const UserTable: React.FC = () => {
                     <button type='submit'>Add</button>
                 </div>
             </form>
+            {storeUserMutation.isError && (
+                <Alert severity='error'>{storeUserMutation.error.detail}</Alert>
+            )}
         </div>
     )
 }
