@@ -1,3 +1,5 @@
+import { ApiError } from './error'
+
 /** URL for question bank API. */
 const QUESTION_API_URL = 'http://localhost:8000/questions'
 
@@ -16,26 +18,21 @@ export interface Question {
 /**
  * Stores a new question.
  *
- * @param {Omit<Question, 'question_id'>} question
- * The question to store. All fields except ID are required.
+ * @param {Omit<Question, 'question_id'>} question The question to store. All fields except ID are required.
  * @returns {Promise<string>} Resolves with the UUID for the stored question.
+ * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function storeQuestion(question: Omit<Question, 'question_id'>): Promise<string> {
-    try {
-        const response = await fetch(QUESTION_API_URL, {
-            method: 'POST',
-            headers: QUESTION_API_HEADER,
-            body: JSON.stringify(question),
-        })
+    const response = await fetch(QUESTION_API_URL, {
+        method: 'POST',
+        headers: QUESTION_API_HEADER,
+        body: JSON.stringify(question),
+    })
 
-        if (!response.ok) throw new Error(response.statusText)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: Pick<Question, 'question_id'> = await response.json()
-        return data.question_id
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: Pick<Question, 'question_id'> = await response.json()
+    return data.question_id
 }
 
 /**
@@ -43,44 +40,36 @@ export async function storeQuestion(question: Omit<Question, 'question_id'>): Pr
  *
  * @param {string} id The ID of the question to retrieve.
  * @returns {Promise<Question>} Resolves with the Question object if found.
+ * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getQuestion(id: string): Promise<Question> {
-    try {
-        const response = await fetch(`${QUESTION_API_URL}/${id}`, {
-            method: 'GET',
-            headers: QUESTION_API_HEADER,
-        })
+    const response = await fetch(`${QUESTION_API_URL}/${id}`, {
+        method: 'GET',
+        headers: QUESTION_API_HEADER,
+    })
 
-        if (!response.ok) throw new Error(response.statusText)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: Question = await response.json()
-        return data
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: Question = await response.json()
+    return data
 }
 
 /**
  * Retrieves all questions.
  *
  * @returns {Promise<Question[]>} An array of questions.
+ * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getAllQuestions(): Promise<Question[]> {
-    try {
-        const response = await fetch(`${QUESTION_API_URL}/all`, {
-            method: 'GET',
-            headers: QUESTION_API_HEADER,
-        })
+    const response = await fetch(`${QUESTION_API_URL}/all`, {
+        method: 'GET',
+        headers: QUESTION_API_HEADER,
+    })
 
-        if (!response.ok) throw new Error(response.statusText)
+    if (!response.ok) throw await ApiError.parseResponse(response)
 
-        const data: Question[] = await response.json()
-        return data
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    const data: Question[] = await response.json()
+    return data
 }
 
 /**
@@ -89,22 +78,18 @@ export async function getAllQuestions(): Promise<Question[]> {
  * @param {Pick<Question, 'question_id'> & Partial<Omit<Question, 'question_id'>>} updatedQuestion
  * Question with the fields to update. All fields except `id` are optional.
  * @returns {Promise<void>} Resolves when the question is successfully updated.
+ * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function updateQuestion(
     updatedQuestion: Pick<Question, 'question_id'> & Partial<Omit<Question, 'question_id'>>
 ): Promise<void> {
-    try {
-        const response = await fetch(QUESTION_API_URL, {
-            method: 'PUT',
-            headers: QUESTION_API_HEADER,
-            body: JSON.stringify(updatedQuestion),
-        })
+    const response = await fetch(QUESTION_API_URL, {
+        method: 'PUT',
+        headers: QUESTION_API_HEADER,
+        body: JSON.stringify(updatedQuestion),
+    })
 
-        if (!response.ok) throw new Error(response.statusText)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }
 
 /**
@@ -112,36 +97,28 @@ export async function updateQuestion(
  *
  * @param {string} id The ID of the question to be deleted.
  * @returns {Promise<void>} Resolves when the question is successfully deleted.
+ * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteQuestion(id: string): Promise<void> {
-    try {
-        const response = await fetch(`${QUESTION_API_URL}/${id}`, {
-            method: 'DELETE',
-            headers: QUESTION_API_HEADER,
-        })
+    const response = await fetch(`${QUESTION_API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: QUESTION_API_HEADER,
+    })
 
-        if (!response.ok) throw new Error(response.statusText)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }
 
 /**
  * Deletes all questions.
  *
  * @returns {Promise<void>} Resolves when all questions are successfully deleted.
+ * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteAllQuestions(): Promise<void> {
-    try {
-        const response = await fetch(`${QUESTION_API_URL}/all`, {
-            method: 'DELETE',
-            headers: QUESTION_API_HEADER,
-        })
+    const response = await fetch(`${QUESTION_API_URL}/all`, {
+        method: 'DELETE',
+        headers: QUESTION_API_HEADER,
+    })
 
-        if (!response.ok) throw new Error(response.statusText)
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error)
-        throw error
-    }
+    if (!response.ok) throw await ApiError.parseResponse(response)
 }

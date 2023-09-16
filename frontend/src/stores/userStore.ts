@@ -6,7 +6,9 @@ import {
     updateUser,
     deleteUser,
     deleteAllUsers,
+    User,
 } from '../api/users'
+import { ApiError } from '../api/error'
 
 /**
  * Hook for getting users state from backend.
@@ -23,7 +25,7 @@ import {
  * ```
  */
 export function useAllUsers() {
-    return useQuery({
+    return useQuery<User[], ApiError>({
         queryKey: ['user'],
         queryFn: getAllUsers,
         initialData: [],
@@ -47,7 +49,7 @@ export function useAllUsers() {
  * ```
  */
 export function useUser(id: string) {
-    return useQuery({
+    return useQuery<User, ApiError>({
         queryKey: ['user', id],
         queryFn: () => getUser(id),
     })
@@ -75,9 +77,10 @@ export function useUser(id: string) {
 export function useStoreUser() {
     const queryClient = useQueryClient()
     return useMutation(storeUser, {
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -103,9 +106,10 @@ export function useStoreUser() {
 export function useUpdateUser() {
     const queryClient = useQueryClient()
     return useMutation(updateUser, {
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -131,9 +135,10 @@ export function useUpdateUser() {
 export function useDeleteUser() {
     const queryClient = useQueryClient()
     return useMutation(deleteUser, {
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -159,8 +164,9 @@ export function useDeleteUser() {
 export function useDeleteAllUsers() {
     const queryClient = useQueryClient()
     return useMutation(deleteAllUsers, {
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] })
         },
+        onError: (error: ApiError) => {},
     })
 }

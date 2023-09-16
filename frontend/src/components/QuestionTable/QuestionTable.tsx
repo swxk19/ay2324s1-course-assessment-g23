@@ -9,6 +9,7 @@ import {
     useUpdateQuestion,
 } from '../../stores/questionStore.ts'
 import '../../styles/QuestionTable.css'
+import { Alert } from '@mui/material'
 
 export const QuestionTable: React.FC = () => {
     const { data: questions } = useAllQuestions()
@@ -109,6 +110,13 @@ export const QuestionTable: React.FC = () => {
                 </table>
             </form>
 
+            {updateQuestionMutation.isError && (
+                <Alert severity='error'>{updateQuestionMutation.error.detail}</Alert>
+            )}
+            {deleteQuestionMutation.isError && (
+                <Alert severity='error'>{deleteQuestionMutation.error.detail}</Alert>
+            )}
+
             <h2>Add a Question</h2>
             <form className='questionForm' onSubmit={handleAddFormSubmit}>
                 <input
@@ -159,6 +167,9 @@ export const QuestionTable: React.FC = () => {
                     </button>
                 </div>
             </form>
+            {storeQuestionMutation.isError && (
+                <Alert severity='error'>{storeQuestionMutation.error.detail}</Alert>
+            )}
         </div>
     )
 }
