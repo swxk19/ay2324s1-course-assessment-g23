@@ -5,10 +5,12 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle, IconButton,
-    TextField, Typography,
+    DialogTitle,
+    IconButton,
+    TextField,
+    Typography,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from '@mui/icons-material/Close'
 import { type Question, updateQuestion } from '../../services/questionBank.ts'
 
 interface ReadOnlyRowProps {
@@ -70,11 +72,11 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 aria-labelledby='alert-dialog-title'
                 aria-describedby='alert-dialog-description'
             >
-                <DialogTitle style={{ backgroundColor: '#242424', color: 'white'}}>
+                <DialogTitle style={{ backgroundColor: '#242424', color: 'white' }}>
                     Edit Description
                 </DialogTitle>
                 <IconButton
-                    aria-label="close"
+                    aria-label='close'
                     disableRipple
                     onClick={handleClose}
                     sx={{
@@ -106,11 +108,14 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                         disableRipple
                         size='medium'
                         onClick={handleEditDescription}
-                        style={{ color: 'white', paddingLeft: '25px', paddingRight: '25px', textTransform: 'none' }}
+                        style={{
+                            color: 'white',
+                            paddingLeft: '25px',
+                            paddingRight: '25px',
+                            textTransform: 'none',
+                        }}
                     >
-                        <Typography variant="subtitle1">
-                            Save
-                        </Typography>
+                        <Typography variant='subtitle1'>Save</Typography>
                     </Button>
                 </DialogActions>
             </Dialog>
