@@ -62,3 +62,7 @@ async def user_login(r: rm.UserLogin):
 @app.get("/sessions/{session_id}",  status_code=200)
 async def get_session(session_id: str):
     return sf.get_session(session_id)
+
+@app.delete("/sessions/{session_id}",  status_code=200)
+async def user_logout(session_id: str):
+    return sf.user_logout(session_id)
