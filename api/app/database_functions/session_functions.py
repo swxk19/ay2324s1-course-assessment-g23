@@ -7,15 +7,16 @@ import database as db
 
 def user_login(username: str, password: str):
     hashed_password = hashlib.md5(password.encode()).hexdigest()
-    user_id = sessions_util.is_valid_login(username, hashed_password) # returns False if invalid login
+    user_id, role = sessions_util.is_valid_login(username, hashed_password) # returns False if invalid login
 
     if user_id:
-        session_id = sessions_util.create_session(user_id, "placeholder-role")
+        session_id = sessions_util.create_session(user_id, role)
         return {
-                'session_id': f'{session_id}',
-                'role': 'placeholder',
-                'message': f'User {username} successfully logged in'
-            }
+            'user_id': f'{user_id}',
+            'session_id': f'{session_id}',
+            'role': f'{role}',
+            'message': f'User {username} successfully logged in'
+        }   
     else:
         if users_util.username_exists(username):
             raise HTTPException(status_code=401, detail="Invalid password")
@@ -34,8 +35,9 @@ def get_session(session_id):
 
 
     if result != None and not sessions_util.is_expired_session(result):
-        return { 'role': result[2] }
+        return result
     else:
-        raise HTTPException(status_code=401, detail="Unauthorized session")
+        # raise HTTPException(status_code=401, detail="Unauthorized session")
+        return None
 
 

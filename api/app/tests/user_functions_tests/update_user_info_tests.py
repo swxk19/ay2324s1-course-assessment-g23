@@ -10,4 +10,3 @@ data = {
 
 response = requests.put("http://localhost:8000/users", json=data)
 print(response.content)
-
