@@ -9,7 +9,8 @@ import {
     useUpdateQuestion,
 } from '../../stores/questionStore.ts'
 import '../../styles/QuestionTable.css'
-import { Alert } from '@mui/material'
+import AlertMessage from '../AlertMessage.tsx'
+import '../../styles/AlertMessage.css'
 
 export const QuestionTable: React.FC = () => {
     const { data: questions } = useAllQuestions()
@@ -111,10 +112,15 @@ export const QuestionTable: React.FC = () => {
             </form>
 
             {updateQuestionMutation.isError && (
-                <Alert severity='error'>{updateQuestionMutation.error.detail}</Alert>
+                <AlertMessage variant='error'>
+                    <h4>Oops! {updateQuestionMutation.error.detail}</h4>
+                </AlertMessage>
             )}
+
             {deleteQuestionMutation.isError && (
-                <Alert severity='error'>{deleteQuestionMutation.error.detail}</Alert>
+                <AlertMessage variant='error'>
+                    <h4>Oops! {deleteQuestionMutation.error.detail}</h4>
+                </AlertMessage>
             )}
 
             <h2>Add a Question</h2>
@@ -168,7 +174,9 @@ export const QuestionTable: React.FC = () => {
                 </div>
             </form>
             {storeQuestionMutation.isError && (
-                <Alert severity='error'>{storeQuestionMutation.error.detail}</Alert>
+                <AlertMessage variant='error'>
+                    <h4>Oops! {storeQuestionMutation.error.detail}</h4>
+                </AlertMessage>
             )}
         </div>
     )

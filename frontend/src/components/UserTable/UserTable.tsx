@@ -4,7 +4,8 @@ import { User } from '../../api/users.ts'
 import { useAllUsers, useDeleteUser, useStoreUser, useUpdateUser } from '../../stores/userStore.ts'
 import UserReadOnlyRow from './UserReadOnlyRow.tsx'
 import '../../styles/UserTable.css'
-import { Alert } from '@mui/material'
+import AlertMessage from '../AlertMessage.tsx'
+import '../../styles/AlertMessage.css'
 
 export const UserTable: React.FC = () => {
     const { data: users } = useAllUsers()
@@ -103,12 +104,15 @@ export const UserTable: React.FC = () => {
             </form>
 
             {updateUserMutation.isError && (
-                <Alert severity='error'>{updateUserMutation.error.detail}</Alert>
+                <AlertMessage variant='error'>
+                    <h4>Oops! {updateUserMutation.error.detail}</h4>
+                </AlertMessage>
             )}
             {deleteUserMutation.isError && (
-                <Alert severity='error'>{deleteUserMutation.error.detail}</Alert>
+                <AlertMessage variant='error'>
+                    <h4>Oops! {deleteUserMutation.error.detail}</h4>
+                </AlertMessage>
             )}
-
             <h2>Add a User</h2>
             <form className='userForm' onSubmit={handleAddFormSubmit}>
                 <input
@@ -144,7 +148,9 @@ export const UserTable: React.FC = () => {
                 </div>
             </form>
             {storeUserMutation.isError && (
-                <Alert severity='error'>{storeUserMutation.error.detail}</Alert>
+                <AlertMessage variant='error'>
+                    <h4>Oops! {storeUserMutation.error.detail}</h4>
+                </AlertMessage>
             )}
         </div>
     )
