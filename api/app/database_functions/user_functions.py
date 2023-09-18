@@ -48,7 +48,7 @@ def get_user(user_id, session_id):
     return db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s",
                                         params=(user_id,))
 
-def update_user_info(user_id, username, password, email, session_id):
+def update_user_info(user_id, username, password, email, role, session_id):
     if not sessions_util.is_logged_in(session_id):
         raise HTTPException(status_code=401, detail='You are not logged in')
 
@@ -61,6 +61,9 @@ def update_user_info(user_id, username, password, email, session_id):
             raise HTTPException(status_code=409, detail='Username already exists')
     if users_util.check_duplicate_email(user_id, email):
             raise HTTPException(status_code=409, detail='Email already exists')
+
+    if role is not None:
+        update_user_role(user_id, role, session_id)
 
     new_password = hashlib.md5(password.encode()).hexdigest()
 
