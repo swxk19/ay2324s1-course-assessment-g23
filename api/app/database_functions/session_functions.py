@@ -40,4 +40,11 @@ def get_session(session_id):
         # raise HTTPException(status_code=401, detail="Unauthorized session")
         return None
 
-
+def user_logout(session_id):
+    try:
+        sessions_util.delete_session(session_id)
+        return {
+            'message': f'Session {session_id} successfully deleted'
+        }
+    except e:
+        raise HTTPException(status_code=401, detail=f"Unable to logout user: {e}")
