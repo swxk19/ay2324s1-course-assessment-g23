@@ -6,7 +6,9 @@ import {
     updateQuestion,
     deleteQuestion,
     deleteAllQuestions,
-} from '../services/questionBank'
+    Question,
+} from '../api/questions'
+import { ApiError } from '../api/error'
 
 /**
  * Hook for getting questions state from backend.
@@ -23,7 +25,7 @@ import {
  * ```
  */
 export function useAllQuestions() {
-    return useQuery({
+    return useQuery<Question[], ApiError>({
         queryKey: ['question'],
         queryFn: getAllQuestions,
         initialData: [],
@@ -47,7 +49,7 @@ export function useAllQuestions() {
  * ```
  */
 export function useQuestion(id: string) {
-    return useQuery({
+    return useQuery<Question, ApiError>({
         queryKey: ['question', id],
         queryFn: () => getQuestion(id),
     })
@@ -75,9 +77,10 @@ export function useQuestion(id: string) {
 export function useStoreQuestion() {
     const queryClient = useQueryClient()
     return useMutation(storeQuestion, {
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['question'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -103,9 +106,10 @@ export function useStoreQuestion() {
 export function useUpdateQuestion() {
     const queryClient = useQueryClient()
     return useMutation(updateQuestion, {
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['question'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -131,9 +135,10 @@ export function useUpdateQuestion() {
 export function useDeleteQuestion() {
     const queryClient = useQueryClient()
     return useMutation(deleteQuestion, {
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['question'] })
         },
+        onError: (error: ApiError) => {},
     })
 }
 
@@ -159,8 +164,9 @@ export function useDeleteQuestion() {
 export function useDeleteAllQuestions() {
     const queryClient = useQueryClient()
     return useMutation(deleteAllQuestions, {
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['question'] })
         },
+        onError: (error: ApiError) => {},
     })
 }

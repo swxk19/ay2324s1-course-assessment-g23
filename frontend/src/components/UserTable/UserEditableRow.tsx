@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import { User } from '../../services/users.ts'
+import { User } from '../../api/users.ts'
 import '../../styles/UserTable.css'
 
 // Define a TypeScript interface for the props

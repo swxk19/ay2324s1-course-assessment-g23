@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import { type Question } from '../../services/questionBank.ts'
+import { type Question } from '../../api/questions.ts'
 import '../../styles/QuestionTable.css'
 
 // Define a TypeScript interface for the props

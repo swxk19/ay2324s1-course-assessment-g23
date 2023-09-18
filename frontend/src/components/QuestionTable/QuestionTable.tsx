@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import QuestionEditableRow from './QuestionEditableRow.tsx'
 import QuestionReadOnlyRow from './QuestionReadOnlyRow.tsx'
-import { type Question } from '../../services/questionBank.ts'
+import { type Question } from '../../api/questions.ts'
 import {
     useAllQuestions,
     useDeleteQuestion,
@@ -9,6 +9,8 @@ import {
     useUpdateQuestion,
 } from '../../stores/questionStore.ts'
 import '../../styles/QuestionTable.css'
+import AlertMessage from '../AlertMessage.tsx'
+import '../../styles/AlertMessage.css'
 
 export const QuestionTable: React.FC = () => {
     const { data: questions } = useAllQuestions()
@@ -109,6 +111,18 @@ export const QuestionTable: React.FC = () => {
                 </table>
             </form>
 
+            {updateQuestionMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {updateQuestionMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
+
+            {deleteQuestionMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {deleteQuestionMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
+
             <h2>Add a Question</h2>
             <form className='questionForm' onSubmit={handleAddFormSubmit}>
                 <input
@@ -159,6 +173,11 @@ export const QuestionTable: React.FC = () => {
                     </button>
                 </div>
             </form>
+            {storeQuestionMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {storeQuestionMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
         </div>
     )
 }
