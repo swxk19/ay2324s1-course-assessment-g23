@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../styles/Navbar.css'
 import { Link, useMatch, useResolvedPath } from 'react-router-dom'
 import EditProfile from './EditProfile.tsx'
@@ -7,10 +8,17 @@ const Navbar: React.FC = () => {
     const [dropDownOpen, setDropDownOpen] = useState(false)
     const [editProfileOpen, setEditProfileOpen] = useState(false)
 
+    const navigate = useNavigate()
+
     const openEditProfile = () => {
         console.log('Opening Edit Profile')
         setEditProfileOpen(true)
-        setDropDownOpen(false) // Close the dropdown when opening Edit Profile
+        setDropDownOpen(false)
+    }
+
+    const handleSignOut = () => {
+        navigate('/')
+        // insert rest of signOut logic
     }
 
     console.log('editProfileOpen:', editProfileOpen)
@@ -18,7 +26,7 @@ const Navbar: React.FC = () => {
     return (
         <div>
             <nav className='nav'>
-                <Link to='/' className='site-title'>
+                <Link to='/questions' className='site-title'>
                     PeerPrep
                 </Link>
                 <ul>
@@ -41,7 +49,7 @@ const Navbar: React.FC = () => {
                         </h3>
                         <ul>
                             <DropdownItem text={'Edit Profile'} onClick={openEditProfile} />
-                            <DropdownItem text={'Logout'} />
+                            <DropdownItem text={'Sign out'} onClick={handleSignOut} />
                         </ul>
                     </div>
                 </ul>

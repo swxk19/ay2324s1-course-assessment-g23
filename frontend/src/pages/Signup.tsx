@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { User } from '../services/users.ts'
 import '../styles/SignupPage.css'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Signup = () => {
     const [addNewUser, setAddNewUser] = useState<Omit<User, 'user_id'>>({
@@ -9,10 +9,13 @@ const Signup = () => {
         password: '',
         email: '',
     })
+    const navigate = useNavigate()
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        // Insert login logic
+        // Insert signup logic using addNewUser data
+        // User will be redirected to login page
+        navigate('/')
     }
 
     const handleAddUserChange = (

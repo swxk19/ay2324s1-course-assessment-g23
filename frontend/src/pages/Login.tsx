@@ -1,7 +1,13 @@
 import '../styles/LoginPage.css'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Login = () => {
+    const navigate = useNavigate()
+    const handleLogin = () => {
+        // insert authentication logic
+        // add error message if username not found or password is incorrect
+        navigate('/questions')
+    }
     return (
         <>
             <span className='home-page-container'>
@@ -18,7 +24,7 @@ const Login = () => {
                     <form className='login-form'>
                         <input placeholder='Username' />
                         <input placeholder='Password' type='password' />
-                        <button>Log in</button>
+                        <button onClick={handleLogin}>Log in</button>
                         <h4 style={{ textAlign: 'left', display: 'inline-block' }}>
                             Don't have an account?&nbsp;
                         </h4>
