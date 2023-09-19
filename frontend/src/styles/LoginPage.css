@@ -9,7 +9,7 @@
     float:left;
     text-align: left;
     width: 50%;
-    padding: 20vh 10rem 20vh 15vh;
+    padding: 30vh 10rem 20vh 15vh;
 }
 
 .login-container {
@@ -19,7 +19,7 @@
     width: 50%;
     height: 100vh;
     min-width: 500px;
-    padding-top: 20vh;
+    padding-top: 30vh;
 }
 
 .login-container h2 {
@@ -66,4 +66,27 @@
     .login-container {
         width: 100%;
     }
+}
+
+.signup-container {
+    position: absolute;
+    background:#242424;
+    width: 30rem;
+    min-height: 30rem;
+    border-radius: 1rem;
+    padding: 4rem 3rem;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9); /* semi-transparent black background */
+    z-index: 999; /* Ensure the overlay is on top of other content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
