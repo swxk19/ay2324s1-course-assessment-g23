@@ -14,7 +14,7 @@ import { type Question, updateQuestion } from '../../api/questions.ts'
 
 interface ReadOnlyRowProps {
     question: Question
-    handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, question: any) => void
+    handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, question: Question) => void
     handleDeleteClick: (id: string) => void
 }
 
@@ -84,9 +84,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                         top: 10,
                         color: (theme) => theme.palette.grey[500],
                     }}
-                >
-                    <CloseIcon />
-                </IconButton>
+                ></IconButton>
                 <DialogContent style={{ backgroundColor: '#242424', width: '700px' }}>
                     <DialogContentText id='alert-dialog-description' style={{ color: 'white' }} />
                     <TextField
