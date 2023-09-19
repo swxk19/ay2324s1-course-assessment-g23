@@ -4,14 +4,14 @@ import '../styles/SignupPage.css'
 import { Link, useNavigate } from 'react-router-dom'
 
 const Signup = () => {
-    const [addNewUser, setAddNewUser] = useState<Omit<User, 'user_id'>>({
+    const [addNewUser, setAddNewUser] = useState<Omit<User, 'user_id' | 'role'>>({
         username: '',
         password: '',
         email: '',
     })
     const navigate = useNavigate()
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleSignup = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         // Insert signup logic using addNewUser data
         // User will be redirected to login page
@@ -32,7 +32,7 @@ const Signup = () => {
             <div className='signup-box'>
                 <img src='../../public/peerprep.png' alt='PeerPrep Logo' />
                 <h3>Sign up for PeerPrep and enhance your coding skills with your peers.</h3>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSignup}>
                     <input
                         name='username'
                         required
