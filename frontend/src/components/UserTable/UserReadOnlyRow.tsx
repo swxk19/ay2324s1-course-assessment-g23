@@ -1,4 +1,4 @@
-import {User} from "../../services/users.ts";
+import { User } from '../../api/users.ts'
 interface ReadOnlyRowProps {
     user: User
     handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, user: any) => void
@@ -10,7 +10,6 @@ const UserReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     handleEditClick,
     handleDeleteClick,
 }) => {
-
     return (
         <tr>
             <td>{user.user_id}</td>

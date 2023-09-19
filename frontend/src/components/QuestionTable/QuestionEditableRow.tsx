@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import { type Question } from '../../services/questionBank.ts'
+import { type Question } from '../../api/questions.ts'
 import '../../styles/QuestionTable.css'
 
 // Define a TypeScript interface for the props
@@ -17,11 +17,7 @@ const QuestionEditableRow: React.FC<EditableRowProps> = ({
     return (
         <tr>
             <td>
-                <input
-                    required
-                    value={editFormData.question_id}
-                    disabled
-                />
+                <input required value={editFormData.question_id} disabled />
             </td>
             <td>
                 <input

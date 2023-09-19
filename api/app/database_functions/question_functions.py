@@ -3,8 +3,15 @@ from fastapi import HTTPException
 
 import database as db
 from .utils import questions_util
+from .utils import users_util
+from .utils import sessions_util
 
-def create_question(question_id, title, description, category, complexity):
+def create_question(question_id, title, description, category, complexity, session_id):
+    if not sessions_util.is_logged_in(session_id):
+        raise HTTPException(status_code=401, detail='You are not logged in')
+
+    if not users_util.is_maintainer(session_id):
+        raise HTTPException(status_code=401, detail='You do not have access')
 
     if not questions_util.is_valid_complexity(complexity):
         raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
@@ -17,7 +24,10 @@ def create_question(question_id, title, description, category, complexity):
                          params=(question_id, title, description, category, complexity))
     return {'message': f'Question({question_id}) successfully created'}
 
-def get_question(question_id):
+def get_question(question_id, session_id):
+    if not sessions_util.is_logged_in(session_id):
+        raise HTTPException(status_code=401, detail='You are not logged in')
+
     if question_id != "all" and not questions_util.qid_exists(question_id):
         raise HTTPException(status_code=404, detail='Question id does not exist')
 
@@ -29,7 +39,12 @@ def get_question(question_id):
     return db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM questions WHERE question_id = %s",
                                         params=(question_id,))
 
-def update_question_info(question_id, title, description, category, complexity):
+def update_question_info(question_id, title, description, category, complexity, session_id):
+    if not sessions_util.is_logged_in(session_id):
+        raise HTTPException(status_code=401, detail='You are not logged in')
+
+    if not users_util.is_maintainer(session_id):
+        raise HTTPException(status_code=401, detail='You do not have access')
 
     if not questions_util.qid_exists(question_id):
         raise HTTPException(status_code=404, detail="Question does not exist")
@@ -44,7 +59,13 @@ def update_question_info(question_id, title, description, category, complexity):
                         params=(title, description, category, complexity, question_id))
     return {'message': f'Successfully updated'}
 
-def delete_question(question_id):
+def delete_question(question_id, session_id):
+    if not sessions_util.is_logged_in(session_id):
+        raise HTTPException(status_code=401, detail='You are not logged in')
+
+    if not users_util.is_maintainer(session_id):
+        raise HTTPException(status_code=401, detail='You do not have access')
+
     if question_id != "all" and not questions_util.qid_exists(question_id):
         raise HTTPException(status_code=404, detail="Question does not exist")
 

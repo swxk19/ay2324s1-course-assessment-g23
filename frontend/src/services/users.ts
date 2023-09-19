@@ -10,6 +10,7 @@ export interface User {
     username: string
     email: string
     password: string
+    role: string
 }
 
 /**
@@ -144,3 +145,4 @@ export async function deleteAllUsers(): Promise<void> {
         throw error
     }
 }
+
