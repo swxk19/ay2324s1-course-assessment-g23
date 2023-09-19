@@ -1,9 +1,11 @@
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import UserEditableRow from './UserEditableRow.tsx'
-import { User } from '../../services/users.ts'
+import { User } from '../../api/users.ts'
 import { useAllUsers, useDeleteUser, useStoreUser, useUpdateUser } from '../../stores/userStore.ts'
 import UserReadOnlyRow from './UserReadOnlyRow.tsx'
 import '../../styles/UserTable.css'
+import AlertMessage from '../AlertMessage.tsx'
+import '../../styles/AlertMessage.css'
 
 export const UserTable: React.FC = () => {
     const { data: users } = useAllUsers()
@@ -101,6 +103,16 @@ export const UserTable: React.FC = () => {
                 </table>
             </form>
 
+            {updateUserMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {updateUserMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
+            {deleteUserMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {deleteUserMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
             <h2>Add a User</h2>
             <form className='userForm' onSubmit={handleAddFormSubmit}>
                 <input
@@ -135,6 +147,11 @@ export const UserTable: React.FC = () => {
                     <button type='submit'>Add</button>
                 </div>
             </form>
+            {storeUserMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {storeUserMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
         </div>
     )
 }

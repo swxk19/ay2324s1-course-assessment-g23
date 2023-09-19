@@ -14,11 +14,12 @@ class UpdateUserInfo(BaseModel):
     username: str
     password: str
     email: str
-    session_id: str
-
-class UpdateUserRole(BaseModel):
     role: str
     session_id: str
+
+# class UpdateUserRole(BaseModel):
+#     role: str
+#     session_id: str
 
 class DeleteUser(BaseModel):
     session_id: str

@@ -10,8 +10,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
-import { type Question, updateQuestion } from '../../services/questionBank.ts'
+import { type Question, updateQuestion } from '../../api/questions.ts'
 
 interface ReadOnlyRowProps {
     question: Question
