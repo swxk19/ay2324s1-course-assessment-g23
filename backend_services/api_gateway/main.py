@@ -4,8 +4,9 @@ import httpx
 
 HOST_URL = "http://localhost"
 USERS_API_PORT = 8001
+SESSIONS_API_PORT = 8001
 QUESTIONS_API_PORT = 8002
-SESSIONS_API_PORT = 8003
+
 
 # Permission values of higher value is a superset of any permission with lower value
 # i.e Maintainer can do anything that a user can do
