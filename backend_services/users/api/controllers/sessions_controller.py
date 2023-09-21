@@ -1,9 +1,8 @@
 import hashlib
 from fastapi import HTTPException
+from ...database import user_database as db
+from ..utils import users_util, sessions_util
 
-from .utils import users_util
-from .utils import sessions_util
-import database as db
 
 def user_login(username: str, password: str):
     hashed_password = hashlib.md5(password.encode()).hexdigest()
@@ -16,7 +15,7 @@ def user_login(username: str, password: str):
             'session_id': f'{session_id}',
             'role': f'{role}',
             'message': f'User {username} successfully logged in'
-        }   
+        }
     else:
         if users_util.username_exists(username):
             raise HTTPException(status_code=401, detail="Invalid password")
@@ -46,5 +45,5 @@ def user_logout(session_id):
         return {
             'message': f'Session {session_id} successfully deleted'
         }
-    except e:
+    except Exception as e:
         raise HTTPException(status_code=401, detail=f"Unable to logout user: {e}")

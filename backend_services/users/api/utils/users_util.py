@@ -1,5 +1,6 @@
-import database as db
 from fastapi import HTTPException
+
+from ...database import user_database as db
 
 def username_exists(username):
     cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM users WHERE username = %s)", params=(username,))
