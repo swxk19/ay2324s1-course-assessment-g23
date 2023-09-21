@@ -1,0 +1,46 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.nav {
+    background-color: #303030;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+}
+
+.site-title {
+    font-size: 2rem;
+}
+
+.nav ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    font-size: 1.25rem;
+    color: #c2c2c2;
+}
+
+.nav a {
+    color: inherit;
+}
+
+.nav li.active {
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 1.5rem;
+}
+
+.nav a:hover {
+    color: white;
+    transition: 0.3s;
+}

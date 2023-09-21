@@ -1,14 +1,15 @@
-import React from 'react'
-import { type Question } from '../services/questionBank'
+import React, { ChangeEvent } from 'react'
+import { type Question } from '../../api/questions.ts'
+import '../../styles/QuestionTable.css'
 
 // Define a TypeScript interface for the props
 interface EditableRowProps {
     editFormData: Question
-    handleEditFormChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    handleEditFormChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
     handleCancelClick: () => void
 }
 
-const EditableRow: React.FC<EditableRowProps> = ({
+const QuestionEditableRow: React.FC<EditableRowProps> = ({
     editFormData,
     handleEditFormChange,
     handleCancelClick,
@@ -16,20 +17,10 @@ const EditableRow: React.FC<EditableRowProps> = ({
     return (
         <tr>
             <td>
-                <input
-                    className='custom-id-input'
-                    type='text'
-                    required
-                    placeholder='ID'
-                    name='id'
-                    value={editFormData.id}
-                    disabled
-                />
+                <input required value={editFormData.question_id} disabled />
             </td>
             <td>
                 <input
-                    className='custom-title-input'
-                    type='text'
                     required
                     placeholder='Title'
                     name='title'
@@ -39,8 +30,6 @@ const EditableRow: React.FC<EditableRowProps> = ({
             </td>
             <td>
                 <input
-                    className='custom-cat-input'
-                    type='text'
                     required
                     placeholder='Category'
                     name='category'
@@ -70,4 +59,4 @@ const EditableRow: React.FC<EditableRowProps> = ({
     )
 }
 
-export default EditableRow
+export default QuestionEditableRow

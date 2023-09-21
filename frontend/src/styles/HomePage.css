@@ -1,0 +1,11 @@
+.homepage h1 {
+    text-align: center;
+    padding-top: 40vh;
+}
+
+.homepage img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
