@@ -3,7 +3,6 @@ from fastapi import HTTPException
 from ...database import user_database as db
 from ..utils import users_util, sessions_util
 
-
 def user_login(username: str, password: str):
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
@@ -33,7 +32,6 @@ def get_session(session_id):
 
     result = db.execute_sql_read_fetchone('SELECT * FROM sessions WHERE session_id = %s',
                                  params=(session_id,))
-
 
     if result != None and not sessions_util.is_expired_session(result):
         return result

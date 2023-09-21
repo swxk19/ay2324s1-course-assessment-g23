@@ -1,14 +1,9 @@
 import uuid
-import requests
-import httpx
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .utils import requestModels as rm
 from .controllers import questions_controller as qc
-
-
-API_GATEWAY_URL = "http://localhost:8000"
 
 # create app
 app = FastAPI()

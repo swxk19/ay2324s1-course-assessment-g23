@@ -17,7 +17,6 @@ def create_question(question_id, title, description, category, complexity):
     return {'message': f'Question({question_id}) successfully created'}
 
 def get_question(question_id):
-
     if question_id != "all" and not questions_util.qid_exists(question_id):
         raise HTTPException(status_code=404, detail='Question id does not exist')
 
@@ -30,7 +29,6 @@ def get_question(question_id):
                                         params=(question_id,))
 
 def update_question_info(question_id, title, description, category, complexity):
-
     if not questions_util.qid_exists(question_id):
         raise HTTPException(status_code=404, detail="Question does not exist")
     if questions_util.check_duplicate_title(question_id, title):
@@ -45,7 +43,6 @@ def update_question_info(question_id, title, description, category, complexity):
     return {'message': f'Successfully updated'}
 
 def delete_question(question_id):
-
     if question_id != "all" and not questions_util.qid_exists(question_id):
         raise HTTPException(status_code=404, detail="Question does not exist")
 
