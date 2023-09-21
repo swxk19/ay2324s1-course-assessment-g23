@@ -2,9 +2,7 @@ import traceback
 from fastapi import HTTPException
 
 import database as db
-from .utils import questions_util
-from .utils import users_util
-from .utils import sessions_util
+from ..utils import questions_util
 
 def create_question(question_id, title, description, category, complexity, session_id):
     if not sessions_util.is_logged_in(session_id):

@@ -1,8 +1,8 @@
 from ...database_model import Database
 
-HOST = 'users'
-PORT = 5001
-DATABASE = 'users_database'
+HOST = 'questions'
+PORT = 5002
+DATABASE = 'questions_database'
 USER = 'user'
 PASSWORD = 'password'
 
