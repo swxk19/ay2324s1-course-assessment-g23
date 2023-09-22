@@ -1,20 +1,22 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
-import { User } from '../api/users.ts'
+import { UserSignupDetails } from '../api/users.ts'
 import '../styles/SignupPage.css'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSignupUser } from '../stores/sessionStore.ts'
+import AlertMessage from '../components/AlertMessage.tsx'
 
 const Signup = () => {
-    const [addNewUser, setAddNewUser] = useState<Omit<User, 'user_id' | 'role'>>({
+    const signupUserMutation = useSignupUser()
+    const [addNewUser, setAddNewUser] = useState<UserSignupDetails>({
         username: '',
         password: '',
         email: '',
     })
     const navigate = useNavigate()
 
-    const handleSignup = (event: FormEvent<HTMLFormElement>) => {
+    const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        // Insert signup logic using addNewUser data
-        // User will be redirected to login page
+        await signupUserMutation.mutateAsync(addNewUser)
         navigate('/')
     }
 
@@ -61,6 +63,11 @@ const Signup = () => {
                     <Link to='/'>Log in</Link>
                 </form>
             </div>
+            {signupUserMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {signupUserMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
         </div>
     )
 }

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { userLogin, userLogout, SessionDetails, getSession } from '../api/auth'
 import { ApiError } from '../api/error'
+import { storeUser } from '../api/users'
 
 /**
  * Hook for getting session details from the query cache.
@@ -73,6 +74,28 @@ export function useLogoutUser() {
         onSettled: () => {
             queryClient.setQueryData(['session'], null)
         },
+        onError: (error: ApiError) => {},
+    })
+}
+
+/**
+ * Hook for signing up a new user.
+ *
+ * @example
+ * ```tsx
+ * const MyComponent: React.FC = () => {
+ *     const signupUserMutation = useSignupUser()
+ *
+ *     const handleSignup = (signupDetails: UserSignupDetails) => {
+ *         signupUserMutation.mutate(signupDetails)
+ *         // ... rest of the code ...
+ *     }
+ *     // ... rest of the code ...
+ * }
+ * ```
+ */
+export function useSignupUser() {
+    return useMutation(storeUser, {
         onError: (error: ApiError) => {},
     })
 }
