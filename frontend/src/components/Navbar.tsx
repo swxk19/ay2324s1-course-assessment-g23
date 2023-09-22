@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import '../styles/Navbar.css'
 import { Link, useMatch, useResolvedPath } from 'react-router-dom'
 import EditProfile from './EditProfile.tsx'
+import { useLogoutUser } from '../stores/sessionStore.ts'
 
 const Navbar: React.FC = () => {
+    const logoutUserMutation = useLogoutUser()
     const [dropDownOpen, setDropDownOpen] = useState(false)
     const [editProfileOpen, setEditProfileOpen] = useState(false)
-
-    const navigate = useNavigate()
 
     const openEditProfile = () => {
         console.log('Opening Edit Profile')
@@ -17,8 +16,7 @@ const Navbar: React.FC = () => {
     }
 
     const handleSignOut = () => {
-        navigate('/')
-        // insert rest of signOut logic
+        logoutUserMutation.mutate()
     }
 
     console.log('editProfileOpen:', editProfileOpen)
