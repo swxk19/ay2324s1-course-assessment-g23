@@ -35,9 +35,12 @@ export function useAllUsers() {
 /**
  * Hook for getting a specific user's state from the backend using its ID.
  *
+ * If no user ID is given, the user will be `undefined` (without throwing
+ * errors). This is incase the user ID might not yet be known.
+ *
  * The fetching of the user from the backend is done automatically.
  *
- * @param id - The ID of the user to fetch.
+ * @param id - The ID of the user to fetch (optional).
  *
  * @example
  * ```ts
@@ -48,10 +51,10 @@ export function useAllUsers() {
  * }
  * ```
  */
-export function useUser(id: string) {
-    return useQuery<User, ApiError>({
+export function useUser(id?: string) {
+    return useQuery<User | undefined, ApiError>({
         queryKey: ['user', id],
-        queryFn: () => getUser(id),
+        queryFn: () => (id !== undefined ? getUser(id) : undefined),
     })
 }
 

@@ -2,9 +2,12 @@ import React, { useState } from 'react'
 import '../styles/Navbar.css'
 import { Link, useMatch, useResolvedPath } from 'react-router-dom'
 import EditProfile from './EditProfile.tsx'
-import { useLogoutUser } from '../stores/sessionStore.ts'
+import { useLogoutUser, useSessionDetails } from '../stores/sessionStore.ts'
+import { useUser } from '../stores/userStore.ts'
 
 const Navbar: React.FC = () => {
+    const { data: sessionDetails } = useSessionDetails()
+    const { data: user } = useUser(sessionDetails?.user_id)
     const logoutUserMutation = useLogoutUser()
     const [dropDownOpen, setDropDownOpen] = useState(false)
     const [editProfileOpen, setEditProfileOpen] = useState(false)
@@ -41,9 +44,11 @@ const Navbar: React.FC = () => {
                     )}
                     <div className={`dropdown-menu ${dropDownOpen ? 'active' : 'inactive'}`}>
                         <h3>
-                            afiqzu
+                            {user?.username}
                             <br />
-                            <span>Website Designer</span>
+                            <span>{user?.role}</span>
+                            <br />
+                            <span>{user?.email}</span>
                         </h3>
                         <ul>
                             <DropdownItem text={'Edit Profile'} onClick={openEditProfile} />
