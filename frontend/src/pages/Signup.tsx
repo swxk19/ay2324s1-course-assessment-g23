@@ -30,7 +30,7 @@ const Signup = () => {
     return (
         <div className='signup-page'>
             <div className='signup-box'>
-                <img src='../../public/peerprep.png' alt='PeerPrep Logo' />
+                <img src='../../peerprep.png' alt='PeerPrep Logo' />
                 <h3>Sign up for PeerPrep and enhance your coding skills with your peers.</h3>
                 <form onSubmit={handleSignup}>
                     <input
