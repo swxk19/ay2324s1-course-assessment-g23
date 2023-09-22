@@ -9,6 +9,7 @@ const USERS_API_HEADER = { 'Content-Type': 'application/json' }
 /** Represents a user. */
 export interface User {
     user_id: string
+    role: string
     username: string
     email: string
     password: string
