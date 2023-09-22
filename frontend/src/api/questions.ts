@@ -27,6 +27,7 @@ export async function storeQuestion(question: Omit<Question, 'question_id'>): Pr
         method: 'POST',
         headers: QUESTION_API_HEADER,
         body: JSON.stringify(question),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -46,6 +47,7 @@ export async function getQuestion(id: string): Promise<Question> {
     const response = await fetch(`${QUESTION_API_URL}/${id}`, {
         method: 'GET',
         headers: QUESTION_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -64,6 +66,7 @@ export async function getAllQuestions(): Promise<Question[]> {
     const response = await fetch(`${QUESTION_API_URL}/all`, {
         method: 'GET',
         headers: QUESTION_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -86,6 +89,7 @@ export async function updateQuestion(
         method: 'PUT',
         headers: QUESTION_API_HEADER,
         body: JSON.stringify(updatedQuestion),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -102,6 +106,7 @@ export async function deleteQuestion(id: string): Promise<void> {
     const response = await fetch(`${QUESTION_API_URL}/${id}`, {
         method: 'DELETE',
         headers: QUESTION_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -117,6 +122,7 @@ export async function deleteAllQuestions(): Promise<void> {
     const response = await fetch(`${QUESTION_API_URL}/all`, {
         method: 'DELETE',
         headers: QUESTION_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)

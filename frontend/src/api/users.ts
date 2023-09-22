@@ -26,6 +26,7 @@ export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {
         method: 'POST',
         headers: USERS_API_HEADER,
         body: JSON.stringify(user),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -45,6 +46,7 @@ export async function getUser(id: string): Promise<User> {
     const response = await fetch(`${USERS_API_URL}/${id}`, {
         method: 'GET',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -63,6 +65,7 @@ export async function getAllUsers(): Promise<User[]> {
     const response = await fetch(`${USERS_API_URL}/all`, {
         method: 'GET',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -85,6 +88,7 @@ export async function updateUser(
         method: 'PUT',
         headers: USERS_API_HEADER,
         body: JSON.stringify(updatedUser),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -101,6 +105,7 @@ export async function deleteUser(id: string): Promise<void> {
     const response = await fetch(`${USERS_API_URL}/${id}`, {
         method: 'DELETE',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -116,6 +121,7 @@ export async function deleteAllUsers(): Promise<void> {
     const response = await fetch(`${USERS_API_URL}/all`, {
         method: 'DELETE',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
