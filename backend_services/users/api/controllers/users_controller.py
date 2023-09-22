@@ -2,7 +2,6 @@ import hashlib
 from fastapi import HTTPException
 from ...database import user_database as db
 from ..utils import users_util, sessions_util
-# import requests
 
 def create_user(user_id, username, email, password):
     if users_util.uid_exists(user_id):
@@ -17,34 +16,28 @@ def create_user(user_id, username, email, password):
     db.execute_sql_write("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)",
                          params=(user_id, username, email, hashed_password))
     return {'message': f'User({user_id}) successfully created'}
-    # return {'message': f'User successfully created'}
 
 
 def get_user(user_id, session_id):
-    # check if logged in
-    # session_user = session_functions.get_session('all')
-    # if len(session_user) < 1:
-    #     raise HTTPException(status_code=401, detail='You are not logged in')
-
-    # check if maintainer
-    # if not session_user[0]['role'] == "maintainer":
-    #     raise HTTPException(status_code=401, detail='You do not have read access to users')
     if not sessions_util.is_logged_in(session_id):
         raise HTTPException(status_code=401, detail='You are not logged in')
-
-    if not users_util.is_maintainer(session_id):
+    
+    if not users_util.is_maintainer(session_id) and not users_util.is_account_owner(user_id, session_id):
         raise HTTPException(status_code=401, detail='You do not have access')
 
     if user_id != "all" and not users_util.uid_exists(user_id):
         raise HTTPException(status_code=404, detail='User does not exist')
 
     FIELD_NAMES = ['user_id', 'username', 'email', 'password', 'role']
-    if user_id == "all":
+    if users_util.is_maintainer(session_id) and user_id == "all":
         rows = db.execute_sql_read_fetchall(f"SELECT {', '.join(FIELD_NAMES)} FROM users")
         users = [dict(zip(FIELD_NAMES, row)) for row in rows]
         return users
-    return db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s",
+    elif users_util.is_maintainer(session_id) or users_util.is_account_owner(user_id, session_id):
+        db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s",
                                         params=(user_id,))
+    else:
+        raise HTTPException(status_code=401, detail='You do not have access')
 
 def update_user_info(user_id, username, password, email, role, session_id):
     if not sessions_util.is_logged_in(session_id):
