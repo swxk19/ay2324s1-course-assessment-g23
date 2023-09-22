@@ -1,7 +1,13 @@
 import { QuestionTable } from '../components/QuestionTable/QuestionTable.tsx'
+import Navbar from '../components/Navbar.tsx'
 
 const Questions = () => {
-    return <QuestionTable />
+    return (
+        <>
+            <Navbar />
+            <QuestionTable />
+        </>
+    )
 }
 
 export default Questions

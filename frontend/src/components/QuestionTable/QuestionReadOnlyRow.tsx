@@ -6,13 +6,15 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    IconButton,
     TextField,
+    Typography,
 } from '@mui/material'
 import { type Question, updateQuestion } from '../../api/questions.ts'
 
 interface ReadOnlyRowProps {
     question: Question
-    handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, question: any) => void
+    handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, question: Question) => void
     handleDeleteClick: (id: string) => void
 }
 
@@ -72,6 +74,17 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 <DialogTitle style={{ backgroundColor: '#242424', color: 'white' }}>
                     Edit Description
                 </DialogTitle>
+                <IconButton
+                    aria-label='close'
+                    disableRipple
+                    onClick={handleClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 10,
+                        top: 10,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                ></IconButton>
                 <DialogContent style={{ backgroundColor: '#242424', width: '700px' }}>
                     <DialogContentText id='alert-dialog-description' style={{ color: 'white' }} />
                     <TextField
@@ -88,10 +101,18 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 </DialogContent>
                 <DialogActions style={{ backgroundColor: '#242424', width: '38rem' }}>
                     <Button
+                        disableFocusRipple
+                        disableRipple
+                        size='medium'
                         onClick={handleEditDescription}
-                        style={{ color: 'white', paddingLeft: '25px', paddingRight: '25px' }}
+                        style={{
+                            color: 'white',
+                            paddingLeft: '25px',
+                            paddingRight: '25px',
+                            textTransform: 'none',
+                        }}
                     >
-                        Save and Close
+                        <Typography variant='subtitle1'>Save</Typography>
                     </Button>
                 </DialogActions>
             </Dialog>
