@@ -37,7 +37,7 @@ export function useAllUsers() {
  *
  * The fetching of the user from the backend is done automatically.
  *
- * @param id The ID of the user to fetch.
+ * @param id - The ID of the user to fetch.
  *
  * @example
  * ```ts

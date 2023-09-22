@@ -37,7 +37,7 @@ export function useAllQuestions() {
  *
  * The fetching of the question from the backend is done automatically.
  *
- * @param id The ID of the question to fetch.
+ * @param id - The ID of the question to fetch.
  *
  * @example
  * ```ts

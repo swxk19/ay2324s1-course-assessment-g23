@@ -17,8 +17,8 @@ export interface User {
 /**
  * Stores a new user.
  *
- * @param {Omit<User, 'user_id'>} user The user to store. All fields except ID are required.
- * @returns {Promise<string>} Resolves with the UUID for the stored user.
+ * @param user - The user to store. All fields except ID are required.
+ * @returns Resolves with the UUID for the stored user.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {
@@ -37,8 +37,8 @@ export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {
 /**
  * Retrieves a user by its ID.
  *
- * @param {string} id The ID of the user to retrieve.
- * @returns {Promise<User>} Resolves with the User object if found.
+ * @param id - The ID of the user to retrieve.
+ * @returns Resolves with the User object if found.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getUser(id: string): Promise<User> {
@@ -56,7 +56,7 @@ export async function getUser(id: string): Promise<User> {
 /**
  * Retrieves all users.
  *
- * @returns {Promise<User[]>} An array of users.
+ * @returns An array of users.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getAllUsers(): Promise<User[]> {
@@ -74,9 +74,8 @@ export async function getAllUsers(): Promise<User[]> {
 /**
  * Updates an existing user by its ID.
  *
- * @param {Pick<User, 'user_id'> & Partial<Omit<User, 'user_id'>>} updatedUser
- * User with the fields to update. All fields except `id` are optional.
- * @returns {Promise<void>} Resolves when the user is successfully updated.
+ * @param updatedUser - User with the fields to update. All fields except `id` are optional.
+ * @returns Resolves when the user is successfully updated.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function updateUser(
@@ -94,8 +93,8 @@ export async function updateUser(
 /**
  * Deletes a user by its ID.
  *
- * @param {string} id The ID of the user to be deleted.
- * @returns {Promise<void>} Resolves when the user is successfully deleted.
+ * @param id - The ID of the user to be deleted.
+ * @returns Resolves when the user is successfully deleted.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteUser(id: string): Promise<void> {
@@ -110,7 +109,7 @@ export async function deleteUser(id: string): Promise<void> {
 /**
  * Deletes all users.
  *
- * @returns {Promise<void>} Resolves when all users are successfully deleted.
+ * @returns Resolves when all users are successfully deleted.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteAllUsers(): Promise<void> {
