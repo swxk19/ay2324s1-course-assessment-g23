@@ -17,10 +17,6 @@ class UpdateUserInfo(BaseModel):
     role: str
     session_id: str
 
-# class UpdateUserRole(BaseModel):
-#     role: str
-#     session_id: str
-
 class DeleteUser(BaseModel):
     session_id: str
 

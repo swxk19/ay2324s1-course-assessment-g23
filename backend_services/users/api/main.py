@@ -33,10 +33,6 @@ async def delete_user(user_id: str, r: rm.DeleteUser):
 async def update_user_info(r: rm.UpdateUserInfo):
     return uc.update_user_info(r.user_id, r.username, r.password, r.email, r.role, r.session_id)
 
-# @app.put("/users/{user_id}", status_code=200)
-# async def update_user_role(user_id: str, r: rm.UpdateUserRole):
-#     return uc.update_user_role(user_id, r.role, r.session_id)
-
 @app.post("/sessions",  status_code=200)
 async def user_login(r: rm.UserLogin):
     return sc.user_login(r.username, r.password)
