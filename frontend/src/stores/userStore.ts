@@ -69,8 +69,8 @@ export function useUser(id?: string) {
  * const MyComponent: React.FC = () => {
  *     const storeUserMutation = useStoreUser()
  *
- *     const handleStoreUser = (newUser: Omit<User, 'user_id'>) => {
- *         storeUserMutation.mutate(newUser)
+ *     const handleStoreUser = (signupDetails: UserSignupDetails) => {
+ *         storeUserMutation.mutate(signupDetails)
  *         // ... rest of the code ...
  *     }
  *     // ... rest of the code ...
