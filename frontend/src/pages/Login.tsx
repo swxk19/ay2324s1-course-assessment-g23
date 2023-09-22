@@ -19,7 +19,7 @@ const Login = () => {
                     </h3>
                 </div>
                 <div className='login-container'>
-                    <img src='../../public/peerprep.png' />
+                    <img src='../../peerprep.png' />
                     <h2>Login to your account</h2>
                     <form className='login-form'>
                         <input placeholder='Username' />
