@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
-import { User } from '../services/users.ts'
+import { User } from '../api/users.ts'
 import '../styles/SignupPage.css'
 import { Link, useNavigate } from 'react-router-dom'
 
