@@ -16,12 +16,14 @@ interface ReadOnlyRowProps {
     question: Question
     handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, question: Question) => void
     handleDeleteClick: (id: string) => void
+    hasActions: boolean
 }
 
 const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     question,
     handleEditClick,
     handleDeleteClick,
+    hasActions,
 }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editedDescription, setEditedDescription] = useState(question.description)
@@ -56,14 +58,19 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 </td>
                 <td>{question.category}</td>
                 <td>{question.complexity}</td>
-                <td>
-                    <button type='button' onClick={(event) => handleEditClick(event, question)}>
-                        Edit
-                    </button>
-                    <button type='button' onClick={() => handleDeleteClick(question.question_id)}>
-                        Delete
-                    </button>
-                </td>
+                {hasActions && (
+                    <td>
+                        <button type='button' onClick={(event) => handleEditClick(event, question)}>
+                            Edit
+                        </button>
+                        <button
+                            type='button'
+                            onClick={() => handleDeleteClick(question.question_id)}
+                        >
+                            Delete
+                        </button>
+                    </td>
+                )}
             </tr>
             <Dialog
                 open={isModalOpen}
@@ -72,7 +79,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 aria-describedby='alert-dialog-description'
             >
                 <DialogTitle style={{ backgroundColor: '#242424', color: 'white' }}>
-                    Edit Description
+                    {hasActions ? 'Edit Description' : 'Description'}
                 </DialogTitle>
                 <IconButton
                     aria-label='close'
@@ -86,35 +93,42 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                     }}
                 ></IconButton>
                 <DialogContent style={{ backgroundColor: '#242424', width: '700px' }}>
-                    <DialogContentText id='alert-dialog-description' style={{ color: 'white' }} />
-                    <TextField
-                        style={{ width: '36rem', paddingRight: '20px' }}
-                        fullWidth
-                        multiline
-                        rows={10}
-                        value={editedDescription}
-                        onChange={(e) => setEditedDescription(e.target.value)}
-                        InputProps={{
-                            style: { color: 'white', borderColor: 'white' },
-                        }}
-                    />
+                    {hasActions ? (
+                        <TextField
+                            style={{ width: '36rem', paddingRight: '20px' }}
+                            fullWidth
+                            multiline
+                            rows={10}
+                            value={editedDescription}
+                            onChange={(e) => setEditedDescription(e.target.value)}
+                            InputProps={{
+                                style: { color: 'white', borderColor: 'white' },
+                            }}
+                        />
+                    ) : (
+                        <DialogContentText id='alert-dialog-description' style={{ color: 'white' }}>
+                            {editedDescription}
+                        </DialogContentText>
+                    )}
                 </DialogContent>
-                <DialogActions style={{ backgroundColor: '#242424', width: '38rem' }}>
-                    <Button
-                        disableFocusRipple
-                        disableRipple
-                        size='medium'
-                        onClick={handleEditDescription}
-                        style={{
-                            color: 'white',
-                            paddingLeft: '25px',
-                            paddingRight: '25px',
-                            textTransform: 'none',
-                        }}
-                    >
-                        <Typography variant='subtitle1'>Save</Typography>
-                    </Button>
-                </DialogActions>
+                {hasActions && (
+                    <DialogActions style={{ backgroundColor: '#242424', width: '38rem' }}>
+                        <Button
+                            disableFocusRipple
+                            disableRipple
+                            size='medium'
+                            onClick={handleEditDescription}
+                            style={{
+                                color: 'white',
+                                paddingLeft: '25px',
+                                paddingRight: '25px',
+                                textTransform: 'none',
+                            }}
+                        >
+                            <Typography variant='subtitle1'>Save</Typography>
+                        </Button>
+                    </DialogActions>
+                )}
             </Dialog>
         </>
     )
