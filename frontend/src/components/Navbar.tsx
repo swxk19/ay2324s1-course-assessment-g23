@@ -59,7 +59,9 @@ const Navbar: React.FC = () => {
                     </div>
                 </ul>
             </nav>
-            {editProfileOpen && <EditProfile onClose={() => setEditProfileOpen(false)} />}
+            {editProfileOpen && (
+                <EditProfile user={user!} onClose={() => setEditProfileOpen(false)} />
+            )}
         </div>
     )
 }
