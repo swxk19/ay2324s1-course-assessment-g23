@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import '../styles/Navbar.css'
 import { Link, useMatch, useResolvedPath } from 'react-router-dom'
 import EditProfile from './EditProfile.tsx'
+import { useLogoutUser, useSessionDetails } from '../stores/sessionStore.ts'
+import { useUser } from '../stores/userStore.ts'
 
 const Navbar: React.FC = () => {
+    const { data: sessionDetails } = useSessionDetails()
+    const { data: user } = useUser(sessionDetails?.user_id)
+    const logoutUserMutation = useLogoutUser()
     const [dropDownOpen, setDropDownOpen] = useState(false)
     const [editProfileOpen, setEditProfileOpen] = useState(false)
-
-    const navigate = useNavigate()
 
     const openEditProfile = () => {
         console.log('Opening Edit Profile')
@@ -16,9 +18,8 @@ const Navbar: React.FC = () => {
         setDropDownOpen(false)
     }
 
-    const handleSignOut = () => {
-        navigate('/')
-        // insert rest of signOut logic
+    const handleSignOut = async () => {
+        await logoutUserMutation.mutateAsync()
     }
 
     console.log('editProfileOpen:', editProfileOpen)
@@ -31,7 +32,9 @@ const Navbar: React.FC = () => {
                 </Link>
                 <ul>
                     <CustomLink to='/questions'>Questions</CustomLink>
-                    <CustomLink to='/users'>Users</CustomLink>
+                    {sessionDetails?.role === 'maintainer' && (
+                        <CustomLink to='/users'>Users</CustomLink>
+                    )}
                     <li
                         className={`profile-button ${dropDownOpen ? 'active' : 'inactive'}`}
                         onClick={() => setDropDownOpen(!dropDownOpen)}
@@ -43,9 +46,11 @@ const Navbar: React.FC = () => {
                     )}
                     <div className={`dropdown-menu ${dropDownOpen ? 'active' : 'inactive'}`}>
                         <h3>
-                            afiqzu
+                            {user?.username}
                             <br />
-                            <span>Website Designer</span>
+                            <span>{user?.role}</span>
+                            <br />
+                            <span>{user?.email}</span>
                         </h3>
                         <ul>
                             <DropdownItem text={'Edit Profile'} onClick={openEditProfile} />
@@ -54,7 +59,9 @@ const Navbar: React.FC = () => {
                     </div>
                 </ul>
             </nav>
-            {editProfileOpen && <EditProfile onClose={() => setEditProfileOpen(false)} />}
+            {editProfileOpen && (
+                <EditProfile user={user!} onClose={() => setEditProfileOpen(false)} />
+            )}
         </div>
     )
 }

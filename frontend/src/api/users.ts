@@ -6,26 +6,32 @@ const USERS_API_URL = 'http://localhost:8000/users'
 /** HTTP request headers for users API. */
 const USERS_API_HEADER = { 'Content-Type': 'application/json' }
 
-/** Represents a user. */
-export interface User {
-    user_id: string
+/** Represents the details needed for signing up as a new user. */
+export interface UserSignupDetails {
     username: string
     email: string
     password: string
 }
 
+/** Represents a user. */
+export interface User extends UserSignupDetails {
+    user_id: string
+    role: string
+}
+
 /**
  * Stores a new user.
  *
- * @param user - The user to store. All fields except ID are required.
+ * @param signupDetails - The signup details for creating a new user.
  * @returns Resolves with the UUID for the stored user.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
-export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {
+export async function storeUser(signupDetails: UserSignupDetails): Promise<string> {
     const response = await fetch(USERS_API_URL, {
         method: 'POST',
         headers: USERS_API_HEADER,
-        body: JSON.stringify(user),
+        body: JSON.stringify(signupDetails),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -45,6 +51,7 @@ export async function getUser(id: string): Promise<User> {
     const response = await fetch(`${USERS_API_URL}/${id}`, {
         method: 'GET',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -63,6 +70,7 @@ export async function getAllUsers(): Promise<User[]> {
     const response = await fetch(`${USERS_API_URL}/all`, {
         method: 'GET',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -85,6 +93,7 @@ export async function updateUser(
         method: 'PUT',
         headers: USERS_API_HEADER,
         body: JSON.stringify(updatedUser),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -101,6 +110,7 @@ export async function deleteUser(id: string): Promise<void> {
     const response = await fetch(`${USERS_API_URL}/${id}`, {
         method: 'DELETE',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -116,6 +126,7 @@ export async function deleteAllUsers(): Promise<void> {
     const response = await fetch(`${USERS_API_URL}/all`, {
         method: 'DELETE',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
