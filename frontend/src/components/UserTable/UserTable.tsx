@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import UserEditableRow from './UserEditableRow.tsx'
-import { User } from '../../api/users.ts'
+import { User, UserSignupDetails } from '../../api/users.ts'
 import { useAllUsers, useDeleteUser, useStoreUser, useUpdateUser } from '../../stores/userStore.ts'
 import UserReadOnlyRow from './UserReadOnlyRow.tsx'
 import '../../styles/UserTable.css'
@@ -12,7 +12,7 @@ export const UserTable: React.FC = () => {
     const storeUserMutation = useStoreUser()
     const updateUserMutation = useUpdateUser()
     const deleteUserMutation = useDeleteUser()
-    const [addFormData, setAddFormData] = useState<Omit<User, 'user_id'>>({
+    const [addFormData, setAddFormData] = useState<UserSignupDetails>({
         username: '',
         password: '',
         email: '',
