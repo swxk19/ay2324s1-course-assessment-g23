@@ -40,7 +40,7 @@ export const UserTable: React.FC = () => {
 
     const handleAddFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        storeUserMutation.mutate(addFormData)
+        await storeUserMutation.mutateAsync(addFormData)
         setAddFormData({
             username: '',
             password: '',
@@ -52,7 +52,7 @@ export const UserTable: React.FC = () => {
         event.preventDefault()
 
         if (!editFormData) return
-        updateUserMutation.mutate(editFormData)
+        await updateUserMutation.mutateAsync(editFormData)
         setEditFormData(null)
     }
 
@@ -65,7 +65,7 @@ export const UserTable: React.FC = () => {
         setEditFormData(null)
     }
 
-    const handleDeleteClick = (userId: string) => deleteUserMutation.mutate(userId)
+    const handleDeleteClick = (userId: string) => deleteUserMutation.mutateAsync(userId)
 
     return (
         <div className='user-container'>

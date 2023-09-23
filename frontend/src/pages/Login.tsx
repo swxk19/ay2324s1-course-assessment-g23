@@ -18,7 +18,7 @@ const Login = () => {
     }, [sessionDetails, navigate])
 
     const handleLogin = async () => {
-        loginUserMutation.mutate({ username, password })
+        await loginUserMutation.mutateAsync({ username, password })
     }
 
     return (

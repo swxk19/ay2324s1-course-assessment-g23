@@ -48,7 +48,7 @@ export const QuestionTable: React.FC = () => {
 
     const handleAddFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        storeQuestionMutation.mutate(addFormData)
+        await storeQuestionMutation.mutateAsync(addFormData)
         setAddFormData({
             title: '',
             description: '',
@@ -61,7 +61,7 @@ export const QuestionTable: React.FC = () => {
         event.preventDefault()
 
         if (!editFormData) return
-        updateQuestionMutation.mutate(editFormData)
+        await updateQuestionMutation.mutateAsync(editFormData)
         setEditFormData(null)
     }
 

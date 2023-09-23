@@ -18,8 +18,8 @@ const Navbar: React.FC = () => {
         setDropDownOpen(false)
     }
 
-    const handleSignOut = () => {
-        logoutUserMutation.mutate()
+    const handleSignOut = async () => {
+        await logoutUserMutation.mutateAsync()
     }
 
     console.log('editProfileOpen:', editProfileOpen)
