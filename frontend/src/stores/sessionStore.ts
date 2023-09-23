@@ -2,6 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { userLogin, userLogout, SessionDetails, getSession } from '../api/auth'
 import { ApiError } from '../api/error'
 import { storeUser } from '../api/users'
+import Cookies from 'js-cookie'
+
+const SESSION_ID_COOKIE_NAME = 'session_id'
 
 /**
  * Hook for getting session details from the query cache.
@@ -17,7 +20,15 @@ import { storeUser } from '../api/users'
 export function useSessionDetails() {
     return useQuery<SessionDetails | null, ApiError>({
         queryKey: ['session'],
-        queryFn: getSession,
+        queryFn: async () => {
+            const hasSessionIdCookie = Cookies.get(SESSION_ID_COOKIE_NAME) !== undefined
+            if (!hasSessionIdCookie) return null
+
+            const sessionDetails = await getSession()
+            // If `session_id` cookie is stale, remove stale cookie.
+            if (sessionDetails === null) Cookies.remove(SESSION_ID_COOKIE_NAME)
+            return sessionDetails
+        },
         initialData: null,
     })
 }
@@ -71,7 +82,8 @@ export function useLogoutUser() {
     const queryClient = useQueryClient()
 
     return useMutation(userLogout, {
-        onSettled: () => {
+        onSuccess: () => {
+            Cookies.remove(SESSION_ID_COOKIE_NAME)
             queryClient.setQueryData(['session'], null)
         },
         onError: (error: ApiError) => {},
