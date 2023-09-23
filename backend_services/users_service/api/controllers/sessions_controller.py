@@ -10,11 +10,9 @@ def user_login(username: str, password: str):
 
     if login_result:
         user_id, role = login_result
-        session_id = sessions_util.create_session(user_id, role)
+        session = sessions_util.create_session(user_id, role)
         return {
-            'user_id': f'{user_id}',
-            'session_id': f'{session_id}',
-            'role': f'{role}',
+            'session_details': session,
             'message': f'User {username} successfully logged in'
         }
     else:
@@ -22,19 +20,22 @@ def user_login(username: str, password: str):
             raise HTTPException(status_code=401, detail="Invalid password")
         raise HTTPException(status_code=401, detail="Account does not exist")
 
-def get_session(session_id):
+
+def get_all_sessions():
     FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
 
-    if session_id == "all":
-        rows = db.execute_sql_read_fetchall(f"SELECT * FROM sessions")
-        sessions = [dict(zip(FIELD_NAMES, row)) for row in rows]
-        return sessions
+    rows = db.execute_sql_read_fetchall(f"SELECT * FROM sessions")
+    sessions = [dict(zip(FIELD_NAMES, row)) for row in rows]
+    return sessions
+
+def get_session(session_id):
+    FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
 
     result = db.execute_sql_read_fetchone('SELECT * FROM sessions WHERE session_id = %s',
                                  params=(session_id,))
 
-    if result != None and not sessions_util.is_expired_session(result):
-        return result
+    if result and not sessions_util.is_expired_session(result):
+        return dict(zip(FIELD_NAMES, result))
     else:
         raise HTTPException(status_code=401, detail="Unauthorized session")
 

@@ -5,7 +5,7 @@ import websockets
 
 from .utils.api_permissions import PERMISSIONS_TABLE
 from .utils.addresses import HOST_URL, USERS_SERVICE_PORT, QUESTIONS_SERVICE_PORT, SESSIONS_SERVICE_PORT, MATCHING_SERVICE_PORT
-from .utils.api_gateway_util import check_permission
+from .utils.api_gateway_util import check_permission, map_path_microservice_url, get_id_from_url
 
 app = FastAPI()
 
@@ -37,32 +37,28 @@ async def websocket_endpoint(websocket: WebSocket):
 
 async def route_request(method: str, path: str, request: Request):
     # Determine the microservice URL based on the path
-    service = None
-    if path.startswith("/users"):
-        service = "users"
-        microservice_url = f"{HOST_URL}:{USERS_SERVICE_PORT}"
-    elif path.startswith("/questions"):
-        service = "questions"
-        microservice_url = f"{HOST_URL}:{QUESTIONS_SERVICE_PORT}"
-    elif path.startswith("/sessions"):
-        service = "sessions"
-        microservice_url = f"{HOST_URL}:{SESSIONS_SERVICE_PORT}"
-    else:
+    service, microservice_url = map_path_microservice_url(path)
+
+    if not service:
         raise HTTPException(status_code=404, detail="Endpoint not found")
 
-    permission_required = PERMISSIONS_TABLE[service][method]
-    check_permission(request, permission_required)
+    cookies = request.cookies
+    session_id = cookies.get('session_id')
+
+    check_permission(session_id, path, method)
+
+    data = await request.body()
 
     # Forward the request to the microservice
     async with httpx.AsyncClient() as client:
         if method == "GET":
             response = await client.get(f"{microservice_url}{path}")
         elif method == "POST":
-            response = await client.post(f"{microservice_url}{path}", data=await request.body())
+            response = await client.post(f"{microservice_url}{path}", data=data)
         elif method == "PUT":
-            response = await client.post(f"{microservice_url}{path}", data=await request.body())
+            response = await client.post(f"{microservice_url}{path}", data=data)
         elif method == "DELETE":
-             response = await client.delete(f"{microservice_url}{path}", data=await request.body())
+             response = await client.delete(f"{microservice_url}{path}", data=data)
 
         response.raise_for_status()
         return response.text
