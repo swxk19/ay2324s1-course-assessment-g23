@@ -32,7 +32,9 @@ const Navbar: React.FC = () => {
                 </Link>
                 <ul>
                     <CustomLink to='/questions'>Questions</CustomLink>
-                    <CustomLink to='/users'>Users</CustomLink>
+                    {sessionDetails?.role === 'maintainer' && (
+                        <CustomLink to='/users'>Users</CustomLink>
+                    )}
                     <li
                         className={`profile-button ${dropDownOpen ? 'active' : 'inactive'}`}
                         onClick={() => setDropDownOpen(!dropDownOpen)}

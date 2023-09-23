@@ -10,7 +10,8 @@ const Users = () => {
 
     // Redirect if not logged in.
     useEffect(() => {
-        if (!sessionDetails) navigate('/')
+        const hasAccessToPage = sessionDetails !== null && sessionDetails.role === 'maintainer'
+        if (!hasAccessToPage) navigate('/')
     }, [sessionDetails, navigate])
 
     return (
