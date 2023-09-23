@@ -1,80 +1,52 @@
-from fastapi import FastAPI, HTTPException, Request
-import requests
+from fastapi import FastAPI, HTTPException, Request, WebSocket
 import httpx
+import json
+import websockets
 
-HOST_URL = "http://localhost"
-USERS_API_PORT = 8001
-SESSIONS_API_PORT = 8001
-QUESTIONS_API_PORT = 8002
-
-
-# Permission values of higher value is a superset of any permission with lower value
-# i.e Maintainer can do anything that a user can do
-PUBLIC_PERMISSION = 0
-USER_PERMISSION = 1 # means ANY user that is logged in
-MAINTAINER_PERMISSION = 2
+from .utils.api_permissions import PERMISSIONS_TABLE
+from .utils.addresses import HOST_URL, USERS_SERVICE_PORT, QUESTIONS_SERVICE_PORT, SESSIONS_SERVICE_PORT, MATCHING_SERVICE_PORT
+from .utils.api_gateway_util import check_permission
 
 app = FastAPI()
 
-PERMISSIONS_TABLE = {
-    "users": {
-        "POST": PUBLIC_PERMISSION,
-        "GET": USER_PERMISSION,
-        "DELETE": USER_PERMISSION,
-        "PUT": USER_PERMISSION
-        },
-    "sessions": {
-        "POST": PUBLIC_PERMISSION,
-        "GET": USER_PERMISSION,
-        "DELETE": USER_PERMISSION,
-        },
-    "questions": {
-        "POST": MAINTAINER_PERMISSION,
-        "GET": USER_PERMISSION,
-        "DELETE": MAINTAINER_PERMISSION,
-        "PUT": MAINTAINER_PERMISSION
-        }
-}
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
 
-async def check_permission(request: Request, permission_required):
-    def map_role_permission(role):
-        if role == "user":
-            return USER_PERMISSION
-        elif role == "maintainer":
-            return MAINTAINER_PERMISSION
-        return -1
+    try:
+        # Receive message from client
+        message = await websocket.receive_text()
 
-    if permission_required == PUBLIC_PERMISSION:
-        return
+        request =  json.loads(message)
+        service = request["service"]
 
-    session_id = request.cookies.get('session_id')
+        websocket_url = f"{HOST_URL}"
+        # Send message to microservice
+        if service == "matching-service":
+            websocket_url += f"/{MATCHING_SERVICE_PORT}"
+            async with websockets.connect(websocket_url) as matching_service_websocket:
+                await matching_service_websocket.send(json.dumps(request))
+                response = await matching_service_websocket.recv()
+                await websocket.send_text(response)
+                websocket.close()
+        else:
+            raise HTTPException(status_code=400, detail=f"Invalid service requested: {service}")
 
-    headers = { session_id: session_id }
-    url = f"{HOST_URL}/{USERS_API_PORT}/sessions"
-
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=headers)
-
-        if response.status_code != 200:
-            raise HTTPException(status_code=response.status_code, detail=response.text)
-
-        permission_level = map_role_permission(response.json()["role"])
-
-        if permission_level < permission_required:
-            raise HTTPException(status_code=401, detail="Unauthorized access")
+    except HTTPException as http_exc:
+        await websocket.send_text(http_exc.detail)
 
 async def route_request(method: str, path: str, request: Request):
     # Determine the microservice URL based on the path
     service = None
     if path.startswith("/users"):
         service = "users"
-        microservice_url = f"{HOST_URL}:{USERS_API_PORT}"
+        microservice_url = f"{HOST_URL}:{USERS_SERVICE_PORT}"
     elif path.startswith("/questions"):
         service = "questions"
-        microservice_url = f"{HOST_URL}:{QUESTIONS_API_PORT}"
+        microservice_url = f"{HOST_URL}:{QUESTIONS_SERVICE_PORT}"
     elif path.startswith("/sessions"):
         service = "sessions"
-        microservice_url = f"{HOST_URL}:{USERS_API_PORT}"
+        microservice_url = f"{HOST_URL}:{SESSIONS_SERVICE_PORT}"
     else:
         raise HTTPException(status_code=404, detail="Endpoint not found")
 
