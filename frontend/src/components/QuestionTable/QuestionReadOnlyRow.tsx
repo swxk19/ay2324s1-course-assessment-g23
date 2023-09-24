@@ -57,7 +57,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                     {question.title}
                 </td>
                 <td>{question.category}</td>
-                <td>{question.complexity}</td>
+                <td className={`complexity-color-${question.complexity}`}>{question.complexity}</td>
                 {hasActions && (
                     <td>
                         <button type='button' onClick={(event) => handleEditClick(event, question)}>
@@ -92,7 +92,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                         color: (theme) => theme.palette.grey[500],
                     }}
                 ></IconButton>
-                <DialogContent style={{ backgroundColor: '#242424', width: '700px' }}>
+                <DialogContent style={{ backgroundColor: '#242424', width: '600px' }}>
                     {hasActions ? (
                         <TextField
                             style={{ width: '36rem', paddingRight: '20px' }}
