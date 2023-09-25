@@ -83,6 +83,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
             >
                 <DialogTitle
                     style={{
+                        fontWeight: 'bold',
                         backgroundColor: '#242424',
                         color: 'white',
                         width: '700px',
@@ -115,6 +116,32 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                             disableFocusRipple
                             disableRipple
                             size='medium'
+                            onClick={handleClose}
+                            style={{
+                                color: 'white',
+                                paddingLeft: '25px',
+                                paddingRight: '25px',
+                                marginRight: '15px',
+                                textTransform: 'none',
+                                width: '5rem',
+                                maxWidth: '700px',
+                                backgroundColor: '#303030',
+                            }}
+                            sx={{
+                                ml: 1,
+                                '&.MuiButtonBase-root:hover': {
+                                    bgcolor: 'transparent',
+                                },
+                            }}
+                        >
+                            <Typography variant='subtitle1' sx={{ fontWeight: 'bold' }}>
+                                Cancel
+                            </Typography>
+                        </Button>
+                        <Button
+                            disableFocusRipple
+                            disableRipple
+                            size='medium'
                             onClick={handleEditDescription}
                             style={{
                                 color: 'white',
@@ -124,7 +151,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                                 textTransform: 'none',
                                 width: '5rem',
                                 maxWidth: '700px',
-                                backgroundColor: 'black',
+                                backgroundColor: '#238636',
                             }}
                             sx={{
                                 ml: 1,
@@ -133,7 +160,9 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                                 },
                             }}
                         >
-                            <Typography variant='subtitle1'>Save</Typography>
+                            <Typography variant='subtitle1' sx={{ fontWeight: 'bold' }}>
+                                Save
+                            </Typography>
                         </Button>
                     </DialogActions>
                 )}
