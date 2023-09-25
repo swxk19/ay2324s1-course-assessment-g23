@@ -47,6 +47,17 @@ const UserEditableRow: React.FC<EditableRowProps> = ({
                 />
             </td>
             <td>
+                <select
+                    name='role'
+                    required
+                    value={editFormData.role}
+                    onChange={handleEditFormChange}
+                >
+                    <option value='normal'>normal</option>
+                    <option value='maintainer'>maintainer</option>
+                </select>
+            </td>
+            <td>
                 <button type='submit'>Save</button>
                 <button type='button' onClick={handleCancelClick}>
                     Cancel

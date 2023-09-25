@@ -1,7 +1,7 @@
 import { User } from '../../api/users.ts'
 interface ReadOnlyRowProps {
     user: User
-    handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, user: any) => void
+    handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, user: User) => void
     handleDeleteClick: (id: string) => void
 }
 
@@ -16,6 +16,7 @@ const UserReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
             <td>{user.username}</td>
             <td>{user.password}</td>
             <td>{user.email}</td>
+            <td>{user.role}</td>
             <td>
                 <button type='button' onClick={(event) => handleEditClick(event, user)}>
                     Edit
