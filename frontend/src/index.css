@@ -65,3 +65,18 @@ button:focus-visible {
         background-color: #f9f9f9;
     }
 }
+
+.complexity-color-Easy {
+    color: #00b8a2;
+    font-weight: bold;
+}
+
+.complexity-color-Medium {
+    color: #febf1d;
+    font-weight: bold;
+}
+
+.complexity-color-Hard {
+    color: #fe375f;
+    font-weight: bold;
+}
