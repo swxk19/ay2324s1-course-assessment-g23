@@ -4,7 +4,7 @@ import json
 import websockets
 
 from .utils.api_permissions import PERMISSIONS_TABLE
-from .utils.addresses import HOST_URL, USERS_SERVICE_PORT, QUESTIONS_SERVICE_PORT, SESSIONS_SERVICE_PORT, MATCHING_SERVICE_PORT
+from .utils.addresses import API_PORT, USERS_SERVICE_HOST, QUESTIONS_SERVICE_HOST, SESSIONS_SERVICE_HOST, MATCHING_SERVICE_HOST
 from .utils.api_gateway_util import check_permission, map_path_microservice_url, get_id_from_url
 
 app = FastAPI()
@@ -20,10 +20,9 @@ async def websocket_endpoint(websocket: WebSocket):
         request =  json.loads(message)
         service = request["service"]
 
-        websocket_url = f"{HOST_URL}"
         # Send message to microservice
         if service == "matching-service":
-            websocket_url += f"/{MATCHING_SERVICE_PORT}"
+            websocket_url += f"{MATCHING_SERVICE_HOST}/{API_PORT}"
             async with websockets.connect(websocket_url) as matching_service_websocket:
                 await matching_service_websocket.send(json.dumps(request))
                 response = await matching_service_websocket.recv()
