@@ -6,7 +6,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    IconButton,
     TextField,
     Typography,
 } from '@mui/material'
@@ -77,25 +76,24 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 onClose={handleClose}
                 aria-labelledby='alert-dialog-title'
                 aria-describedby='alert-dialog-description'
+                maxWidth='md'
+                PaperProps={{
+                    sx: { borderRadius: '1rem', backgroundColor: '#242424', padding: '1rem' },
+                }}
             >
-                <DialogTitle style={{ backgroundColor: '#242424', color: 'white' }}>
+                <DialogTitle
+                    style={{
+                        backgroundColor: '#242424',
+                        color: 'white',
+                        width: '700px',
+                    }}
+                >
                     {hasActions ? 'Edit Description' : 'Description'}
                 </DialogTitle>
-                <IconButton
-                    aria-label='close'
-                    disableRipple
-                    onClick={handleClose}
-                    sx={{
-                        position: 'absolute',
-                        right: 10,
-                        top: 10,
-                        color: (theme) => theme.palette.grey[500],
-                    }}
-                ></IconButton>
-                <DialogContent style={{ backgroundColor: '#242424', width: '600px' }}>
+                <DialogContent style={{ backgroundColor: '#242424' }}>
                     {hasActions ? (
                         <TextField
-                            style={{ width: '36rem', paddingRight: '20px' }}
+                            style={{ width: '100%' }}
                             fullWidth
                             multiline
                             rows={10}
@@ -112,7 +110,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                     )}
                 </DialogContent>
                 {hasActions && (
-                    <DialogActions style={{ backgroundColor: '#242424', width: '38rem' }}>
+                    <DialogActions style={{ backgroundColor: '#242424' }}>
                         <Button
                             disableFocusRipple
                             disableRipple
@@ -122,7 +120,17 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                                 color: 'white',
                                 paddingLeft: '25px',
                                 paddingRight: '25px',
+                                marginRight: '15px',
                                 textTransform: 'none',
+                                width: '5rem',
+                                maxWidth: '700px',
+                                backgroundColor: 'black',
+                            }}
+                            sx={{
+                                ml: 1,
+                                '&.MuiButtonBase-root:hover': {
+                                    bgcolor: 'transparent',
+                                },
                             }}
                         >
                             <Typography variant='subtitle1'>Save</Typography>
