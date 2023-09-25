@@ -76,7 +76,7 @@ export const UserTable: React.FC = () => {
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Password</th>
+                            <th>Hashed Password</th>
                             <th>Email</th>
                             <th>Role</th>
                             <th>Actions</th>

@@ -6,9 +6,13 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    IconButton,
     TextField,
+    Tooltip,
     Typography,
 } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { type Question, updateQuestion } from '../../api/questions.ts'
 
 interface ReadOnlyRowProps {
@@ -44,7 +48,21 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     return (
         <>
             <tr>
-                <td>{question.question_id}</td>
+                <td>
+                    <Tooltip title={<p>{question.question_id}</p>} arrow>
+                        <Typography
+                            style={{
+                                cursor: 'pointer',
+                                maxWidth: '10ch', // Adjust the maximum width as needed
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                            }}
+                        >
+                            {question.question_id}
+                        </Typography>
+                    </Tooltip>
+                </td>
                 <td
                     onClick={openModal}
                     style={{
@@ -59,15 +77,18 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 <td className={`complexity-color-${question.complexity}`}>{question.complexity}</td>
                 {hasActions && (
                     <td>
-                        <button type='button' onClick={(event) => handleEditClick(event, question)}>
-                            Edit
-                        </button>
-                        <button
-                            type='button'
+                        <IconButton
+                            sx={{ color: '#c2c2c2', paddingLeft: '0' }}
+                            onClick={(event) => handleEditClick(event, question)}
+                        >
+                            <EditIcon />
+                        </IconButton>
+                        <IconButton
+                            sx={{ color: '#c2c2c2' }}
                             onClick={() => handleDeleteClick(question.question_id)}
                         >
-                            Delete
-                        </button>
+                            <DeleteIcon />
+                        </IconButton>
                     </td>
                 )}
             </tr>
