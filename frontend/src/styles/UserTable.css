@@ -20,3 +20,7 @@
 .userForm input {
     width: 10rem;
 }
+
+.user-container select {
+    padding: 0.55rem;
+}
