@@ -3,9 +3,9 @@ import httpx
 import json
 import websockets
 
-from .utils.api_permissions import PERMISSIONS_TABLE
-from .utils.addresses import API_PORT, USERS_SERVICE_HOST, QUESTIONS_SERVICE_HOST, SESSIONS_SERVICE_HOST, MATCHING_SERVICE_HOST
-from .utils.api_gateway_util import check_permission, map_path_microservice_url, get_id_from_url
+from utils.api_permissions import PERMISSIONS_TABLE
+from utils.addresses import API_PORT, USERS_SERVICE_HOST, QUESTIONS_SERVICE_HOST, SESSIONS_SERVICE_HOST, MATCHING_SERVICE_HOST
+from utils.api_gateway_util import check_permission, map_path_microservice_url, get_id_from_url
 
 app = FastAPI()
 

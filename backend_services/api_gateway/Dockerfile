@@ -1,4 +1,4 @@
-FROM base_api
+FROM ay2324s1-course-assessment-g23-base_api:latest
 
 WORKDIR /
 

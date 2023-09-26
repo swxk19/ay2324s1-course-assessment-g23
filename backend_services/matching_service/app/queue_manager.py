@@ -1,4 +1,4 @@
-from .matching_util import User
+from matching_util import User
 
 queue = []
 

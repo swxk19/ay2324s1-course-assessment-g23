@@ -23,16 +23,23 @@ services:
       - 8000:8000
     environment:
       - USERS_SERVICE_HOST=users_api
-      - SESSIONS_SERVICE_HOST=sessions_api
+      - SESSIONS_SERVICE_HOST= users_api #sessions_api
       - QUESTIONS_SERVICE_HOST=questions_api
       - MATCHING_SERVICE_HOST=matching_api
+    depends_on:
+      - base_api
+      - users_api
+      #- sessions_api
+      - questions_api
+      - matching_api
   users_api:
     build: ./backend_services/users_service/api
     container_name: users_api
-    ports: 8000:8000
+    ports: 
+      - 8000:8000
     networks:
-      - backend_apis
-      - users-data
+      - backend-apis
+      - users
     environment:
       - POSTGRES_HOST=users_database
       - POSTGRES_PORT=5432
@@ -41,13 +48,15 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - users_database
+      - base_api
   questions_api:
     build: ./backend_services/questions_service/api
     container_name: questions_api
-    ports: 8000:8000
+    ports: 
+      - 8000:8000
     networks:
-      - backend_apis
-      - questions-data
+      - backend-apis
+      - questions
     environment:
       - POSTGRES_HOST=questions_database
       - POSTGRES_PORT=5432
@@ -56,15 +65,34 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - questions_database
+      - base_api
+  matching_api:
+    build: ./backend_services/matching_service 
+    container_name: matching_api
+    ports: 
+      - 8000:8000
+    networks:
+      - backend-apis
+    depends_on:
+      - base_api
+  # sessions_api:
+  #   build: ./backend_services/sessions_service
+  #   container_name: sessions_api
+  #   ports: 
+  #     - 8000:8000
+  #   networks:
+  #     - backend_apis
+  #   depends_on:
+  #     - base_api
   users_database:
     build: ./backend_services/users_service/database
     container_name: users_database
     ports:
       - 5432:5432
     networks:
-      - users-data:
+      - users
     volumes:
-      - sql-data:/var/lib/postgresql
+      - users-data:/var/lib/postgresql/users
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -76,19 +104,21 @@ services:
     ports:
       - 5432:5432
     networks:
-      - server-side
+      - questions
     volumes:
-      - sql-data:/var/lib/postgresql
+      - questions-data:/var/lib/postgresql/questions
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=${PGDATA}
 volumes:
-  sql-data:
+  users-data:
+    external: true
+  questions-data:
     external: true
 networks:
-  users-data:
-  questions-data:
+  users:
+  questions:
   client-side:
   backend-apis:
