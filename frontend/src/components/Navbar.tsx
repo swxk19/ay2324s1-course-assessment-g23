@@ -13,7 +13,6 @@ const Navbar: React.FC = () => {
     const [editProfileOpen, setEditProfileOpen] = useState(false)
 
     const openEditProfile = () => {
-        console.log('Opening Edit Profile')
         setEditProfileOpen(true)
         setDropDownOpen(false)
     }
@@ -21,8 +20,6 @@ const Navbar: React.FC = () => {
     const handleSignOut = async () => {
         await logoutUserMutation.mutateAsync()
     }
-
-    console.log('editProfileOpen:', editProfileOpen)
 
     return (
         <div>
