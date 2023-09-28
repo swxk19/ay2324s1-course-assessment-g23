@@ -32,6 +32,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     const [editedDescription, setEditedDescription] = useState(question.description)
 
     const openModal = () => {
+        setEditedDescription(question.description)
         setIsModalOpen(true)
     }
 
