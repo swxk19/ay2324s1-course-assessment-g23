@@ -26,6 +26,7 @@ services:
       - SESSIONS_SERVICE_HOST= users_api #sessions_api
       - QUESTIONS_SERVICE_HOST=questions_api
       - MATCHING_SERVICE_HOST=matching_api
+      - API_PORT=8000
     depends_on:
       - base_api
       - users_api

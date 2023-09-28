@@ -25,7 +25,7 @@ class Database:
             traceback.print_exc()
 
     def execute_sql_write(self, sql_command: str, params: tuple=None):
-        conn = self.connect()
+        conn = self._connect()
         try:
             with conn, conn.cursor() as cur:
                 if params:
@@ -42,7 +42,7 @@ class Database:
             raise HTTPException(status_code=500, detail=str(e))
 
     def execute_sql_read_fetchone(self, sql_command: str, params: tuple=None):
-        conn = self.connect()
+        conn = self._connect()
         try:
             with conn, conn.cursor() as cur:
                 if params:
@@ -57,7 +57,7 @@ class Database:
             raise HTTPException(status_code=500, detail=str(e))
 
     def execute_sql_read_fetchall(self, sql_command: str, params: tuple=None):
-        conn = self.connect()
+        conn = self._connect()
         try:
             with conn, conn.cursor() as cur:
                 if params:

@@ -1,11 +1,20 @@
 from fastapi import FastAPI, HTTPException, Request, WebSocket
 import httpx
 import json
+from fastapi.middleware.cors import CORSMiddleware
 
 from utils.addresses import API_PORT, MATCHING_SERVICE_HOST
 from utils.api_gateway_util import check_permission, map_path_microservice_url, connect_matching_service_websocket
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -37,7 +46,7 @@ async def route_request(method: str, path: str, request: Request):
     cookies = request.cookies
     session_id = cookies.get('session_id')
 
-    check_permission(session_id, path, method)
+    await check_permission(session_id, path, method)
 
     data = await request.body()
 
@@ -48,14 +57,17 @@ async def route_request(method: str, path: str, request: Request):
         elif method == "POST":
             response = await client.post(f"{microservice_url}{path}", data=data)
         elif method == "PUT":
-            response = await client.post(f"{microservice_url}{path}", data=data)
+            response = await client.put(f"{microservice_url}{path}", data=data)
         elif method == "DELETE":
              response = await client.delete(f"{microservice_url}{path}", data=data)
 
-        response.raise_for_status()
-        return response.text
+        return response
 
-@app.route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def handle_request(path: str, request: Request):
+@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def handle_request(request: Request):
+    path = request.url.path
     method = request.method
-    return await route_request(method, path, request)
+
+    response = await route_request(method, path, request)
+
+    return response.json()

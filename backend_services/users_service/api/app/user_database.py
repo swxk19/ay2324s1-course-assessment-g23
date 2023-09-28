@@ -1,9 +1,10 @@
 from database_model import Database
+import os
 
-HOST = 'users'
-PORT = 5001
-DATABASE = 'users_database'
-USER = 'user'
-PASSWORD = 'password'
+HOST = os.getenv('POSTGRES_HOST')
+PORT = os.getenv('POSTGRES_PORT')
+DATABASE = os.getenv('POSTGRES_DB')
+USER = os.getenv('POSTGRES_USER')
+PASSWORD = os.getenv('POSTGRES_PASSWORD')
 
 USER_DATABASE = Database(HOST, PORT, DATABASE, USER, PASSWORD)

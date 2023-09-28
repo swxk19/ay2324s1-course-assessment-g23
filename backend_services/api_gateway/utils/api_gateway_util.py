@@ -22,16 +22,16 @@ def _get_id_from_url(path):
 
 def map_path_microservice_url(path):
     service = None
-    microservice_url = None
+    microservice_url = "http://"
     if path.startswith("/users"):
         service = "users"
-        microservice_url = f"{USERS_SERVICE_HOST}:{API_PORT}"
+        microservice_url += f"{USERS_SERVICE_HOST}:{API_PORT}"
     elif path.startswith("/questions"):
         service = "questions"
-        microservice_url = f"{QUESTIONS_SERVICE_HOST}:{API_PORT}"
+        microservice_url += f"{QUESTIONS_SERVICE_HOST}:{API_PORT}"
     elif path.startswith("/sessions"):
         service = "sessions"
-        microservice_url = f"{SESSIONS_SERVICE_HOST}:{API_PORT}"
+        microservice_url += f"{SESSIONS_SERVICE_HOST}:{API_PORT}"
 
     return service, microservice_url
 
