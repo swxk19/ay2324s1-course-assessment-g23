@@ -1,4 +1,4 @@
-from ...database_model import Database
+from database_model import Database
 import os
 
 HOST = os.getenv('POSTGRES_HOST')
@@ -7,4 +7,4 @@ DATABASE = os.getenv('POSTGRES_DB')
 USER = os.getenv('POSTGRES_USER')
 PASSWORD = os.getenv('POSTGRES_PAASWORD')
 
-USER_DATABASE = Database(HOST, PORT, DATABASE, USER, PASSWORD)
+QUESTIONS_DATABASE = Database(HOST, PORT, DATABASE, USER, PASSWORD)

@@ -1,7 +1,7 @@
 import hashlib
 from fastapi import HTTPException
-from ...database import user_database as db
-from ..utils import users_util
+from user_database import USER_DATABASE as db
+from utils import users_util
 
 def create_user(user_id, username, email, password):
     if users_util.uid_exists(user_id):

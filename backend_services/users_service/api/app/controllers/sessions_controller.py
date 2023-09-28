@@ -1,7 +1,7 @@
 import hashlib
 from fastapi import HTTPException
-from ...database import user_database as db
-from ..utils import users_util, sessions_util
+from user_database import USER_DATABASE as db
+from utils import users_util, sessions_util
 
 def user_login(username: str, password: str):
     hashed_password = hashlib.md5(password.encode()).hexdigest()

@@ -1,4 +1,4 @@
-from ...database_model import Database
+from database_model import Database
 
 HOST = 'users'
 PORT = 5001

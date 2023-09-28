@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timedelta
 
-from ...database import user_database as db
+from user_database import USER_DATABASE as db
 
 def is_valid_login(username, hashed_password):
     result = db.execute_sql_read_fetchone("SELECT user_id, role FROM users where username = %s AND password = %s",
