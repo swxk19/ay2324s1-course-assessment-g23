@@ -14,6 +14,8 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { type Question, updateQuestion } from '../../api/questions.ts'
+import { useUpdateQuestion } from '../../stores/questionStore.ts'
+import AlertMessage from '../AlertMessage.tsx'
 
 interface ReadOnlyRowProps {
     question: Question
@@ -30,6 +32,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
 }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editedDescription, setEditedDescription] = useState(question.description)
+    const updateQuestionMutation = useUpdateQuestion()
 
     const openModal = () => {
         setEditedDescription(question.description)
@@ -42,7 +45,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
 
     const handleEditDescription = async () => {
         question.description = editedDescription
-        await updateQuestion(question)
+        await updateQuestionMutation.mutateAsync(question)
         handleClose()
     }
 
@@ -187,6 +190,12 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                             </Typography>
                         </Button>
                     </DialogActions>
+                )}
+
+                {updateQuestionMutation.isError && (
+                    <AlertMessage variant='error'>
+                        <h4>Oops! {updateQuestionMutation.error.detail}</h4>
+                    </AlertMessage>
                 )}
             </Dialog>
         </>
