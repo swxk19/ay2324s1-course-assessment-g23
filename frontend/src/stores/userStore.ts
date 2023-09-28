@@ -52,9 +52,9 @@ export function useAllUsers() {
  * ```
  */
 export function useUser(id?: string) {
-    return useQuery<User | undefined, ApiError>({
-        queryKey: ['user', id],
-        queryFn: () => (id !== undefined ? getUser(id) : undefined),
+    return useQuery<User | null, ApiError>({
+        queryKey: ['user', id || null],
+        queryFn: () => (id ? getUser(id) : null),
     })
 }
 
