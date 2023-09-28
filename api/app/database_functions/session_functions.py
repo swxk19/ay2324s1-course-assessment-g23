@@ -7,11 +7,9 @@ import database as db
 
 def user_login(username: str, password: str):
     hashed_password = hashlib.md5(password.encode()).hexdigest()
+    user_id, role = sessions_util.is_valid_login(username, hashed_password) # returns False if invalid login
 
-    login_result = sessions_util.is_valid_login(username, hashed_password) # returns False if invalid login
-
-    if login_result:
-        user_id, role = login_result
+    if user_id:
         session_id = sessions_util.create_session(user_id, role)
         return {
             'user_id': f'{user_id}',
