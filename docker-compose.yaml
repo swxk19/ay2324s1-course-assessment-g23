@@ -8,37 +8,117 @@ services:
       - 80:80
     networks:
       - client-side
-  api:
-    build: ./api
-    container_name: api
+  base_api:
+    build: ./backend_services
+    container_name: base_api
     networks:
-      - server-side
+      - backend-apis
+  api_gateway:
+    build: ./backend_services/api_gateway
+    container_name: api_gateway
+    networks:
       - client-side
+      - backend-apis
     ports:
       - 8000:8000
     environment:
-      - POSTGRES_HOST=database
+      - USERS_SERVICE_HOST=users_api
+      - SESSIONS_SERVICE_HOST= users_api #sessions_api
+      - QUESTIONS_SERVICE_HOST=questions_api
+      - MATCHING_SERVICE_HOST=matching_api
+    depends_on:
+      - base_api
+      - users_api
+      #- sessions_api
+      - questions_api
+      - matching_api
+  users_api:
+    build: ./backend_services/users_service/api
+    container_name: users_api
+    ports: 
+      - 8000:8000
+    networks:
+      - backend-apis
+      - users
+    environment:
+      - POSTGRES_HOST=users_database
       - POSTGRES_PORT=5432
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  database:
-    build: ./database
-    container_name: database
+    depends_on:
+      - users_database
+      - base_api
+  questions_api:
+    build: ./backend_services/questions_service/api
+    container_name: questions_api
+    ports: 
+      - 8000:8000
+    networks:
+      - backend-apis
+      - questions
+    environment:
+      - POSTGRES_HOST=questions_database
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - questions_database
+      - base_api
+  matching_api:
+    build: ./backend_services/matching_service 
+    container_name: matching_api
+    ports: 
+      - 8000:8000
+    networks:
+      - backend-apis
+    depends_on:
+      - base_api
+  # sessions_api:
+  #   build: ./backend_services/sessions_service
+  #   container_name: sessions_api
+  #   ports: 
+  #     - 8000:8000
+  #   networks:
+  #     - backend_apis
+  #   depends_on:
+  #     - base_api
+  users_database:
+    build: ./backend_services/users_service/database
+    container_name: users_database
     ports:
       - 5432:5432
     networks:
-      - server-side
+      - users
     volumes:
-      - sql-data:/var/lib/postgresql
+      - users-data:/var/lib/postgresql/users
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=${PGDATA}
+  questions_database:
+    build: ./backend_services/questions_service/database
+    container_name: questions_database
+    ports:
+      - 5432:5432
+    networks:
+      - questions
+    volumes:
+      - questions-data:/var/lib/postgresql/questions
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=${PGDATA}
 volumes:
-  sql-data:
+  users-data:
+    external: true
+  questions-data:
     external: true
 networks:
+  users:
+  questions:
   client-side:
-  server-side:
+  backend-apis:

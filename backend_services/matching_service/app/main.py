@@ -3,8 +3,8 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 import threading
 
-from .matching_util import User
-from .queue_manager import queue, check_for_matches
+from matching_util import User
+from queue_manager import queue, check_for_matches
 
 # create app
 app = FastAPI()

@@ -1,6 +1,6 @@
 import httpx
 from fastapi import HTTPException
-from .addresses import HOST_URL, USERS_SERVICE_PORT, QUESTIONS_SERVICE_PORT, SESSIONS_SERVICE_PORT, MATCHING_SERVICE_PORT
+from .addresses import API_PORT, USERS_SERVICE_HOST, QUESTIONS_SERVICE_HOST, SESSIONS_SERVICE_HOST, MATCHING_SERVICE_HOST
 from .api_permissions import *
 
 def _get_id_from_url(path):
@@ -15,13 +15,13 @@ def map_path_microservice_url(path):
     microservice_url = None
     if path.startswith("/users"):
         service = "users"
-        microservice_url = f"{HOST_URL}:{USERS_SERVICE_PORT}"
+        microservice_url = f"{USERS_SERVICE_HOST}:{API_PORT}"
     elif path.startswith("/questions"):
         service = "questions"
-        microservice_url = f"{HOST_URL}:{QUESTIONS_SERVICE_PORT}"
+        microservice_url = f"{QUESTIONS_SERVICE_HOST}:{API_PORT}"
     elif path.startswith("/sessions"):
         service = "sessions"
-        microservice_url = f"{HOST_URL}:{SESSIONS_SERVICE_PORT}"
+        microservice_url = f"{SESSIONS_SERVICE_HOST}:{API_PORT}"
 
     return service, microservice_url
 
@@ -49,7 +49,7 @@ async def check_permission(session_id, path, method):
         raise HTTPException(status_code=401, detail="Unauthorized access")
 
     headers = { 'session_id': session_id }
-    url = f"{HOST_URL}/{SESSIONS_SERVICE_PORT}/sessions"
+    url = f"{SESSIONS_SERVICE_HOST}/{API_PORT}/sessions"
 
     async with httpx.AsyncClient() as client:
         response = await client.get(url, headers=headers)

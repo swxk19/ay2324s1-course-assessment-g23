@@ -9,8 +9,4 @@ RUN apk add --no-cache python3 postgresql-libs && \
     python3 -m pip install -r requirements.txt --no-cache-dir && \
     apk --purge del .build-deps
 
-COPY ./app /app
-
-WORKDIR /app
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+COPY database_model.py database_model.py
