@@ -2,7 +2,7 @@ version: "3"
 services:
   frontend:
     container_name: frontend
-    build: 
+    build:
       context: ./frontend
     ports:
       - 80:80
@@ -26,6 +26,7 @@ services:
       - SESSIONS_SERVICE_HOST= users_api #sessions_api
       - QUESTIONS_SERVICE_HOST=questions_api
       - MATCHING_SERVICE_HOST=matching_api
+      - API_PORT=8000
     depends_on:
       - base_api
       - users_api
@@ -35,8 +36,8 @@ services:
   users_api:
     build: ./backend_services/users_service/api
     container_name: users_api
-    ports: 
-      - 8000:8000
+    ports:
+      - 8001:8000
     networks:
       - backend-apis
       - users
@@ -52,8 +53,8 @@ services:
   questions_api:
     build: ./backend_services/questions_service/api
     container_name: questions_api
-    ports: 
-      - 8000:8000
+    ports:
+      - 8002:8000
     networks:
       - backend-apis
       - questions
@@ -67,10 +68,10 @@ services:
       - questions_database
       - base_api
   matching_api:
-    build: ./backend_services/matching_service 
+    build: ./backend_services/matching_service
     container_name: matching_api
-    ports: 
-      - 8000:8000
+    ports:
+      - 8003:8000
     networks:
       - backend-apis
     depends_on:
@@ -78,7 +79,7 @@ services:
   # sessions_api:
   #   build: ./backend_services/sessions_service
   #   container_name: sessions_api
-  #   ports: 
+  #   ports:
   #     - 8000:8000
   #   networks:
   #     - backend_apis
@@ -102,7 +103,7 @@ services:
     build: ./backend_services/questions_service/database
     container_name: questions_database
     ports:
-      - 5432:5432
+      - 5433:5432
     networks:
       - questions
     volumes:

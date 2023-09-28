@@ -1,8 +1,8 @@
 import traceback
 from fastapi import HTTPException
 
-import database as db
-from ..utils import questions_util
+from questions_database import QUESTIONS_DATABASE as db
+from utils import questions_util
 
 def create_question(question_id, title, description, category, complexity):
     if not questions_util.is_valid_complexity(complexity):

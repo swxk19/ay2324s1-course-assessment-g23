@@ -1,13 +1,20 @@
 from fastapi import FastAPI, HTTPException, Request, WebSocket
 import httpx
 import json
-import websockets
+from fastapi.middleware.cors import CORSMiddleware
 
-from utils.api_permissions import PERMISSIONS_TABLE
-from utils.addresses import API_PORT, USERS_SERVICE_HOST, QUESTIONS_SERVICE_HOST, SESSIONS_SERVICE_HOST, MATCHING_SERVICE_HOST
-from utils.api_gateway_util import check_permission, map_path_microservice_url, get_id_from_url
+from utils.addresses import API_PORT, MATCHING_SERVICE_HOST
+from utils.api_gateway_util import check_permission, map_path_microservice_url, connect_matching_service_websocket
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -22,12 +29,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
         # Send message to microservice
         if service == "matching-service":
-            websocket_url += f"{MATCHING_SERVICE_HOST}/{API_PORT}"
-            async with websockets.connect(websocket_url) as matching_service_websocket:
-                await matching_service_websocket.send(json.dumps(request))
-                response = await matching_service_websocket.recv()
-                await websocket.send_text(response)
-                websocket.close()
+            connect_matching_service_websocket(websocket, request)
         else:
             raise HTTPException(status_code=400, detail=f"Invalid service requested: {service}")
 
@@ -44,7 +46,7 @@ async def route_request(method: str, path: str, request: Request):
     cookies = request.cookies
     session_id = cookies.get('session_id')
 
-    check_permission(session_id, path, method)
+    await check_permission(session_id, path, method)
 
     data = await request.body()
 
@@ -55,14 +57,17 @@ async def route_request(method: str, path: str, request: Request):
         elif method == "POST":
             response = await client.post(f"{microservice_url}{path}", data=data)
         elif method == "PUT":
-            response = await client.post(f"{microservice_url}{path}", data=data)
+            response = await client.put(f"{microservice_url}{path}", data=data)
         elif method == "DELETE":
              response = await client.delete(f"{microservice_url}{path}", data=data)
 
-        response.raise_for_status()
-        return response.text
+        return response
 
-@app.route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def handle_request(path: str, request: Request):
+@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def handle_request(request: Request):
+    path = request.url.path
     method = request.method
-    return await route_request(method, path, request)
+
+    response = await route_request(method, path, request)
+
+    return response.json()

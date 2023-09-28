@@ -1,7 +1,17 @@
 import httpx
-from fastapi import HTTPException
+from fastapi import HTTPException, WebSocket
 from .addresses import API_PORT, USERS_SERVICE_HOST, QUESTIONS_SERVICE_HOST, SESSIONS_SERVICE_HOST, MATCHING_SERVICE_HOST
 from .api_permissions import *
+import websockets
+import json
+
+async def connect_matching_service_websocket(websocket: WebSocket, request):
+    websocket_url = f"{MATCHING_SERVICE_HOST}/{API_PORT}"
+    async with websockets.connect(websocket_url) as matching_service_websocket:
+                await matching_service_websocket.send(json.dumps(request))
+                response = await matching_service_websocket.recv()
+                await websocket.send_text(response)
+                websocket.close()
 
 def _get_id_from_url(path):
     tokens = path.split("/")
@@ -12,16 +22,16 @@ def _get_id_from_url(path):
 
 def map_path_microservice_url(path):
     service = None
-    microservice_url = None
+    microservice_url = "http://"
     if path.startswith("/users"):
         service = "users"
-        microservice_url = f"{USERS_SERVICE_HOST}:{API_PORT}"
+        microservice_url += f"{USERS_SERVICE_HOST}:{API_PORT}"
     elif path.startswith("/questions"):
         service = "questions"
-        microservice_url = f"{QUESTIONS_SERVICE_HOST}:{API_PORT}"
+        microservice_url += f"{QUESTIONS_SERVICE_HOST}:{API_PORT}"
     elif path.startswith("/sessions"):
         service = "sessions"
-        microservice_url = f"{SESSIONS_SERVICE_HOST}:{API_PORT}"
+        microservice_url += f"{SESSIONS_SERVICE_HOST}:{API_PORT}"
 
     return service, microservice_url
 

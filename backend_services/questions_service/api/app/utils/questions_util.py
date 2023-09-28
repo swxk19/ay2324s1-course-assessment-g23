@@ -1,4 +1,4 @@
-import database as db
+from questions_database import QUESTIONS_DATABASE as db
 
 def is_valid_complexity(complexity):
     valid_complexities =['Easy', 'Medium', 'Hard']
