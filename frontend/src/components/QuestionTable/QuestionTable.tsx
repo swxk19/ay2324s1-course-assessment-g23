@@ -11,8 +11,10 @@ import {
 import '../../styles/QuestionTable.css'
 import AlertMessage from '../AlertMessage.tsx'
 import '../../styles/AlertMessage.css'
+import { useSessionDetails } from '../../stores/sessionStore.ts'
 
 export const QuestionTable: React.FC = () => {
+    const { data: sessionDetails } = useSessionDetails()
     const { data: questions } = useAllQuestions()
     const storeQuestionMutation = useStoreQuestion()
     const updateQuestionMutation = useUpdateQuestion()
@@ -46,7 +48,7 @@ export const QuestionTable: React.FC = () => {
 
     const handleAddFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        storeQuestionMutation.mutate(addFormData)
+        await storeQuestionMutation.mutateAsync(addFormData)
         setAddFormData({
             title: '',
             description: '',
@@ -59,7 +61,7 @@ export const QuestionTable: React.FC = () => {
         event.preventDefault()
 
         if (!editFormData) return
-        updateQuestionMutation.mutate(editFormData)
+        await updateQuestionMutation.mutateAsync(editFormData)
         setEditFormData(null)
     }
 
@@ -74,6 +76,7 @@ export const QuestionTable: React.FC = () => {
 
     const handleDeleteClick = (questionId: string) => deleteQuestionMutation.mutate(questionId)
 
+    const isMaintainer = sessionDetails?.role === 'maintainer'
     return (
         <div className='question-container'>
             <h2>Questions</h2>
@@ -85,7 +88,7 @@ export const QuestionTable: React.FC = () => {
                             <th>Title</th>
                             <th>Category</th>
                             <th>Complexity</th>
-                            <th>Actions</th>
+                            {isMaintainer && <th>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -103,6 +106,7 @@ export const QuestionTable: React.FC = () => {
                                         question={question}
                                         handleEditClick={handleEditClick}
                                         handleDeleteClick={handleDeleteClick}
+                                        hasActions={isMaintainer}
                                     />
                                 )}
                             </Fragment>
@@ -123,60 +127,64 @@ export const QuestionTable: React.FC = () => {
                 </AlertMessage>
             )}
 
-            <h2>Add a Question</h2>
-            <form className='questionForm' onSubmit={handleAddFormSubmit}>
-                <input
-                    name='id'
-                    disabled
-                    placeholder='ID'
-                    onChange={handleAddFormChange}
-                    value={'—'}
-                />
-                <input
-                    name='title'
-                    required
-                    placeholder='Title'
-                    onChange={handleAddFormChange}
-                    value={addFormData.title}
-                />
+            {isMaintainer && (
+                <>
+                    <h2>Add a Question</h2>
+                    <form className='questionForm' onSubmit={handleAddFormSubmit}>
+                        <input
+                            name='id'
+                            disabled
+                            placeholder='ID'
+                            onChange={handleAddFormChange}
+                            value={'—'}
+                        />
+                        <input
+                            name='title'
+                            required
+                            placeholder='Title'
+                            onChange={handleAddFormChange}
+                            value={addFormData.title}
+                        />
 
-                <input
-                    name='category'
-                    required
-                    placeholder='Category'
-                    onChange={handleAddFormChange}
-                    value={addFormData.category}
-                />
-                <select
-                    name='complexity'
-                    required
-                    value={addFormData.complexity}
-                    onChange={handleAddFormChange}
-                >
-                    <option value='Easy'>Easy</option>
-                    <option value='Medium'>Medium</option>
-                    <option value='Hard'>Hard</option>
-                </select>
-                <div>
-                    <textarea
-                        className='custom-desc-input'
-                        name='description'
-                        required
-                        placeholder='Description'
-                        onChange={handleAddFormChange}
-                        value={addFormData.description}
-                    />
-                </div>
-                <div>
-                    <button id='addButton' type='submit'>
-                        Add
-                    </button>
-                </div>
-            </form>
-            {storeQuestionMutation.isError && (
-                <AlertMessage variant='error'>
-                    <h4>Oops! {storeQuestionMutation.error.detail}</h4>
-                </AlertMessage>
+                        <input
+                            name='category'
+                            required
+                            placeholder='Category'
+                            onChange={handleAddFormChange}
+                            value={addFormData.category}
+                        />
+                        <select
+                            name='complexity'
+                            required
+                            value={addFormData.complexity}
+                            onChange={handleAddFormChange}
+                        >
+                            <option value='Easy'>Easy</option>
+                            <option value='Medium'>Medium</option>
+                            <option value='Hard'>Hard</option>
+                        </select>
+                        <div>
+                            <textarea
+                                className='custom-desc-input'
+                                name='description'
+                                required
+                                placeholder='Description'
+                                onChange={handleAddFormChange}
+                                value={addFormData.description}
+                            />
+                        </div>
+                        <div>
+                            <button id='addButton' type='submit'>
+                                Add
+                            </button>
+                        </div>
+                    </form>
+                    {storeQuestionMutation.isError && (
+                        <AlertMessage variant='error'>
+                            <h4>Oops! {storeQuestionMutation.error.detail}</h4>
+                        </AlertMessage>
+                    )}
+                </>
             )}
         </div>
     )

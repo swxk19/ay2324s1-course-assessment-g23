@@ -18,8 +18,8 @@ export interface Question {
 /**
  * Stores a new question.
  *
- * @param {Omit<Question, 'question_id'>} question The question to store. All fields except ID are required.
- * @returns {Promise<string>} Resolves with the UUID for the stored question.
+ * @param question - The question to store. All fields except ID are required.
+ * @returns Resolves with the UUID for the stored question.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function storeQuestion(question: Omit<Question, 'question_id'>): Promise<string> {
@@ -27,6 +27,7 @@ export async function storeQuestion(question: Omit<Question, 'question_id'>): Pr
         method: 'POST',
         headers: QUESTION_API_HEADER,
         body: JSON.stringify(question),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -38,14 +39,15 @@ export async function storeQuestion(question: Omit<Question, 'question_id'>): Pr
 /**
  * Retrieves a question by its ID.
  *
- * @param {string} id The ID of the question to retrieve.
- * @returns {Promise<Question>} Resolves with the Question object if found.
+ * @param id - The ID of the question to retrieve.
+ * @returns Resolves with the Question object if found.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getQuestion(id: string): Promise<Question> {
     const response = await fetch(`${QUESTION_API_URL}/${id}`, {
         method: 'GET',
         headers: QUESTION_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -57,13 +59,14 @@ export async function getQuestion(id: string): Promise<Question> {
 /**
  * Retrieves all questions.
  *
- * @returns {Promise<Question[]>} An array of questions.
+ * @returns An array of questions.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getAllQuestions(): Promise<Question[]> {
     const response = await fetch(`${QUESTION_API_URL}/all`, {
         method: 'GET',
         headers: QUESTION_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -75,9 +78,8 @@ export async function getAllQuestions(): Promise<Question[]> {
 /**
  * Updates an existing question by its ID.
  *
- * @param {Pick<Question, 'question_id'> & Partial<Omit<Question, 'question_id'>>} updatedQuestion
- * Question with the fields to update. All fields except `id` are optional.
- * @returns {Promise<void>} Resolves when the question is successfully updated.
+ * @param updatedQuestion - Question with the fields to update. All fields except `id` are optional.
+ * @returns Resolves when the question is successfully updated.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function updateQuestion(
@@ -87,6 +89,7 @@ export async function updateQuestion(
         method: 'PUT',
         headers: QUESTION_API_HEADER,
         body: JSON.stringify(updatedQuestion),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -95,14 +98,15 @@ export async function updateQuestion(
 /**
  * Deletes a question by its ID.
  *
- * @param {string} id The ID of the question to be deleted.
- * @returns {Promise<void>} Resolves when the question is successfully deleted.
+ * @param id - The ID of the question to be deleted.
+ * @returns Resolves when the question is successfully deleted.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteQuestion(id: string): Promise<void> {
     const response = await fetch(`${QUESTION_API_URL}/${id}`, {
         method: 'DELETE',
         headers: QUESTION_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -111,13 +115,14 @@ export async function deleteQuestion(id: string): Promise<void> {
 /**
  * Deletes all questions.
  *
- * @returns {Promise<void>} Resolves when all questions are successfully deleted.
+ * @returns Resolves when all questions are successfully deleted.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteAllQuestions(): Promise<void> {
     const response = await fetch(`${QUESTION_API_URL}/all`, {
         method: 'DELETE',
         headers: QUESTION_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)

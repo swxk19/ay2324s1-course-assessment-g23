@@ -1,6 +1,9 @@
 import React, { ChangeEvent } from 'react'
 import { User } from '../../api/users.ts'
 import '../../styles/UserTable.css'
+import { IconButton } from '@mui/material'
+import SaveIcon from '@mui/icons-material/Save'
+import CancelIcon from '@mui/icons-material/Cancel'
 
 // Define a TypeScript interface for the props
 interface EditableRowProps {
@@ -47,10 +50,23 @@ const UserEditableRow: React.FC<EditableRowProps> = ({
                 />
             </td>
             <td>
-                <button type='submit'>Save</button>
-                <button type='button' onClick={handleCancelClick}>
-                    Cancel
-                </button>
+                <select
+                    name='role'
+                    required
+                    value={editFormData.role}
+                    onChange={handleEditFormChange}
+                >
+                    <option value='normal'>normal</option>
+                    <option value='maintainer'>maintainer</option>
+                </select>
+            </td>
+            <td>
+                <IconButton type='submit' sx={{ color: '#c2c2c2', paddingLeft: '0' }}>
+                    <SaveIcon />
+                </IconButton>
+                <IconButton type='button' onClick={handleCancelClick} sx={{ color: '#c2c2c2' }}>
+                    <CancelIcon />
+                </IconButton>
             </td>
         </tr>
     )

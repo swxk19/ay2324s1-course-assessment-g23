@@ -1,6 +1,9 @@
 import React, { ChangeEvent } from 'react'
 import { type Question } from '../../api/questions.ts'
 import '../../styles/QuestionTable.css'
+import { IconButton } from '@mui/material'
+import SaveIcon from '@mui/icons-material/Save'
+import CancelIcon from '@mui/icons-material/Cancel'
 
 // Define a TypeScript interface for the props
 interface EditableRowProps {
@@ -50,10 +53,12 @@ const QuestionEditableRow: React.FC<EditableRowProps> = ({
                 </select>
             </td>
             <td>
-                <button type='submit'>Save</button>
-                <button type='button' onClick={handleCancelClick}>
-                    Cancel
-                </button>
+                <IconButton type='submit' sx={{ color: '#c2c2c2', paddingLeft: '0' }}>
+                    <SaveIcon />
+                </IconButton>
+                <IconButton type='button' onClick={handleCancelClick} sx={{ color: '#c2c2c2' }}>
+                    <CancelIcon />
+                </IconButton>
             </td>
         </tr>
     )
