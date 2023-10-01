@@ -67,7 +67,7 @@ export async function getUser(id: string): Promise<User> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getAllUsers(): Promise<User[]> {
-    const response = await fetch(`${USERS_API_URL}/all`, {
+    const response = await fetch(`${USERS_API_URL}_all`, {
         method: 'GET',
         headers: USERS_API_HEADER,
         credentials: 'include',
@@ -123,7 +123,7 @@ export async function deleteUser(id: string): Promise<void> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteAllUsers(): Promise<void> {
-    const response = await fetch(`${USERS_API_URL}/all`, {
+    const response = await fetch(`${USERS_API_URL}_all`, {
         method: 'DELETE',
         headers: USERS_API_HEADER,
         credentials: 'include',
