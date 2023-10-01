@@ -10,9 +10,9 @@ def user_login(username: str, password: str):
 
     if login_result:
         user_id, role = login_result
-        session = sessions_util.create_session(user_id, role)
+        session_id = sessions_util.create_session(user_id, role)
         return {
-            'session_details': session,
+            'session_id': session_id,
             'message': f'User {username} successfully logged in'
         }
     else:

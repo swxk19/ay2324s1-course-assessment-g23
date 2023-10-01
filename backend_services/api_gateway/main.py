@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request, WebSocket
+from fastapi.responses import JSONResponse
 import httpx
 import json
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,10 +11,11 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 @app.websocket("/ws")
@@ -46,7 +48,7 @@ async def route_request(method: str, path: str, request: Request):
     cookies = request.cookies
     session_id = cookies.get('session_id')
 
-    # await check_permission(session_id, path, method)
+    await check_permission(session_id, path, method)
 
     data = await request.body()
 
@@ -69,5 +71,13 @@ async def handle_request(request: Request):
     method = request.method
 
     response = await route_request(method, path, request)
+
+    if path == "/sessions" and method == "POST":
+        response_content = response.json()
+        session_id = response_content['session_id']
+        message = response_content['message']
+        response = JSONResponse(content=message)
+        response.set_cookie(key='session_id', value=session_id)
+        return response
 
     return response.json()
