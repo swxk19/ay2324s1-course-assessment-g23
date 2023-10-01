@@ -63,7 +63,7 @@ export async function getQuestion(id: string): Promise<Question> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getAllQuestions(): Promise<Question[]> {
-    const response = await fetch(`${QUESTION_API_URL}/all`, {
+    const response = await fetch(`${QUESTION_API_URL}_all`, {
         method: 'GET',
         headers: QUESTION_API_HEADER,
         credentials: 'include',
@@ -119,7 +119,7 @@ export async function deleteQuestion(id: string): Promise<void> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteAllQuestions(): Promise<void> {
-    const response = await fetch(`${QUESTION_API_URL}/all`, {
+    const response = await fetch(`${QUESTION_API_URL}_all`, {
         method: 'DELETE',
         headers: QUESTION_API_HEADER,
         credentials: 'include',

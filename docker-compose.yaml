@@ -23,7 +23,7 @@ services:
       - 8000:8000
     environment:
       - USERS_SERVICE_HOST=users_api
-      - SESSIONS_SERVICE_HOST= users_api #sessions_api
+      - SESSIONS_SERVICE_HOST=users_api #sessions_api
       - QUESTIONS_SERVICE_HOST=questions_api
       - MATCHING_SERVICE_HOST=matching_api
       - API_PORT=8000
