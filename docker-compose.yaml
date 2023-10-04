@@ -93,7 +93,7 @@ services:
     networks:
       - users
     volumes:
-      - users-data:/var/lib/postgresql
+      - users-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -107,7 +107,7 @@ services:
     networks:
       - questions
     volumes:
-      - questions-data:/var/lib/postgresql
+      - questions-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
