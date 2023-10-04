@@ -20,8 +20,8 @@ PERMISSIONS_TABLE = {
         },
     "sessions": {
         "POST": PUBLIC_PERMISSION,
-        "GET": USER_PERMISSION,
-        "DELETE": USER_PERMISSION,
+        "GET": PUBLIC_PERMISSION, # for login persistence, and session_id should be implicitly already be secret to user
+        "DELETE": PUBLIC_PERMISSION, # no validation needed to logout
         },
     "sessions_all":{
         "GET": MAINTAINER_PERMISSION,

@@ -35,3 +35,8 @@ def is_account_owner(user_id, session_id):
         return db.execute_sql_read_fetchone("SELECT user_id FROM sessions WHERE session_id = %s", params=(session_id,))[0] == user_id
     except IndexError:
         raise HTTPException(status_code=409, detail='User not in session')
+
+def http_exception_message(status_code: int, message: str):
+    return {'status_code': status_code,
+            'message': message
+    }

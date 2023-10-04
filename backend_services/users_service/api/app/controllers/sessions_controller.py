@@ -1,5 +1,4 @@
 import hashlib
-from fastapi import HTTPException
 from user_database import USER_DATABASE as db
 from utils import users_util, sessions_util
 
@@ -17,9 +16,8 @@ def user_login(username: str, password: str):
         }
     else:
         if users_util.username_exists(username):
-            raise HTTPException(status_code=401, detail="Invalid password")
-        raise HTTPException(status_code=401, detail="Account does not exist")
-
+            return sessions_util.http_exception_message(status_code=401, message='Invalid password')
+        return sessions_util.http_exception_message(status_code=401, message='Account does not exist')
 
 def get_all_sessions():
     FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
@@ -37,7 +35,7 @@ def get_session(session_id):
     if result and not sessions_util.is_expired_session(result):
         return dict(zip(FIELD_NAMES, result))
     else:
-        raise HTTPException(status_code=401, detail="Unauthorized session")
+        return sessions_util.http_exception_message(status_code=401, message='Unauthorized session')
 
 def user_logout(session_id):
     try:
@@ -46,4 +44,5 @@ def user_logout(session_id):
             'message': f'Session {session_id} successfully deleted'
         }
     except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Unable to logout user: {e}")
+        return sessions_util.http_exception_message(status_code=500, message=f'Unable to logout user: {e}')
+

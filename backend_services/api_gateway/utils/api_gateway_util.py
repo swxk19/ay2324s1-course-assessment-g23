@@ -58,16 +58,16 @@ async def check_permission(session_id, path, method):
     if session_id is None:
         raise HTTPException(status_code=401, detail="Unauthorized access")
 
-    headers = { 'session_id': session_id }
-    url = f"{SESSIONS_SERVICE_HOST}/{API_PORT}/sessions"
+    url = f"http://{SESSIONS_SERVICE_HOST}:{API_PORT}/sessions/{session_id}"
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=headers)
-
-        if response.status_code != 200:
-            raise HTTPException(status_code=response.status_code, detail=response.text)
+        response = await client.get(url)
 
         session = response.json()
+        print(session, "#########")
+        if 'status_code' in session:
+            raise HTTPException(status_code=session['status_code'], detail=session['message'])
+
         _check_access_to_supplied_id(session, path, service_path)
 
         permission_level = _map_role_permission(session['role'])
@@ -86,9 +86,4 @@ def _check_access_to_supplied_id(session, path, service):
         supplied_id = _get_id_from_url(path)
         session_user_id = session['user_id']
         if supplied_id != session_user_id:
-            raise HTTPException(status_code=401, detail="Unauthorized access")
-
-    elif service == "sessions":
-        supplied_id = _get_id_from_url(path)
-        if supplied_id != session['session_id']:
             raise HTTPException(status_code=401, detail="Unauthorized access")
