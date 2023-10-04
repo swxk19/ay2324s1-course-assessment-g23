@@ -73,14 +73,18 @@ async def handle_request(request: Request):
     response = await route_request(method, path, request)
     response = response.json()
 
-    status_code = response['status_code']
-    if status_code != 200:
-        raise HTTPException(status_code=status_code, detail=response['message'])
+    if 'status_code' in response: # status code will not be there if there is no error
+        raise HTTPException(status_code=response['status_code'], detail=response['message'])
     if path == "/sessions" and method == "POST":
         session_id = response['session_id']
         message = response['message']
         response = JSONResponse(content=message)
         response.set_cookie(key='session_id', value=session_id)
+        return response
+    if path == "/sessions" and method == "DELETE":
+        message = response['message']
+        response = JSONResponse(content=message)
+        response.delete_cookie('session_id')
         return response
 
     return response
