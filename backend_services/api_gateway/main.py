@@ -55,6 +55,8 @@ async def route_request(method: str, path: str, request: Request):
     # Forward the request to the microservice
     async with httpx.AsyncClient() as client:
         if method == "GET":
+            if service == "sessions":
+                path += f"/{session_id}"
             response = await client.get(f"{microservice_url}{path}")
         elif method == "POST":
             response = await client.post(f"{microservice_url}{path}", data=data)
