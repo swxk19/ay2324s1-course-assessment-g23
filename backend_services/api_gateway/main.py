@@ -61,7 +61,9 @@ async def route_request(method: str, path: str, request: Request):
         elif method == "PUT":
             response = await client.put(f"{microservice_url}{path}", data=data)
         elif method == "DELETE":
-             response = await client.delete(f"{microservice_url}{path}", data=data)
+             if service == "sessions":
+                path += f"/{session_id}"
+             response = await client.delete(f"{microservice_url}{path}")
 
         return response
 
@@ -82,6 +84,7 @@ async def handle_request(request: Request):
         response.set_cookie(key='session_id', value=session_id)
         return response
     if path == "/sessions" and method == "DELETE":
+        print(response, "#####")
         message = response['message']
         response = JSONResponse(content=message)
         response.delete_cookie('session_id')

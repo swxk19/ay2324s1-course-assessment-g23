@@ -64,6 +64,7 @@ async def check_permission(session_id, path, method):
         response = await client.get(url)
 
         session = response.json()
+        print(session, "#########")
         if 'status_code' in session:
             raise HTTPException(status_code=session['status_code'], detail=session['message'])
 
