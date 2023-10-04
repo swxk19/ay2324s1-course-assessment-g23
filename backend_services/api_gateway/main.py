@@ -1,11 +1,9 @@
 from fastapi import FastAPI, HTTPException, Request, WebSocket
-from fastapi.responses import JSONResponse
 import httpx
 import json
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils.addresses import API_PORT, MATCHING_SERVICE_HOST
-from utils.api_gateway_util import check_permission, map_path_microservice_url, connect_matching_service_websocket
+from utils.api_gateway_util import check_permission, map_path_microservice_url, connect_matching_service_websocket, attach_cookie, delete_cookie
 
 app = FastAPI()
 
@@ -80,16 +78,9 @@ async def handle_request(request: Request):
     if 'status_code' in response: # status code will not be there if there is no error
         raise HTTPException(status_code=response['status_code'], detail=response['message'])
     if path == "/sessions" and method == "POST":
-        session_id = response['session_id']
-        message = response['message']
-        response = JSONResponse(content=message)
-        response.set_cookie(key='session_id', value=session_id)
-        return response
+        return attach_cookie(response)
     if path == "/sessions" and method == "DELETE":
-        print(response, "#####")
-        message = response['message']
-        response = JSONResponse(content=message)
-        response.delete_cookie('session_id')
-        return response
+        return delete_cookie(response)
 
     return response
+

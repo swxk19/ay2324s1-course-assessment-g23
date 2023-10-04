@@ -1,5 +1,6 @@
 import httpx
 from fastapi import HTTPException, WebSocket
+from fastapi.responses import JSONResponse
 from .addresses import API_PORT, USERS_SERVICE_HOST, QUESTIONS_SERVICE_HOST, SESSIONS_SERVICE_HOST, MATCHING_SERVICE_HOST
 from .api_permissions import *
 import websockets
@@ -64,7 +65,6 @@ async def check_permission(session_id, path, method):
         response = await client.get(url)
 
         session = response.json()
-        print(session, "#########")
         if 'status_code' in session:
             raise HTTPException(status_code=session['status_code'], detail=session['message'])
 
@@ -87,3 +87,17 @@ def _check_access_to_supplied_id(session, path, service):
         session_user_id = session['user_id']
         if supplied_id != session_user_id:
             raise HTTPException(status_code=401, detail="Unauthorized access")
+
+
+def attach_cookie(response):
+    session_id = response['session_id']
+    message = response['message']
+    response = JSONResponse(content=message)
+    response.set_cookie(key='session_id', value=session_id)
+    return response
+
+def delete_cookie(response):
+        message = response['message']
+        response = JSONResponse(content=message)
+        response.delete_cookie('session_id')
+        return response
