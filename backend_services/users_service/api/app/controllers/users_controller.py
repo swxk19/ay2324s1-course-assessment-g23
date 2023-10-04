@@ -5,11 +5,11 @@ from utils import users_util
 
 def create_user(user_id, username, email, password):
     if users_util.uid_exists(user_id):
-        raise HTTPException(status_code=500, detail='Internal server error (uid already exists)')
+        return users_util.http_exception_message(status_code=500, message='Internal server error (uid already exists)')
     if users_util.username_exists(username):
-        raise HTTPException(status_code=409, detail='Username already exists')
+        return users_util.http_exception_message(status_code=409, message='Username already exists')
     if users_util.email_exists(email):
-        raise HTTPException(status_code=409, detail='Email already exists')
+        return users_util.http_exception_message(status_code=409, message='Email already exists')
 
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
