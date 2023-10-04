@@ -71,13 +71,16 @@ async def handle_request(request: Request):
     method = request.method
 
     response = await route_request(method, path, request)
+    response = response.json()
 
+    status_code = response['status_code']
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=response['message'])
     if path == "/sessions" and method == "POST":
-        response_content = response.json()
-        session_id = response_content['session_id']
-        message = response_content['message']
+        session_id = response['session_id']
+        message = response['message']
         response = JSONResponse(content=message)
         response.set_cookie(key='session_id', value=session_id)
         return response
 
-    return response.json()
+    return response

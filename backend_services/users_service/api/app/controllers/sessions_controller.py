@@ -12,13 +12,18 @@ def user_login(username: str, password: str):
         user_id, role = login_result
         session_id = sessions_util.create_session(user_id, role)
         return {
+            'status_code': 200,
             'session_id': session_id,
             'message': f'User {username} successfully logged in'
         }
     else:
         if users_util.username_exists(username):
-            raise HTTPException(status_code=401, detail="Invalid password")
-        raise HTTPException(status_code=401, detail="Account does not exist")
+            return {'status_code': 401,
+            'message': 'Invalid password'
+            }
+        return {'status_code': 401,
+            'message': 'Account does not exist'
+            }
 
 
 def get_all_sessions():
@@ -35,9 +40,12 @@ def get_session(session_id):
                                  params=(session_id,))
 
     if result and not sessions_util.is_expired_session(result):
-        return dict(zip(FIELD_NAMES, result))
+        response = dict(zip(FIELD_NAMES, result))
+        response['status_code'] = 200
     else:
-        raise HTTPException(status_code=401, detail="Unauthorized session")
+        return {'status_code': 401,
+            'message': 'Unauthorized session'
+            }
 
 def user_logout(session_id):
     try:
@@ -46,4 +54,6 @@ def user_logout(session_id):
             'message': f'Session {session_id} successfully deleted'
         }
     except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Unable to logout user: {e}")
+        return {'status_code': 401,
+            'message': f"Unable to logout user: {e}"
+            }
