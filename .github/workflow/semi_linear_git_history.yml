@@ -6,8 +6,6 @@ on:
       - synchronize
       - opened
       - reopened
-    branches-ignore:
-      - master
 
 jobs:
   check-history:
