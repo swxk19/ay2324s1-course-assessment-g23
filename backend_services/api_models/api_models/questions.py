@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class CreateQuestion(BaseModel):
     title: str
     description: str

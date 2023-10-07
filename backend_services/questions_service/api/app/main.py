@@ -2,7 +2,7 @@ import uuid
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils import requestModels as rm
+from api_models import questions as rm
 from controllers import questions_controller as qc
 
 # create app
