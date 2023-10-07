@@ -37,13 +37,13 @@ def map_path_microservice_url(path):
     return service, microservice_url
 
 def _map_role_permission(role):
-        if role == PUBLIC_PERMISSION:
-            return "public"
-        elif role == "user":
-            return USER_PERMISSION
-        elif role == "maintainer":
-            return MAINTAINER_PERMISSION
-        return -1
+    if role == "public":
+        return PUBLIC_PERMISSION
+    elif role == "user":
+        return USER_PERMISSION
+    elif role == "maintainer":
+        return MAINTAINER_PERMISSION
+    return -1
 
 def _get_service_path(path):
     tokens = path.split("/")
