@@ -1,21 +1,24 @@
-from typing import Optional
 from pydantic import BaseModel
 
-class CreateUser(BaseModel):
+
+class CreateUserRequest(BaseModel):
     username: str
     password: str
     email: str
 
-class UpdateUserInfo(BaseModel):
+
+class UpdateUserRequest(BaseModel):
     user_id: str
     username: str
     password: str
     email: str
     role: str
 
-class UserLogin(BaseModel):
+
+class UserLoginRequest(BaseModel):
     username: str
     password: str
 
-class UpdateUserRole(BaseModel):
+
+class UpdateUserRoleRequest(BaseModel):
     role: str
