@@ -1,7 +1,10 @@
 from fastapi import FastAPI, HTTPException, Request, WebSocket
+from fastapi.responses import JSONResponse
 import httpx
 import json
 from fastapi.middleware.cors import CORSMiddleware
+from api_models.error import ServiceError
+from api_models.users import UserLoginResponse, UserLogoutResponse
 
 from utils.api_gateway_util import check_permission, map_path_microservice_url, connect_matching_service_websocket, attach_cookie, delete_cookie
 
@@ -68,7 +71,7 @@ async def route_request(method: str, path: str, request: Request):
         return response
 
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def handle_request(request: Request):
+async def handle_request(request: Request) -> dict | JSONResponse:
     path = request.url.path
     method = request.method
 
@@ -77,13 +80,16 @@ async def handle_request(request: Request):
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json()['detail'])
 
-    res_json = response.json()
-    if 'status_code' in res_json: # status code will not be there if there is no error
-        raise HTTPException(status_code=res_json['status_code'], detail=res_json['message'])
+    res_json: dict = response.json()
+    if ServiceError.is_service_error(res_json):
+        service_error = ServiceError(**res_json)
+        raise HTTPException(status_code=service_error.status_code, detail=service_error.message)
     if path == "/sessions" and method == "POST":
-        return attach_cookie(res_json)
+        res = UserLoginResponse(**res_json)
+        return attach_cookie(res)
     if path == "/sessions" and method == "DELETE":
-        return delete_cookie(res_json)
+        res = UserLogoutResponse(**res_json)
+        return delete_cookie(res)
 
     return res_json
 
