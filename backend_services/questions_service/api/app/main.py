@@ -28,7 +28,7 @@ async def get_question(question_id: str) -> GetQuestionResponse | ServiceError:
     return qc.get_question(question_id)
 
 @app.get("/questions_all", status_code=200)
-async def get_question() -> list[GetQuestionResponse]:
+async def get_all_questions() -> list[GetQuestionResponse]:
     return qc.get_all_questions()
 
 

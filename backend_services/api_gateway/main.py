@@ -71,7 +71,7 @@ async def route_request(method: str, path: str, request: Request):
         return response
 
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def handle_request(request: Request) -> dict | JSONResponse:
+async def handle_request(request: Request) -> JSONResponse:
     path = request.url.path
     method = request.method
 
@@ -91,5 +91,5 @@ async def handle_request(request: Request) -> dict | JSONResponse:
         res = UserLogoutResponse(**res_json)
         return delete_cookie(res)
 
-    return res_json
+    return JSONResponse(content=res_json)
 
