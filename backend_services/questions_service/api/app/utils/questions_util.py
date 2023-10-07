@@ -18,8 +18,3 @@ def check_duplicate_title(qid, title):
     cur = db.execute_sql_read_fetchone("SELECT EXISTS (SELECT 1 FROM questions WHERE title = %s AND question_id != %s)",
                                        params=(title, qid,))
     return cur[0]
-
-def http_exception_message(status_code: int, message: str):
-    return {'status_code': status_code,
-            'message': message
-    }

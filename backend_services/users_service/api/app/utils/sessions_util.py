@@ -28,8 +28,3 @@ def delete_session(session_id):
 
 def is_logged_in(session_id):
     return db.execute_sql_read_fetchone("SELECT COUNT(*) FROM sessions WHERE session_id = %s", params=(session_id,))[0] > 0
-
-def http_exception_message(status_code: int, message: str):
-    return {'status_code': status_code,
-            'message': message
-    }
