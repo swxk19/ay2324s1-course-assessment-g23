@@ -25,18 +25,22 @@ def get_all_sessions() -> list[GetSessionResponse]:
     sessions = [dict(zip(FIELD_NAMES, row)) for row in rows]
     return [GetSessionResponse(**x) for x in sessions]
 
-def get_session(session_id) -> GetSessionResponse | ServiceError:
+def get_session(session_id: str) -> GetSessionResponse | ServiceError:
     FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
 
     result = db.execute_sql_read_fetchone('SELECT * FROM sessions WHERE session_id = %s',
                                  params=(session_id,))
 
-    if result and not sessions_util.is_expired_session(result):
-        return GetSessionResponse(**dict(zip(FIELD_NAMES, result)))
-    else:
+    if result is None:
         return ServiceError(status_code=401, message='Unauthorized session')
 
-def user_logout(session_id) -> UserLogoutResponse | ServiceError:
+    expiration_time: str = result[4]
+    if sessions_util.is_expired_session(expiration_time):
+        return GetSessionResponse(**dict(zip(FIELD_NAMES, result)))
+
+    return ServiceError(status_code=401, message='Unauthorized session')
+
+def user_logout(session_id: str) -> UserLogoutResponse | ServiceError:
     try:
         sessions_util.delete_session(session_id)
         return UserLogoutResponse(message=f'Session {session_id} successfully deleted')

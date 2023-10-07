@@ -3,7 +3,7 @@ from api_models.error import ServiceError
 from questions_database import QUESTIONS_DATABASE as db
 from utils import questions_util
 
-def create_question(question_id, title, description, category, complexity) -> CreateQuestionResponse | ServiceError:
+def create_question(question_id: str, title: str, description: str, category: str, complexity: str) -> CreateQuestionResponse | ServiceError:
     if not questions_util.is_valid_complexity(complexity):
         return ServiceError(status_code=422, message="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
     if questions_util.qid_exists(question_id):
@@ -22,7 +22,7 @@ def get_all_questions() -> list[GetQuestionResponse]:
     questions = [dict(zip(FIELD_NAMES, row)) for row in rows]
     return [GetQuestionResponse(**q) for q in questions] # type: ignore
 
-def get_question(question_id) -> GetQuestionResponse | ServiceError:
+def get_question(question_id: str) -> GetQuestionResponse | ServiceError:
     if not questions_util.qid_exists(question_id):
         return ServiceError(status_code=404, message='Question id does not exist')
 
@@ -30,10 +30,11 @@ def get_question(question_id) -> GetQuestionResponse | ServiceError:
 
     row = db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM questions WHERE question_id = %s",
                                     params=(question_id,))
+    assert row is not None
     question = dict(zip(FIELD_NAMES, row))
     return GetQuestionResponse(**question) # type: ignore
 
-def update_question_info(question_id, title, description, category, complexity) -> UpdateQuestionResponse | ServiceError:
+def update_question_info(question_id: str, title: str, description: str, category: str, complexity: str) -> UpdateQuestionResponse | ServiceError:
     if not questions_util.qid_exists(question_id):
         return ServiceError(status_code=404, message="Question does not exist")
     if questions_util.check_duplicate_title(question_id, title):
@@ -51,7 +52,7 @@ def delete_all_questions() -> DeleteQuestionResponse:
     db.execute_sql_write("DELETE FROM questions")
     return DeleteQuestionResponse(message='All questions deleted')
 
-def delete_question(question_id) -> DeleteQuestionResponse | ServiceError:
+def delete_question(question_id: str) -> DeleteQuestionResponse | ServiceError:
     if not questions_util.qid_exists(question_id):
         return ServiceError(status_code=404, message="Question does not exist")
 

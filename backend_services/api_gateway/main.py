@@ -1,3 +1,4 @@
+from typing import cast
 from fastapi import FastAPI, HTTPException, Request, WebSocket
 from fastapi.responses import JSONResponse
 import httpx
@@ -5,6 +6,7 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from api_models.error import ServiceError
 from api_models.users import UserLoginResponse, UserLogoutResponse
+from utils.api_permissions import Method
 
 from utils.api_gateway_util import check_permission, map_path_microservice_url, connect_matching_service_websocket, attach_cookie, delete_cookie
 
@@ -39,7 +41,7 @@ async def websocket_endpoint(websocket: WebSocket):
     except HTTPException as http_exc:
         await websocket.send_text(http_exc.detail)
 
-async def route_request(method: str, path: str, request: Request):
+async def route_request(method: Method, path: str, request: Request):
     # Determine the microservice URL based on the path
     service, microservice_url = map_path_microservice_url(path)
 
@@ -73,7 +75,7 @@ async def route_request(method: str, path: str, request: Request):
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
 async def handle_request(request: Request) -> JSONResponse:
     path = request.url.path
-    method = request.method
+    method = cast(Method, request.method)
 
     response = await route_request(method, path, request)
 
