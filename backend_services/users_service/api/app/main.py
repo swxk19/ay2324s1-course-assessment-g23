@@ -2,7 +2,7 @@ import uuid
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils import requestModels as rm
+from api_models.users import CreateUser, UpdateUserInfo, UpdateUserRole, UserLogin
 from controllers import users_controller as uc, sessions_controller as sc
 
 # create app
@@ -18,7 +18,7 @@ app.add_middleware(
 )
 
 @app.post("/users", status_code=200)
-async def create_user(r: rm.CreateUser):
+async def create_user(r: CreateUser):
     user_id = str(uuid.uuid4())
     return uc.create_user(user_id, r.username, r.email, r.password)
 
@@ -39,15 +39,15 @@ async def delete_user(user_id: str):
     return uc.delete_user(user_id)
 
 @app.put("/users/{user_id}", status_code=200)
-async def update_user_info(user_id: str, r: rm.UpdateUserInfo):
+async def update_user_info(user_id: str, r: UpdateUserInfo):
     return uc.update_user_info(user_id, r.username, r.password, r.email)
 
 @app.put("/users_role/{user_id}", status_code=200)
-async def update_user_role(user_id: str, r: rm.UpdateUserRole):
+async def update_user_role(user_id: str, r: UpdateUserRole):
     return uc.update_user_role(user_id, r.role)
 
 @app.post("/sessions", status_code=200)
-async def user_login(r: rm.UserLogin):
+async def user_login(r: UserLogin):
     return sc.user_login(r.username, r.password)
 
 @app.get("/sessions_all",  status_code=200)
