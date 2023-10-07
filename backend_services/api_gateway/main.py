@@ -73,14 +73,17 @@ async def handle_request(request: Request):
     method = request.method
 
     response = await route_request(method, path, request)
-    response = response.json()
 
-    if 'status_code' in response: # status code will not be there if there is no error
-        raise HTTPException(status_code=response['status_code'], detail=response['message'])
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json()['detail'])
+
+    res_json = response.json()
+    if 'status_code' in res_json: # status code will not be there if there is no error
+        raise HTTPException(status_code=res_json['status_code'], detail=res_json['message'])
     if path == "/sessions" and method == "POST":
-        return attach_cookie(response)
+        return attach_cookie(res_json)
     if path == "/sessions" and method == "DELETE":
-        return delete_cookie(response)
+        return delete_cookie(res_json)
 
-    return response
+    return res_json
 
