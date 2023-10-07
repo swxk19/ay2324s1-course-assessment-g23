@@ -1,58 +1,105 @@
-from fastapi import FastAPI, WebSocket
-import json
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-import logging
+from fastapi.websockets import WebSocketState
 
-from matching_util import add_event
-from matching import send_user_to_queue, wait_for_match, remove_user_from_queue
-import asyncio
+from data_classes import (
+    Complexity,
+    MatchRequest,
+    MatchResponse,
+    UserWebSocket,
+    UserWebSocketQueue,
+)
 
-# create app
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"]
+    expose_headers=["*"],
 )
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-# Configure logging to write to stdout
-handler = logging.StreamHandler()
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+queues: dict[Complexity, UserWebSocketQueue] = {
+    "easy": UserWebSocketQueue(),
+    "medium": UserWebSocketQueue(),
+    "hard": UserWebSocketQueue(),
+}
 
 
 @app.websocket("/ws/matching")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
-        # Receive message from client
-        request = await websocket.receive_text()
-        message = json.loads(request)
-        user_id = message["user_id"]
-        complexity = message["complexity"]
-        action = message["action"]
-        if action == "queue":
-            user_event = asyncio.Event()
-            add_event(user_id, user_event)
-            logger.info(f"Sending {user_id} to queue")
-            await send_user_to_queue(user_id, complexity)
-            listener_task = asyncio.create_task(
-                wait_for_match(user_id, complexity, websocket))
-            await user_event.wait()
-        elif action == "cancel":
-            await remove_user_from_queue(user_id, complexity)
-        logger.info(f"Closing websocket for {user_id}")
-    except Exception as e:
-        # Log any other exceptions for debugging
-        print(f"An error occurred: {e}")
+        while True:
+            json_data = await websocket.receive_json()
+            payload = MatchRequest(**json_data)
+            user = UserWebSocket(user_id=payload.user_id, websocket=websocket)
+
+            match payload.action:
+                case "queue":
+                    await handle_queue(payload.complexity, user)
+                case "cancel":
+                    await handle_cancel(payload.complexity, user)
+
+    # Ignore exceptions related to websocket disconnecting.
+    except WebSocketDisconnect:
+        pass
+    except RuntimeError as e:
+        if "WebSocket is not connected" in str(e):
+            return
+        raise e
+
     finally:
-        await websocket.close()
+        await handle_cleanup(websocket)
+
+
+async def handle_queue(complexity: Complexity, user_1: UserWebSocket) -> None:
+    queue = queues[complexity]
+
+    # If no match, add user to queue.
+    if queue.is_empty():
+        queue.push(user_1)
+        return
+
+    # If has match, send both users their matches and close both websockets.
+    user_2 = queue.pop()
+
+    await user_1.websocket.send_json(
+        MatchResponse(is_matched=True, user_id=user_2.user_id).model_dump(mode="json")
+    )
+    await user_2.websocket.send_json(
+        MatchResponse(is_matched=True, user_id=user_1.user_id).model_dump(mode="json")
+    )
+
+    await user_1.websocket.close()
+    await user_2.websocket.close()
+
+
+async def handle_cancel(complexity: Complexity, user: UserWebSocket) -> None:
+    queue = queues[complexity]
+    queue.remove_by_websocket(user.websocket)
+    await user.websocket.send_json(
+        MatchResponse(is_matched=False, user_id=None).model_dump(mode="json")
+    )
+    await user.websocket.close()
+
+
+async def handle_cleanup(websocket: WebSocket) -> None:
+    # Remove websocket from queue if it exists.
+    for queue in queues.values():
+        queue.remove_by_websocket(websocket)
+
+    try:
+        # Close websocket if it hasn't closed yet.
+        if websocket.client_state != WebSocketState.DISCONNECTED:
+            await websocket.close()
+
+    # Idk why, but sometimes this gets thrown.
+    # It's something to do with `websocket.client_state == WebSocketState.DISCONNECTED`
+    # while calling `websocket.close()`.
+    # Idk how that manages to happen but this try-except ignores it.
+    except RuntimeError as e:
+        if 'Cannot call "send" once a close message has been sent' in str(e):
+            return
+        raise e

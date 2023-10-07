@@ -6,4 +6,6 @@ COPY ./app /app
 
 WORKDIR /app
 
-CMD uvicorn main:app --host 0.0.0.0 --port 8003 --workers 4
+# MUST run with 1 worker only, else there'll be
+# duplicate queues on different threads.
+CMD uvicorn main:app --host 0.0.0.0 --port 8003 --workers 1
