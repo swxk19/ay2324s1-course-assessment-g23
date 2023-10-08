@@ -3,9 +3,12 @@ import Navbar from '../components/Navbar.tsx'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSessionDetails } from '../stores/sessionStore.ts'
+import MatchBar from '../components/MatchBar.tsx'
 
 const Questions = () => {
     const { data: sessionDetails } = useSessionDetails()
+    const isUser = sessionDetails?.role === 'normal'
+
     const navigate = useNavigate()
 
     // Redirect if not logged in.
@@ -17,7 +20,10 @@ const Questions = () => {
     return (
         <>
             <Navbar />
-            <QuestionTable />
+            <div className='question-page-container'>
+                {isUser && <MatchBar />}
+                <QuestionTable />
+            </div>
         </>
     )
 }
