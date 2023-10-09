@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
     }
 
     return (
-        <div>
+        <>
             <nav className='nav'>
                 <Link to='/questions' className='site-title'>
                     PeerPrep
@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
             {editProfileOpen && (
                 <EditProfile user={user!} onClose={() => setEditProfileOpen(false)} />
             )}
-        </div>
+        </>
     )
 }
 
