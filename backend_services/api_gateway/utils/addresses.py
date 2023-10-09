@@ -1,7 +1,14 @@
 import os
 
-API_PORT = os.getenv("API_PORT")
-USERS_SERVICE_HOST = os.getenv("USERS_SERVICE_HOST")
-QUESTIONS_SERVICE_HOST = os.getenv("QUESTIONS_SERVICE_HOST")
-SESSIONS_SERVICE_HOST = os.getenv("SESSIONS_SERVICE_HOST")
-MATCHING_SERVICE_HOST = os.getenv("MATCHING_SERVICE_HOST")
+
+def _get_env_variable(key: str) -> str:
+    value = os.getenv(key)
+    assert value is not None, f'Environment variable "{key}" not found.'
+    return value
+
+
+API_PORT = _get_env_variable("API_PORT")
+USERS_SERVICE_HOST = _get_env_variable("USERS_SERVICE_HOST")
+QUESTIONS_SERVICE_HOST = _get_env_variable("QUESTIONS_SERVICE_HOST")
+SESSIONS_SERVICE_HOST = _get_env_variable("SESSIONS_SERVICE_HOST")
+MATCHING_SERVICE_HOST = _get_env_variable("MATCHING_SERVICE_HOST")

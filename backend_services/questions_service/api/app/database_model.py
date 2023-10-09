@@ -1,16 +1,16 @@
+from dataclasses import dataclass
 import psycopg2
-import os
 import traceback
 from fastapi import HTTPException
 
 
+@dataclass
 class Database:
-    def __init__(self, host, port, database, user, password):
-        self.host = host
-        self.port = port
-        self.database = database
-        self.user = user
-        self.password = password
+    host: str
+    port: str
+    database: str
+    user: str
+    password: str
 
     def _connect(self):
         try:
@@ -21,10 +21,11 @@ class Database:
                 user = self.user,
                 password = self.password)
             return conn
-        except Exception:
+        except Exception as e:
             traceback.print_exc()
+            raise e
 
-    def execute_sql_write(self, sql_command: str, params: tuple=None):
+    def execute_sql_write(self, sql_command: str, params: tuple | None = None):
         conn = self._connect()
         try:
             with conn, conn.cursor() as cur:
@@ -41,7 +42,7 @@ class Database:
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-    def execute_sql_read_fetchone(self, sql_command: str, params: tuple=None):
+    def execute_sql_read_fetchone(self, sql_command: str, params: tuple | None = None):
         conn = self._connect()
         try:
             with conn, conn.cursor() as cur:
@@ -56,7 +57,7 @@ class Database:
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-    def execute_sql_read_fetchall(self, sql_command: str, params: tuple=None):
+    def execute_sql_read_fetchall(self, sql_command: str, params: tuple | None = None):
         conn = self._connect()
         try:
             with conn, conn.cursor() as cur:
