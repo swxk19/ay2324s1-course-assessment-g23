@@ -9,14 +9,14 @@ services:
     networks:
       - client-side
   base_api:
-    build: 
+    build:
       context: ./backend_services
       dockerfile: ./Dockerfile
     container_name: base_api
     networks:
       - backend-apis
   api_gateway:
-    build: 
+    build:
       context: ./backend_services/api_gateway
       dockerfile: ../API_Dockerfile
     container_name: api_gateway
@@ -27,18 +27,17 @@ services:
       - 8000:8000
     environment:
       - USERS_SERVICE_HOST=users_api
-      - SESSIONS_SERVICE_HOST=users_api #sessions_api
+      - SESSIONS_SERVICE_HOST=users_api
       - QUESTIONS_SERVICE_HOST=questions_api
       - MATCHING_SERVICE_HOST=matching_api
       - API_PORT=8000
     depends_on:
       - base_api
       - users_api
-      #- sessions_api
       - questions_api
       - matching_api
   users_api:
-    build: 
+    build:
       context: ./backend_services/users_service/api
       dockerfile: ../../API_Dockerfile
     container_name: users_api
@@ -57,7 +56,7 @@ services:
       - users_database
       - base_api
   questions_api:
-    build: 
+    build:
       context: ./backend_services/questions_service/api
       dockerfile: ../../API_Dockerfile
     container_name: questions_api
@@ -76,7 +75,7 @@ services:
       - questions_database
       - base_api
   matching_api:
-    build: 
+    build:
       context: ./backend_services/matching_service
       dockerfile: ../API_Dockerfile
     container_name: matching_api
@@ -87,7 +86,7 @@ services:
     depends_on:
       - base_api
   users_database:
-    build: 
+    build:
       context: ./backend_services/users_service/database
       dockerfile: ../../DB_Dockerfile
     container_name: users_database
@@ -103,7 +102,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=${PGDATA}
   questions_database:
-    build: 
+    build:
       context: ./backend_services/questions_service/database
       dockerfile: ../../DB_Dockerfile
     container_name: questions_database
