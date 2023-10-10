@@ -11,14 +11,14 @@ services:
   base_api:
     build: 
       context: ./backend_services
-      dockerfile: ./backend_services/Dockerfile
+      dockerfile: ./Dockerfile
     container_name: base_api
     networks:
       - backend-apis
   api_gateway:
     build: 
       context: ./backend_services/api_gateway
-      dockerfile: ./backend_services/API_Dockerfile
+      dockerfile: ../API_Dockerfile
     container_name: api_gateway
     networks:
       - client-side
@@ -40,7 +40,7 @@ services:
   users_api:
     build: 
       context: ./backend_services/users_service/api
-      dockerfile: ./backend_services/API_Dockerfile
+      dockerfile: ../../API_Dockerfile
     container_name: users_api
     ports:
       - 8001:8000
@@ -59,7 +59,7 @@ services:
   questions_api:
     build: 
       context: ./backend_services/questions_service/api
-      dockerfile: ./backend_services/API_Dockerfile
+      dockerfile: ../../API_Dockerfile
     container_name: questions_api
     ports:
       - 8002:8000
@@ -78,7 +78,7 @@ services:
   matching_api:
     build: 
       context: ./backend_services/matching_service
-      dockerfile: ./backend_services/API_Dockerfile
+      dockerfile: ../API_Dockerfile
     container_name: matching_api
     ports:
       - 8003:8000
@@ -89,7 +89,7 @@ services:
   users_database:
     build: 
       context: ./backend_services/users_service/database
-      dockerfile: ./backend_services/DB_Dockerfile
+      dockerfile: ../../DB_Dockerfile
     container_name: users_database
     ports:
       - 5432:5432
@@ -105,7 +105,7 @@ services:
   questions_database:
     build: 
       context: ./backend_services/questions_service/database
-      dockerfile: ./backend_services/DB_Dockerfile
+      dockerfile: ../../DB_Dockerfile
     container_name: questions_database
     ports:
       - 5433:5432
