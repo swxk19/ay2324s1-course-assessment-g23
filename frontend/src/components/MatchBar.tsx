@@ -1,12 +1,21 @@
-import React from 'react'
+import React, {useState} from 'react'
 import '../styles/MatchBar.css'
 import { Info, Star, Whatshot } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
+import MatchingScreen from "./MatchingScreen.tsx";
 
 const tooltipDescription =
     'Select a difficulty level and get matched with another user. ' +
     'Together, you both will collaboratively attempt a question of the chosen difficulty.'
 const MatchBar: React.FC = () => {
+    const [findMatch, setFindMatch] = useState(false)
+    const [difficulty, setDifficulty] = useState<string>('')
+
+    const openFindMatch = (difficulty: string) => {
+        setFindMatch(true)
+        setDifficulty(difficulty)
+    }
+
     return (
         <span className='matchbar-container'>
             <div className='welcome'>
@@ -22,24 +31,25 @@ const MatchBar: React.FC = () => {
                     </Tooltip>
                 </div>
                 <div className='match-button-container'>
-                    <button className='match-button' id='easy'>
+                    <button className='match-button' id='easy' onClick={() => openFindMatch('Easy')}>
                         <div className='icon-text-wrapper'>
                             <Star />
                             Easy
                         </div>
                     </button>
-                    <button className='match-button' id='medium'>
+                    <button className='match-button' id='medium' onClick={() => openFindMatch('Medium')}>
                         <Star />
                         <Star />
                         Medium
                     </button>
-                    <button className='match-button' id='hard'>
+                    <button className='match-button' id='hard' onClick={() => openFindMatch('Hard')}>
                         <Star />
                         <Star />
                         <Star />
                         Hard
                     </button>
                 </div>
+                {findMatch && <MatchingScreen difficulty={difficulty} onMatchExit={() => setFindMatch(false)}/>}
             </div>
         </span>
     )
