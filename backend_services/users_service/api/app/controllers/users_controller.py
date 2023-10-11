@@ -20,13 +20,13 @@ def create_user(user_id, username, email, password) -> CreateUserResponse | Serv
     return CreateUserResponse(message=f'User({user_id}) successfully created')
 
 def get_all_users() -> list[GetUserResponse]:
-    FIELD_NAMES = ['user_id', 'username', 'email', 'password', 'role']
+    FIELD_NAMES = ['user_id', 'username', 'email', 'role']
     rows = db.execute_sql_read_fetchall(f"SELECT {', '.join(FIELD_NAMES)} FROM users")
     users = [dict(zip(FIELD_NAMES, row)) for row in rows]
     return [GetUserResponse(**x) for x in users]  # type: ignore
 
 def get_user(user_id) -> GetUserResponse:
-    FIELD_NAMES = ['user_id', 'username', 'email', 'password', 'role']
+    FIELD_NAMES = ['user_id', 'username', 'email', 'role']
     row = db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s",
                                         params=(user_id,))
     user = dict(zip(FIELD_NAMES, row))
