@@ -1,5 +1,5 @@
 from typing import Any, cast
-from fastapi import FastAPI, HTTPException, Request, WebSocket
+from fastapi import Cookie, FastAPI, HTTPException, Request, WebSocket
 from fastapi.responses import JSONResponse
 import httpx
 import json
@@ -66,10 +66,9 @@ async def route_request(
                 return await client.delete(f"{microservice_url}{path}")
 
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def handle_request(request: Request) -> JSONResponse:
+async def handle_request(request: Request, session_id: str | None = Cookie(None)) -> JSONResponse:
     path = request.url.path
     method = cast(Method, request.method)
-    session_id = request.cookies.get('session_id')
 
     # Determine the microservice URL based on the path
     service, microservice_url = map_path_microservice_url(path)
