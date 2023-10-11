@@ -15,7 +15,6 @@ class GetUserResponse(BaseModel):
     user_id: str
     username: str
     email: str
-    password: str
     role: str
 
 

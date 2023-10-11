@@ -32,21 +32,6 @@ const UserReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 </Tooltip>
             </td>
             <td>{user.username}</td>
-            <td>
-                <Tooltip title={<p>{user.password}</p>} arrow>
-                    <Typography
-                        style={{
-                            cursor: 'pointer',
-                            maxWidth: '20ch', // Adjust the maximum width as needed
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                            textOverflow: 'ellipsis',
-                        }}
-                    >
-                        {user.password}
-                    </Typography>
-                </Tooltip>
-            </td>
             <td>{user.email}</td>
             <td>{user.role}</td>
             <td>

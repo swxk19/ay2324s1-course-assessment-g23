@@ -14,8 +14,10 @@ export interface UserSignupDetails {
 }
 
 /** Represents a user. */
-export interface User extends UserSignupDetails {
+export interface User {
     user_id: string
+    username: string
+    email: string
     role: string
 }
 
