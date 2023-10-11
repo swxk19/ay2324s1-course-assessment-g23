@@ -23,11 +23,9 @@ class DeleteUserResponse(BaseModel):
 
 
 class UpdateUserRequest(BaseModel):
-    user_id: str
     username: str
     password: str
     email: str
-    role: str
 
 
 class UpdateUserResponse(BaseModel):
