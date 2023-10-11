@@ -1,14 +1,14 @@
-from typing import cast
+from typing import Any, cast
 from fastapi import FastAPI, HTTPException, Request, WebSocket
 from fastapi.responses import JSONResponse
 import httpx
 import json
 from fastapi.middleware.cors import CORSMiddleware
 from api_models.error import ServiceError
-from api_models.users import UserLoginResponse, UserLogoutResponse
+from api_models.users import UserLoginResponse
 from utils.api_permissions import Method
 
-from utils.api_gateway_util import check_permission, map_path_microservice_url, connect_matching_service_websocket, attach_cookie, delete_cookie
+from utils.api_gateway_util import has_permission, map_path_microservice_url, connect_matching_service_websocket
 
 app = FastAPI()
 
@@ -41,57 +41,60 @@ async def websocket_endpoint(websocket: WebSocket):
     except HTTPException as http_exc:
         await websocket.send_text(http_exc.detail)
 
-async def route_request(method: Method, path: str, request: Request):
-    # Determine the microservice URL based on the path
-    service, microservice_url = map_path_microservice_url(path)
-
-    if not service:
-        raise HTTPException(status_code=404, detail="Endpoint not found")
-
-    cookies = request.cookies
-    session_id = cookies.get('session_id')
-
-    await check_permission(session_id, path, method)
-
-    data = await request.body()
-
+async def route_request(
+    method: Method,
+    path: str,
+    service: str,
+    microservice_url: str,
+    session_id: str | None,
+    data: Any
+) -> httpx.Response:
     # Forward the request to the microservice
     async with httpx.AsyncClient() as client:
-        if method == "GET":
-            if service == "sessions":
-                path += f"/{session_id}"
-            response = await client.get(f"{microservice_url}{path}")
-        elif method == "POST":
-            response = await client.post(f"{microservice_url}{path}", data=data)
-        elif method == "PUT":
-            response = await client.put(f"{microservice_url}{path}", data=data)
-        elif method == "DELETE":
-             if service == "sessions":
-                path += f"/{session_id}"
-             response = await client.delete(f"{microservice_url}{path}")
-
-        return response
+        match method:
+            case "GET":
+                if service == "sessions":
+                    path += f"/{session_id}"
+                return await client.get(f"{microservice_url}{path}")
+            case "POST":
+                return await client.post(f"{microservice_url}{path}", data=data)
+            case "PUT":
+                return await client.put(f"{microservice_url}{path}", data=data)
+            case "DELETE":
+                if service == "sessions":
+                    path += f"/{session_id}"
+                return await client.delete(f"{microservice_url}{path}")
 
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
 async def handle_request(request: Request) -> JSONResponse:
     path = request.url.path
     method = cast(Method, request.method)
+    session_id = request.cookies.get('session_id')
 
-    response = await route_request(method, path, request)
+    # Determine the microservice URL based on the path
+    service, microservice_url = map_path_microservice_url(path)
+    if service is None:
+        return JSONResponse(status_code=404, content="Endpoint not found")
 
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail=response.json()['detail'])
+    if not await has_permission(session_id, path, method):
+        return JSONResponse(status_code=401, content="Unauthorized access")
 
-    res_json: dict = response.json()
+    data = await request.body()
+    res = await route_request(method, path, service, microservice_url, session_id, data)
+
+    if res.status_code != 200:
+        return JSONResponse(status_code=res.status_code, content=res.content)
+
+    res_json: dict = res.json()
+    output = JSONResponse(content=res_json)
     if ServiceError.is_service_error(res_json):
         service_error = ServiceError(**res_json)
         raise HTTPException(status_code=service_error.status_code, detail=service_error.message)
+
     if path == "/sessions" and method == "POST":
-        res = UserLoginResponse(**res_json)
-        return attach_cookie(res)
-    if path == "/sessions" and method == "DELETE":
-        res = UserLogoutResponse(**res_json)
-        return delete_cookie(res)
+        login_json = UserLoginResponse(**res_json)
+        output.set_cookie(key='session_id', value=login_json.session_id)
+    elif path == "/sessions" and method == "DELETE":
+        output.delete_cookie('session_id')
 
-    return JSONResponse(content=res_json)
-
+    return output
