@@ -77,3 +77,11 @@ button:hover {
     color: #fe375f;
     font-weight: bold;
 }
+
+.box {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    margin-right: auto;
+    margin-left: auto;
+}

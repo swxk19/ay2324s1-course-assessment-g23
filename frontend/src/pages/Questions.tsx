@@ -7,7 +7,8 @@ import MatchBar from '../components/MatchBar.tsx'
 
 const Questions = () => {
     const { data: sessionDetails } = useSessionDetails()
-    const isUser = sessionDetails?.role === 'normal'
+    /** const isUser = sessionDetails?.role === 'normal'*/
+    const isUser = true
 
     const navigate = useNavigate()
 
