@@ -34,15 +34,6 @@ const UserEditableRow: React.FC<EditableRowProps> = ({
             <td>
                 <input
                     required
-                    placeholder='Password'
-                    name='password'
-                    value={editFormData.password}
-                    onChange={handleEditFormChange}
-                />
-            </td>
-            <td>
-                <input
-                    required
                     placeholder='Email'
                     name='email'
                     value={editFormData.email}
