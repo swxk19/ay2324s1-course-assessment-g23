@@ -22,7 +22,7 @@ def create_session(user_id: str, role: str) -> str:
     expiration_time = creation_time + timedelta(minutes=15)
 
     db.execute_sql_write("INSERT INTO sessions (session_id, user_id, role, creation_time, expiration_time) VALUES (%s, %s, %s, %s, %s)",
-                         params=(session_id, user_id, role, str(creation_time), str(expiration_time)))
+                         params=(session_id, user_id, role, creation_time, expiration_time))
     return session_id
 
 def delete_session(session_id: str) -> Literal[True]:

@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS sessions(
     session_id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) REFERENCES users(user_id),
     role VARCHAR(255),
-    creation_time VARCHAR(255),
-    expiration_time VARCHAR(255)
+    creation_time TIMESTAMP,
+    expiration_time TIMESTAMP
 );
 
 INSERT INTO users VALUES (uuid_generate_v4()::VARCHAR, 'admin', MD5('password'), 'admin@email.com', 'maintainer');
