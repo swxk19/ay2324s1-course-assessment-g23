@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS users(
 
 CREATE TABLE IF NOT EXISTS sessions(
     session_id VARCHAR(255) PRIMARY KEY,
-    user_id VARCHAR(255) REFERENCES users(user_id),
+    user_id VARCHAR(255) REFERENCES users(user_id)
+        ON DELETE CASCADE,
     role VARCHAR(255),
     creation_time TIMESTAMP,
     expiration_time TIMESTAMP
