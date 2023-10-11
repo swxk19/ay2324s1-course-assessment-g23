@@ -35,7 +35,7 @@ def get_session(session_id: str) -> GetSessionResponse | ServiceError:
         return ServiceError(status_code=401, message='Unauthorized session')
 
     expiration_time: str = result[4]
-    if sessions_util.is_expired_session(expiration_time):
+    if not sessions_util.is_expired_session(expiration_time):
         return GetSessionResponse(**dict(zip(FIELD_NAMES, result)))
 
     return ServiceError(status_code=401, message='Unauthorized session')
