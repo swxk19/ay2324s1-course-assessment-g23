@@ -32,20 +32,32 @@ def get_user(user_id) -> GetUserResponse:
     user = dict(zip(FIELD_NAMES, row))
     return GetUserResponse(**user)  # type: ignore
 
-def update_user_info(user_id, username, password, email) -> UpdateUserResponse | ServiceError:
+def update_user_info(user_id: str, username: str | None, password: str | None, email: str | None) -> UpdateUserResponse | ServiceError:
     if not users_util.uid_exists(user_id):
         return ServiceError(status_code=404, message="User does not exist")
-    if users_util.check_duplicate_username(user_id, username):
+    if username and users_util.check_duplicate_username(user_id, username):
         return ServiceError(status_code=409, message='Username already exists')
-    if users_util.check_duplicate_email(user_id, email):
+    if email and users_util.check_duplicate_email(user_id, email):
         return ServiceError(status_code=409, message='Email already exists')
 
-    new_password = hashlib.md5(password.encode()).hexdigest()
+    columns_values = {
+        'username': username,
+        'password': hashlib.md5(password.encode()).hexdigest() if password else None,
+        'email': email
+    }
 
-    db.execute_sql_write("""UPDATE users
-                        SET username = %s, password = %s, email = %s
-                        WHERE user_id = %s""",
-                        params=(username, new_password, email, user_id))
+    # Use dictionary comprehension to filter out None values and prepare the SQL parts.
+    updates: list[str] = [f"{col} = %s" for col, val in columns_values.items() if val is not None]
+    params: list[str] = [val for val in columns_values.values() if val is not None]
+
+    if not updates:  # No updates to make
+        return UpdateUserResponse(message='Nothing to update')
+
+    # Construct the full SQL query.
+    sql_query = f"UPDATE users SET {', '.join(updates)} WHERE user_id = %s"
+    params.append(user_id)
+
+    db.execute_sql_write(sql_query, params=tuple(params))
     return UpdateUserResponse(message='Successfully updated')
 
 

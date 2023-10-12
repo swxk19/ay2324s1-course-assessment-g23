@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -23,11 +24,9 @@ class DeleteUserResponse(BaseModel):
 
 
 class UpdateUserRequest(BaseModel):
-    user_id: str
-    username: str
-    password: str
-    email: str
-    role: str
+    username: Optional[str] = None
+    password: Optional[str] = None
+    email: Optional[str] = None
 
 
 class UpdateUserResponse(BaseModel):
