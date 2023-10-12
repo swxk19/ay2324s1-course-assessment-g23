@@ -30,20 +30,9 @@ def check_duplicate_email(uid: str, email: str) -> bool:
     return cur[0]
 
 def is_maintainer(user_id: str) -> bool:
-    try:
-        cur = db.execute_sql_read_fetchone("SELECT role FROM sessions WHERE session_id = %s", params=(user_id,))
-        assert cur is not None
-        return cur[0] == "maintainer"
-    except IndexError:
-        raise HTTPException(status_code=409, detail='User not in session')
-
-def is_account_owner(user_id, session_id):
-    try:
-        cur = db.execute_sql_read_fetchone("SELECT user_id FROM sessions WHERE session_id = %s", params=(session_id,))
-        assert cur is not None
-        return cur[0] == user_id
-    except IndexError:
-        raise HTTPException(status_code=409, detail='User not in session')
+    cur = db.execute_sql_read_fetchone("SELECT role FROM user WHERE user_id = %s", params=(user_id,))
+    assert cur is not None
+    return cur[0] == "maintainer"
 
 def get_num_maintainers() -> int:
     cur = db.execute_sql_read_fetchone("SELECT COUNT(*) FROM users WHERE role = 'maintainer'")

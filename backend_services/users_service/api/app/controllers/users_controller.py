@@ -69,6 +69,9 @@ def delete_user(user_id) -> DeleteUserResponse | ServiceError:
     if not users_util.uid_exists(user_id):
         return ServiceError(status_code=404, message="User does not exist")
 
+    if users_util.is_maintainer(user_id) and users_util.get_num_maintainers == 1:
+        return ServiceError(status_code=403, message="Cannot delete last maintainer")
+
     db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))
     return DeleteUserResponse(message=f'User id {user_id} deleted')
 
