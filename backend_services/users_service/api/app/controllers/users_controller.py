@@ -5,7 +5,7 @@ from api_models.users import CreateUserResponse, DeleteUserResponse, GetUserResp
 from user_database import USER_DATABASE as db
 from utils import users_util
 
-def create_user(user_id, username, email, password) -> CreateUserResponse | ServiceError:
+def create_user(user_id: str, username: str, email: str, password: str) -> CreateUserResponse | ServiceError:
     if users_util.uid_exists(user_id):
         return ServiceError(status_code=500, message='Internal server error (uid already exists)')
     if users_util.username_exists(username):
@@ -25,7 +25,7 @@ def get_all_users() -> list[GetUserResponse]:
     users = [dict(zip(FIELD_NAMES, row)) for row in rows]
     return [GetUserResponse(**x) for x in users]  # type: ignore
 
-def get_user(user_id) -> GetUserResponse:
+def get_user(user_id: str) -> GetUserResponse:
     FIELD_NAMES = ['user_id', 'username', 'email', 'role']
     row = db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s",
                                         params=(user_id,))
@@ -65,7 +65,7 @@ def delete_all_users() -> DeleteUserResponse:
     db.execute_sql_write("DELETE FROM users")
     return DeleteUserResponse(message='All users deleted')
 
-def delete_user(user_id) -> DeleteUserResponse | ServiceError:
+def delete_user(user_id: str) -> DeleteUserResponse | ServiceError:
     if not users_util.uid_exists(user_id):
         return ServiceError(status_code=404, message="User does not exist")
 
@@ -75,7 +75,7 @@ def delete_user(user_id) -> DeleteUserResponse | ServiceError:
     db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))
     return DeleteUserResponse(message=f'User id {user_id} deleted')
 
-def update_user_role(user_id, role) -> UpdateUserRoleResponse | ServiceError:
+def update_user_role(user_id: str, role: str) -> UpdateUserRoleResponse | ServiceError:
     if role == "normal" and users_util.get_num_maintainers() <= 1:
         return ServiceError(status_code=409, message='Only one maintainer left')
 
