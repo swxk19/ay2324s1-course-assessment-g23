@@ -1,4 +1,4 @@
-import { User } from '../api/users'
+import type { UpdatedUser, User } from '../api/users'
 import { useUpdateUser } from '../stores/userStore'
 import '../styles/EditProfile.css'
 import React, { useState } from 'react'
@@ -16,12 +16,13 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onClose }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        await updateUserMutation.mutateAsync({
-            ...user,
-            username,
-            email,
-            password: password || user.password,
-        })
+
+        const updatedUser: UpdatedUser = { user_id: user.user_id }
+        if (username !== user.username) updatedUser['username'] = username
+        if (email !== user.email) updatedUser['email'] = email
+        if (password) updatedUser['password'] = password
+
+        await updateUserMutation.mutateAsync(updatedUser)
         onClose()
     }
 

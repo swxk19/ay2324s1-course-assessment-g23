@@ -21,6 +21,14 @@ export interface User {
     role: string
 }
 
+export interface UpdatedUser {
+    user_id: string
+    username?: string
+    password?: string
+    email?: string
+    role?: string
+}
+
 /**
  * Stores a new user.
  *
@@ -84,13 +92,11 @@ export async function getAllUsers(): Promise<User[]> {
 /**
  * Updates an existing user by its ID.
  *
- * @param updatedUser - User with the fields to update. All fields except `id` are optional.
+ * @param updatedUser - User with the fields to update. All fields except `user_id` are optional.
  * @returns Resolves when the user is successfully updated.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
-export async function updateUser(
-    updatedUser: Pick<User, 'user_id'> & Partial<Omit<User, 'user_id'>>
-): Promise<void> {
+export async function updateUser(updatedUser: UpdatedUser): Promise<void> {
     const response = await fetch(USERS_API_URL, {
         method: 'PUT',
         headers: USERS_API_HEADER,
