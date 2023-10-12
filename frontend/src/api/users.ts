@@ -97,10 +97,26 @@ export async function getAllUsers(): Promise<User[]> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function updateUser(updatedUser: UpdatedUser): Promise<void> {
-    const response = await fetch(USERS_API_URL, {
+    // Split "role" from the rest, as it uses a different API.
+    const { user_id, role, ...rolelessUpdatedUser } = updatedUser
+
+    // Attempt to update "role" first, as it requires a higher permission.
+    // (ie. if fail to update role, it will fail to update everything)
+    if (role) {
+        const response = await fetch(`${USERS_API_URL}_role/${user_id}`, {
+            method: 'PUT',
+            headers: USERS_API_HEADER,
+            body: JSON.stringify({ role }),
+            credentials: 'include',
+        })
+
+        if (!response.ok) throw await ApiError.parseResponse(response)
+    }
+
+    const response = await fetch(`${USERS_API_URL}/${user_id}`, {
         method: 'PUT',
         headers: USERS_API_HEADER,
-        body: JSON.stringify(updatedUser),
+        body: JSON.stringify(rolelessUpdatedUser),
         credentials: 'include',
     })
 
