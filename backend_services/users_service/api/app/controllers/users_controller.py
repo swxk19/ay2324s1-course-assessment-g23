@@ -15,8 +15,8 @@ def create_user(user_id, username, email, password) -> CreateUserResponse | Serv
 
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
-    db.execute_sql_write("INSERT INTO users (user_id, username, email, password) VALUES (%s, %s, %s, %s)",
-                         params=(user_id, username, email, hashed_password))
+    db.execute_sql_write("INSERT INTO users (user_id, username, email, password, role) VALUES (%s, %s, %s, %s, %s)",
+                         params=(user_id, username, email, hashed_password, "normal"))
     return CreateUserResponse(message=f'User({user_id}) successfully created')
 
 def get_all_users() -> list[GetUserResponse]:
@@ -69,7 +69,7 @@ def delete_user(user_id) -> DeleteUserResponse | ServiceError:
     if not users_util.uid_exists(user_id):
         return ServiceError(status_code=404, message="User does not exist")
 
-    if users_util.is_maintainer(user_id) and users_util.get_num_maintainers == 1:
+    if users_util.is_maintainer(user_id) and users_util.get_num_maintainers() == 1:
         return ServiceError(status_code=403, message="Cannot delete last maintainer")
 
     db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))

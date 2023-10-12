@@ -30,11 +30,12 @@ def check_duplicate_email(uid: str, email: str) -> bool:
     return cur[0]
 
 def is_maintainer(user_id: str) -> bool:
-    cur = db.execute_sql_read_fetchone("SELECT role FROM user WHERE user_id = %s", params=(user_id,))
+    cur = db.execute_sql_read_fetchone("SELECT role FROM users WHERE user_id = %s", params=(user_id,))
     assert cur is not None
     return cur[0] == "maintainer"
 
 def get_num_maintainers() -> int:
-    cur = db.execute_sql_read_fetchone("SELECT COUNT(*) FROM users WHERE role = 'maintainer'")
+    cur = db.execute_sql_read_fetchone("SELECT COUNT(role) FROM users WHERE role = 'maintainer'")
     assert cur is not None
     return cur[0]
+
