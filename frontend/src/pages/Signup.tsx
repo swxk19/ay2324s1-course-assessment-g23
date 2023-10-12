@@ -45,6 +45,8 @@ const Signup = () => {
                 bounce: 0.1
             }} }
             exit={{ x: '-70vw' }}
+            transition={{ duration: 0.3 }}
+
         >
             <div className='signup-page'>
                 <div className='signup-box'>
