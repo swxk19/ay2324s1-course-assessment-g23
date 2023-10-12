@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useLoginUser, useSessionDetails } from '../stores/sessionStore'
 import AlertMessage from '../components/AlertMessage'
+import {motion} from 'framer-motion';
+
 
 const Login = () => {
     const { data: sessionDetails } = useSessionDetails()
@@ -10,6 +12,7 @@ const Login = () => {
     const navigate = useNavigate()
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+
 
     // Redirect if already logged in.
     useEffect(() => {
@@ -21,8 +24,16 @@ const Login = () => {
         await loginUserMutation.mutateAsync({ username, password })
     }
 
+
     return (
-        <>
+        <motion.div
+            key = 'Login'
+            initial={{ x: '50vw' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-90vw' }}
+            transition={{ duration: 0.3 }}
+
+        >
             <span className='home-page-container'>
                 <div className='info-container'>
                     <h1>Welcome to PeerPrep!</h1>
@@ -59,7 +70,7 @@ const Login = () => {
                     <h4>Oops! {loginUserMutation.error.detail}</h4>
                 </AlertMessage>
             )}
-        </>
+        </motion.div>
     )
 }
 
