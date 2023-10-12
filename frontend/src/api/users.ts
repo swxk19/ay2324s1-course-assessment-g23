@@ -113,6 +113,9 @@ export async function updateUser(updatedUser: UpdatedUser): Promise<void> {
         if (!response.ok) throw await ApiError.parseResponse(response)
     }
 
+    const hasNoValues = Object.values(rolelessUpdatedUser).every((x) => x === undefined)
+    if (hasNoValues) return
+
     const response = await fetch(`${USERS_API_URL}/${user_id}`, {
         method: 'PUT',
         headers: USERS_API_HEADER,
