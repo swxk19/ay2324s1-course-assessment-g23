@@ -73,9 +73,8 @@ def delete_user(user_id) -> DeleteUserResponse | ServiceError:
     return DeleteUserResponse(message=f'User id {user_id} deleted')
 
 def update_user_role(user_id, role) -> UpdateUserRoleResponse | ServiceError:
-    if role == "normal":
-        if db.execute_sql_read_fetchone("SELECT COUNT(*) FROM users WHERE role = 'maintainer'")[0] <= 1:
-            return ServiceError(status_code=409, message='Only one maintainer left')
+    if role == "normal" and users_util.get_num_maintainers() <= 1:
+        return ServiceError(status_code=409, message='Only one maintainer left')
 
     db.execute_sql_write("UPDATE users SET role = %s WHERE user_id = %s", params=(role, user_id))
 

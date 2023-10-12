@@ -44,3 +44,8 @@ def is_account_owner(user_id, session_id):
         return cur[0] == user_id
     except IndexError:
         raise HTTPException(status_code=409, detail='User not in session')
+
+def get_num_maintainers() -> int:
+    cur = db.execute_sql_read_fetchone("SELECT COUNT(*) FROM users WHERE role = 'maintainer'")
+    assert cur is not None
+    return cur[0]
