@@ -2,17 +2,7 @@ import { motion } from 'framer-motion'
 
 /** Adapted from https://codesandbox.io/s/framer-motion-loader-tpbpg?file=/src/loader.jsx */
 
-const colors = [
-    '#00b8a2',
-    '#33c575',
-    '#66d248',
-    '#99de1b',
-    '#fec800',
-    '#fe9c40',
-    '#fe7030',
-    '#fe4430',
-    '#fe375f',
-]
+const colors = ['white', 'white', 'white', 'white', 'white']
 
 const containerVariants = {
     initial: {},
@@ -27,7 +17,7 @@ const containerVariants = {
 const dotVariants = {
     initial: {},
     animate: {
-        height: [40, 100, 40],
+        height: [10, 30, 10],
         transition: {
             duration: 1.5,
             repeat: Infinity,
@@ -35,7 +25,7 @@ const dotVariants = {
     },
 }
 
-const Loader = ({ count = colors.length }) => {
+const TinyLoader = ({ count = colors.length }) => {
     return (
         <motion.div
             variants={containerVariants}
@@ -43,8 +33,8 @@ const Loader = ({ count = colors.length }) => {
             animate='animate'
             style={{
                 display: 'flex',
-                gap: 10,
-                height: 100,
+                gap: 5,
+                height: 40,
                 alignItems: 'center',
             }}
         >
@@ -56,8 +46,8 @@ const Loader = ({ count = colors.length }) => {
                             key={index}
                             variants={dotVariants}
                             style={{
-                                height: 40,
-                                width: 40,
+                                height: 30,
+                                width: 10,
                                 backgroundColor: colors[index % colors.length],
                                 borderRadius: 20,
                             }}
@@ -68,4 +58,4 @@ const Loader = ({ count = colors.length }) => {
     )
 }
 
-export default Loader
+export default TinyLoader

@@ -45,6 +45,7 @@ button {
     cursor: pointer;
     transition: border-color 0.25s;
 }
+
 button:hover {
     border-color: #646cff;
 }
@@ -55,9 +56,11 @@ button:hover {
         color: white;
         background-color: #ffffff;
     }
+
     a:hover {
         color: #747bff;
     }
+
     button {
         background-color: #f9f9f9;
     }
@@ -76,4 +79,16 @@ button:hover {
 .complexity-color-Hard {
     color: #fe375f;
     font-weight: bold;
+}
+
+.bg-complexity-color-Easy {
+    background-color: #00b8a2;
+}
+
+.bg-complexity-color-Medium {
+    background-color: #febf1d;
+}
+
+.bg-complexity-color-Hard {
+    background-color: #fe375f;
 }
