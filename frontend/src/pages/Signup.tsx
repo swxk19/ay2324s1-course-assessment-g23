@@ -4,8 +4,7 @@ import '../styles/SignupPage.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSignupUser } from '../stores/sessionStore.ts'
 import AlertMessage from '../components/AlertMessage.tsx'
-import {motion} from 'framer-motion';
-
+import { motion } from 'framer-motion'
 
 const Signup = () => {
     const signupUserMutation = useSignupUser()
@@ -32,21 +31,22 @@ const Signup = () => {
         })
     }
 
-
     return (
         <motion.div
             key='Signup'
             initial={{ x: '70vw' }}
-            animate={{ x: 0, transition:{
-                type: "spring",
-                stiffness: 100,
-                damping: 10,
-                mass: 0.5,
-                bounce: 0.1
-            }} }
+            animate={{
+                x: 0,
+                transition: {
+                    type: 'spring',
+                    stiffness: 100,
+                    damping: 10,
+                    mass: 0.5,
+                    bounce: 0.1,
+                },
+            }}
             exit={{ x: '-70vw' }}
             transition={{ duration: 0.3 }}
-
         >
             <div className='signup-page'>
                 <div className='signup-box'>
@@ -86,7 +86,7 @@ const Signup = () => {
                         <h4>Oops! {signupUserMutation.error.detail}</h4>
                     </AlertMessage>
                 )}
-            </div>`
+            </div>
         </motion.div>
     )
 }

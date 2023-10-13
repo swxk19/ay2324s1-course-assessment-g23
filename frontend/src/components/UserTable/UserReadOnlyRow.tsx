@@ -3,6 +3,7 @@ import { IconButton, Tooltip, Typography } from '@mui/material'
 import React from 'react'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+
 interface ReadOnlyRowProps {
     user: User
     handleEditClick: (event: React.MouseEvent<HTMLButtonElement>, user: User) => void
