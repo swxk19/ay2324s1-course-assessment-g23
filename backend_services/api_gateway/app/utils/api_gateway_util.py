@@ -8,14 +8,14 @@ from api_models.error import ServiceError
 from api_models.users import GetSessionResponse
 from .addresses import API_PORT, USERS_SERVICE_HOST, QUESTIONS_SERVICE_HOST, SESSIONS_SERVICE_HOST, MATCHING_SERVICE_HOST
 from .api_permissions import *
-from websockets.sync.client import connect
+import websockets
 import json
-from typing import Literal, TypeAlias, Dict
+from typing import Literal, TypeAlias
 
-async def connect_matching_service_websocket(websocket: WebSocket, request_data: Dict):
+async def connect_matching_service_websocket(websocket: WebSocket, request):
     websocket_url = f"{MATCHING_SERVICE_HOST}/{API_PORT}"
-    async with connect(websocket_url) as matching_service_websocket:
-                await matching_service_websocket.send(json.dumps(request_data))
+    async with websockets.connect(websocket_url) as matching_service_websocket:
+                await matching_service_websocket.send(json.dumps(request))
                 response = await matching_service_websocket.recv()
                 await websocket.send_text(response)
                 websocket.close()
