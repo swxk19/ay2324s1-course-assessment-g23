@@ -41,7 +41,7 @@ def map_path_microservice_url(path: str) -> tuple[Services, str]:
 def _map_role_permission(role: str) -> PermissionLevel:
     if role == "public":
         return PUBLIC_PERMISSION
-    elif role == "user":
+    elif role == "normal":
         return USER_PERMISSION
     elif role == "maintainer":
         return MAINTAINER_PERMISSION
