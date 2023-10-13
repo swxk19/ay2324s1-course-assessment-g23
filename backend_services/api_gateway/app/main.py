@@ -7,8 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from api_models.error import ServiceError
 from api_models.users import UserLoginResponse
 from utils.api_permissions import Method
-
+import websockets
 from utils.api_gateway_util import has_permission, map_path_microservice_url, connect_matching_service_websocket
+from utils.addresses import MATCHING_SERVICE_HOST
 
 app = FastAPI()
 
@@ -24,22 +25,33 @@ app.add_middleware(
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-
     try:
         # Receive message from client
         message = await websocket.receive_text()
-
-        request_data =  json.loads(message)
-        service = request_data["service"]
-
+        request =  json.loads(message)
+        service = request["service"]
+        body = request["message"]
         # Send message to microservice
         if service == "matching-service":
-            connect_matching_service_websocket(websocket, request_data)
+            # await connect_matching_service_websocket(websocket, message)
+            websocket_url = "ws://" + MATCHING_SERVICE_HOST + ":8003/ws/matching"
+            async with websockets.connect(websocket_url) as matching_service_websocket:
+                await matching_service_websocket.send_text(json.dumps(request))
+                response = await matching_service_websocket.receive_text()
+                message = json.loads(response)
+                await websocket.send_text(json.dumps(message))
+                websocket.close()
         else:
             raise HTTPException(status_code=400, detail=f"Invalid service requested: {service}")
 
     except HTTPException as http_exc:
         await websocket.send_text(http_exc.detail)
+    except websockets.exceptions.ConnectionClosedError as conn_closed_exc:
+        # Handle WebSocket connection closed errors
+        print(f"WebSocket connection closed: {conn_closed_exc}")
+    except Exception as e:
+        # Log any other exceptions for debugging
+        print(f"An error occurred: {e}")
 
 async def route_request(
     method: Method,
