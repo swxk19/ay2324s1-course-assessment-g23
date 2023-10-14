@@ -4,13 +4,9 @@ import { motion } from 'framer-motion'
 
 const colors = [
     '#00b8a2',
-    '#33c575',
-    '#66d248',
-    '#99de1b',
+
     '#fec800',
-    '#fe9c40',
-    '#fe7030',
-    '#fe4430',
+
     '#fe375f',
 ]
 
@@ -27,7 +23,7 @@ const containerVariants = {
 const dotVariants = {
     initial: {},
     animate: {
-        height: [40, 100, 40],
+        y: [0, 60, 0],
         transition: {
             duration: 1.5,
             repeat: Infinity,
@@ -44,8 +40,8 @@ const Loader = ({ count = colors.length }) => {
             style={{
                 display: 'flex',
                 gap: 10,
-                height: 100,
-                alignItems: 'center',
+                height: 50,
+                justifyContent: 'center'
             }}
         >
             {Array(count)

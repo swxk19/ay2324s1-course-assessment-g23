@@ -6,6 +6,7 @@ import MatchingScreen from './MatchingScreen.tsx'
 import MatchingStatusBar from './MatchingStatusBar.tsx'
 import { useSessionDetails } from '../stores/sessionStore.ts'
 import { useUser } from '../stores/userStore.ts'
+import {TimerProvider, useTimer} from "./TimerProvider.tsx";
 
 const tooltipDescription =
     'Select a difficulty level and get matched with another user. ' +
@@ -17,7 +18,7 @@ const MatchBar: React.FC = () => {
     const [difficulty, setDifficulty] = useState<string>('')
     const [isMatchingScreenVisible, setMatchingScreenVisible] = useState(false)
     const [isMatchingStatusBarVisible, setMatchingStatusBarVisible] = useState(false)
-
+    
     const startFindMatch = (difficulty: string) => {
         setFindMatch(true)
         setMatchingScreenVisible(true)
@@ -35,8 +36,13 @@ const MatchBar: React.FC = () => {
         setMatchingStatusBarVisible(true)
     }
 
+    const handleMaximise = () => {
+        setMatchingScreenVisible(true)
+        setMatchingStatusBarVisible(false)
+    }
+
     return (
-        <>
+        <TimerProvider>
             <span className='matchbar-container'>
                 <div className='welcome'>
                     <h2>Welcome back, {user?.username}!</h2>
@@ -88,6 +94,7 @@ const MatchBar: React.FC = () => {
                         <MatchingStatusBar
                             difficulty={difficulty}
                             onMatchExit={() => stopFindMatch()}
+                            onMaximise={handleMaximise}
                         />
                     )}
                 </div>
@@ -99,7 +106,7 @@ const MatchBar: React.FC = () => {
                     onMinimise={handleMinimise}
                 />
             )}
-        </>
+        </TimerProvider>
     )
 }
 

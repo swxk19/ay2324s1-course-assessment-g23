@@ -1,5 +1,6 @@
 import React from 'react'
 import Loader from './Loader.tsx'
+import {useTimer} from "./TimerProvider.tsx";
 
 type MatchingScreenProps = {
     difficulty: string
@@ -11,16 +12,34 @@ const MatchingScreen: React.FC<MatchingScreenProps> = ({
     onMatchExit: onMatchExit,
     onMinimise: onMinimise,
 }) => {
+    const { seconds, startTimer, resetTimer } = useTimer();
+
+    startTimer()
+    const handleMatchExit = () => {
+        resetTimer();
+        onMatchExit();
+    };
+
+    function formatTime(totalSeconds : number) {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
     return (
         <div className='dark-overlay' style={{ backgroundColor: 'black', opacity: ' 100%' }}>
             <div className='home-page-container' style={{ opacity: '100%' }}>
-                <h1 style={{ marginBottom: '5rem' }}>Finding a Match...</h1>
+                <h2 style={{ marginBottom: '2rem' }}>Finding a Match...</h2>
                 <Loader />
-                <h2 style={{ marginTop: '5rem' }}>
-                    Selected difficulty:{' '}
-                    <span className={`complexity-color-${difficulty}`}>{difficulty}</span>
+                <h1 style={{ marginTop: '5rem' }}>
+                    {formatTime(seconds)}
+                </h1>
+                <h2 style={{ marginTop: '2rem' }}>
+                    Selected difficulty:
+                    <span className={`complexity-color-${difficulty}`}> {difficulty}</span>
                 </h2>
-                <button onClick={onMatchExit} style={{ backgroundColor: '#ff2945' }}>
+
+                <button onClick={handleMatchExit} style={{ backgroundColor: '#ff2945' }}>
                     Exit matchmaking
                 </button>
                 <button onClick={onMinimise}>Minimise</button>

@@ -15,10 +15,10 @@ const Users = () => {
     }, [sessionDetails, navigate])
 
     return (
-        <div>
+        <>
             <Navbar />
             <UserTable />
-        </div>
+        </>
     )
 }
 
