@@ -88,7 +88,8 @@ async def main():
                     elif action == "cancel":
                         curr_queue = complexity_queues[queue_name]
                         logger.info(f"Queue before delete: {curr_queue}")
-                        curr_queue.remove(user_id)
+                        if user_id in curr_queue:
+                            curr_queue.remove(user_id)
                         logger.info(f"Queue after delete: {curr_queue}")
 
         queue_names = ['easy_queue', 'medium_queue', 'hard_queue']

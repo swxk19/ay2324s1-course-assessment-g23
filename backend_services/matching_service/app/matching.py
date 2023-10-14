@@ -71,6 +71,8 @@ async def listen_for_server_replies(user_id: str, complexity: str, websocket: We
 
         logger.info(f"{user_id} waiting for response...")
         await queue.consume(on_response, timeout=30)
+        await asyncio.sleep(30)
+        raise asyncio.TimeoutError
     except asyncio.TimeoutError as e:
         logger.info("Time has exceeded 30 seconds")
         await remove_user_from_queue(user_id=user_id, complexity=complexity)
