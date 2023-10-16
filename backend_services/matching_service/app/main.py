@@ -1,10 +1,10 @@
-from fastapi import FastAPI, HTTPException,  WebSocket
+from fastapi import FastAPI, WebSocket
 import json
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from matching_util import add_event
-from matching import send_user_to_queue, listen_for_server_replies, remove_user_from_queue
+from matching import send_user_to_queue, wait_for_match, remove_user_from_queue
 import asyncio
 
 # create app
@@ -46,8 +46,7 @@ async def websocket_endpoint(websocket: WebSocket):
             logger.info(f"Sending {user_id} to queue")
             await send_user_to_queue(user_id, complexity)
             listener_task = asyncio.create_task(
-                listen_for_server_replies(user_id, complexity, websocket))
-            logger.info(f"{user_id} waiting for reply")
+                wait_for_match(user_id, complexity, websocket))
             await user_event.wait()
         elif action == "cancel":
             await remove_user_from_queue(user_id, complexity)

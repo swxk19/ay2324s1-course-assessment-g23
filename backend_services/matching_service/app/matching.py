@@ -1,6 +1,5 @@
 import json
 from fastapi import WebSocket
-import websockets
 import aio_pika
 import asyncio
 
@@ -45,7 +44,7 @@ async def send_user_to_queue(user_id, complexity):
         return None
 
 
-async def listen_for_server_replies(user_id: str, complexity: str, websocket: WebSocket):
+async def wait_for_match(user_id: str, complexity: str, websocket: WebSocket):
     try:
         connection = await aio_pika.connect_robust("amqp://guest:guest@rabbitmq:5672/%2F")
         channel = await connection.channel()
@@ -59,7 +58,6 @@ async def listen_for_server_replies(user_id: str, complexity: str, websocket: We
             nonlocal consumer_tag
             async with message.process():
                 response_data = json.loads(message.body)
-                logger.info(f"response_data: {response_data}")
                 user1_id = response_data["user1"]
                 user2_id = response_data["user2"]
                 if user1_id == user_id:
@@ -67,7 +65,10 @@ async def listen_for_server_replies(user_id: str, complexity: str, websocket: We
                 else:
                     id = user1_id
                 logger.info(f"{id} has matched")
-                message = f"You have matched with {id}!"
+                # message = f"You have matched with {id}!"
+                message = {
+                    "user_id": f"{id}"
+                }
                 await websocket.send_text(json.dumps(message))
                 if consumer_tag is not None:
                     await queue.cancel(consumer_tag)

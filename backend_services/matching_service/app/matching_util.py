@@ -1,12 +1,4 @@
-from fastapi import WebSocket
 from asyncio import Event
-from typing import Dict
-
-
-class User:
-    def __init__(self, user_id, complexity):
-        self.user_id = user_id
-        self.complexity = complexity
 
 
 websocket_connections = {}

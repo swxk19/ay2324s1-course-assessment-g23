@@ -43,7 +43,6 @@ async def main():
     try:
         async def callback(message):
             async with message.process():
-                logger.info("Received message")
                 user_data = json.loads(message.body)
                 user_id = user_data["user_id"]
                 complexity = user_data["complexity"]
@@ -55,7 +54,7 @@ async def main():
                         curr_queue = complexity_queues[queue_name]
                         if user_id not in curr_queue:
                             curr_queue.append(user_id)
-                        logger.info(f"{curr_queue}")
+                        logger.info(f"Current queue: {curr_queue}")
                         if len(curr_queue) >= 2:
                             user1_id = curr_queue.pop(0)
                             user2_id = curr_queue.pop(0)
@@ -66,22 +65,18 @@ async def main():
                             logger.info(f"Reply: {reply}")
                             await channel.declare_queue(f'{user1_id}_q')
                             await channel.declare_queue(f'{user2_id}_q')
-                            logger.info(f"User1: {user1_id}")
-                            logger.info(f"User2: {user2_id}")
                             await channel.default_exchange.publish(
                                 aio_pika.Message(
                                     body=json.dumps(reply).encode(),
                                 ),
                                 routing_key=f'{user1_id}_q',
                             )
-                            logger.info("User 1 replied")
                             await channel.default_exchange.publish(
                                 aio_pika.Message(
                                     body=json.dumps(reply).encode(),
                                 ),
                                 routing_key=f'{user2_id}_q',
                             )
-                            logger.info("User 2 replied")
                         else:
                             await asyncio.sleep(1)
                     elif action == "cancel":
