@@ -1,9 +1,23 @@
 from fastapi import WebSocket
-import asyncio
+from asyncio import Event
+from typing import Dict
+
 
 class User:
     def __init__(self, user_id, complexity):
         self.user_id = user_id
         self.complexity = complexity
-        
-message_received = asyncio.Event()
+
+
+websocket_connections = {}
+
+
+def add_event(user_id, event: Event):
+    websocket_connections[user_id] = event
+    return
+
+
+def set_message_received(user_id):
+    event = websocket_connections.get(user_id)
+    if event:
+        event.set()

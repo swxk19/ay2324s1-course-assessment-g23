@@ -1,11 +1,11 @@
-import pika
 import json
 from fastapi import WebSocket
 import websockets
 import aio_pika
 import asyncio
 
-from matching_util import User, message_received
+# from matching_util import User, message_received
+from matching_util import set_message_received
 
 import logging
 
@@ -67,7 +67,7 @@ async def listen_for_server_replies(user_id: str, complexity: str, websocket: We
                 logger.info(f"{id} has matched")
                 message = f"You have matched with {id}!"
                 await websocket.send_text(json.dumps(message))
-                message_received.set()
+                set_message_received(user_id)
 
         logger.info(f"{user_id} waiting for response...")
         await queue.consume(on_response, timeout=30)
@@ -76,10 +76,14 @@ async def listen_for_server_replies(user_id: str, complexity: str, websocket: We
     except asyncio.TimeoutError as e:
         logger.info("Time has exceeded 30 seconds")
         await remove_user_from_queue(user_id=user_id, complexity=complexity)
-        await websocket.send_text(json.dumps("30 seconds has passed, please retry"))
-        message_received.set()
+        try:
+            await websocket.send_text(json.dumps("30 seconds has passed, please retry"))
+        except:
+            logger.info("WS disconnected")
     except Exception as e:
         logger.info(f"Error occurred: {str(e)}")
+    finally:
+        set_message_received(user_id)
 
 
 async def remove_user_from_queue(user_id: str, complexity: str):
