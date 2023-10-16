@@ -1,15 +1,20 @@
+import asyncio
 from typing import Any, cast
 from fastapi import Cookie, FastAPI, HTTPException, Request, WebSocket
+import fastapi
 from fastapi.responses import JSONResponse
+from fastapi.websockets import WebSocketState
+from websockets.protocol import State
 import httpx
 import json
 from fastapi.middleware.cors import CORSMiddleware
 from api_models.error import ServiceError
 from api_models.users import UserLoginResponse
 from utils.api_permissions import Method
-import websockets
+import websockets.client
 from utils.api_gateway_util import has_permission, map_path_microservice_url, connect_matching_service_websocket
 from utils.addresses import MATCHING_SERVICE_HOST
+import websockets.exceptions
 
 app = FastAPI()
 
@@ -22,36 +27,47 @@ app.add_middleware(
     expose_headers=["*"]
 )
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        # Receive message from client
-        message = await websocket.receive_text()
-        request =  json.loads(message)
-        service = request["service"]
-        body = request["message"]
-        # Send message to microservice
-        if service == "matching-service":
-            # await connect_matching_service_websocket(websocket, message)
-            websocket_url = "ws://" + MATCHING_SERVICE_HOST + ":8003/ws/matching"
-            async with websockets.connect(websocket_url) as matching_service_websocket:
-                await matching_service_websocket.send_text(json.dumps(request))
-                response = await matching_service_websocket.receive_text()
-                message = json.loads(response)
-                await websocket.send_text(json.dumps(message))
-                websocket.close()
-        else:
-            raise HTTPException(status_code=400, detail=f"Invalid service requested: {service}")
+async def forward_communication(ws_a: WebSocket, ws_b: websockets.client.WebSocketClientProtocol):
+    """Handles communication from frontend -> microservice."""
+    while True:
+        data = await ws_a.receive_text()
+        await ws_b.send(data)
 
-    except HTTPException as http_exc:
-        await websocket.send_text(http_exc.detail)
-    except websockets.exceptions.ConnectionClosedError as conn_closed_exc:
-        # Handle WebSocket connection closed errors
-        print(f"WebSocket connection closed: {conn_closed_exc}")
-    except Exception as e:
-        # Log any other exceptions for debugging
-        print(f"An error occurred: {e}")
+
+async def reverse_communication(ws_a: WebSocket, ws_b: websockets.client.WebSocketClientProtocol):
+    """Handles communication from microservice -> frontend."""
+    while True:
+        data = await ws_b.recv()
+        assert isinstance(data, str)
+        await ws_a.send_text(data)
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(ws_a: WebSocket):
+    matching_api_url = f"ws://{MATCHING_SERVICE_HOST}/ws/matching"
+    await ws_a.accept()
+    async with websockets.client.connect(matching_api_url) as ws_b_client:
+        try:
+            fwd_task = asyncio.create_task(forward_communication(ws_a, ws_b_client))
+            rev_task = asyncio.create_task(reverse_communication(ws_a, ws_b_client))
+            await asyncio.gather(fwd_task, rev_task)
+
+        # Ignore any "connection closed" errors. They're expected because any
+        # of the websockets methods might fail when the websocket closes.
+        except fastapi.websockets.WebSocketDisconnect:
+            pass
+        except websockets.exceptions.ConnectionClosedOK:
+            pass
+
+        finally:
+            # If any websockets aren't closed, close them.
+            # `ws_a` and `ws_b_client` are from different packages, so they use
+            # different websocket-states.
+            if ws_a.client_state != WebSocketState.DISCONNECTED:  # FastAPI's websocket.
+                await ws_a.close()
+            if ws_b_client.state != State.CLOSED:  # websockets's websocket
+                await ws_b_client.close()
+
 
 async def route_request(
     method: Method,
