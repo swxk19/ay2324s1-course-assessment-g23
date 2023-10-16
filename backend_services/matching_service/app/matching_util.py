@@ -21,3 +21,5 @@ def set_message_received(user_id):
     event = websocket_connections.get(user_id)
     if event:
         event.set()
+    if websocket_connections.get(user_id) is not None:
+        websocket_connections.pop(user_id)

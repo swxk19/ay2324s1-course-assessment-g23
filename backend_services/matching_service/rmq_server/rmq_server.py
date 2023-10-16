@@ -1,10 +1,8 @@
 import logging
-import pika
 import sys
 import os
 import json
 import asyncio
-import traceback
 import time
 import aio_pika
 
@@ -55,7 +53,8 @@ async def main():
                 async with lock:
                     if action == "queue":
                         curr_queue = complexity_queues[queue_name]
-                        curr_queue.append(user_id)
+                        if user_id not in curr_queue:
+                            curr_queue.append(user_id)
                         logger.info(f"{curr_queue}")
                         if len(curr_queue) >= 2:
                             user1_id = curr_queue.pop(0)
