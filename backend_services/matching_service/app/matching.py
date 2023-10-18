@@ -1,11 +1,10 @@
-import pika
 import json
 from fastapi import WebSocket
-import websockets
 import aio_pika
 import asyncio
 
-from matching_util import User, message_received
+# from matching_util import User, message_received
+from matching_util import set_message_received
 
 import logging
 
@@ -45,7 +44,7 @@ async def send_user_to_queue(user_id, complexity):
         return None
 
 
-async def listen_for_server_replies(user_id: str, complexity: str, websocket: WebSocket):
+async def wait_for_match(user_id: str, complexity: str, websocket: WebSocket):
     try:
         connection = await aio_pika.connect_robust("amqp://guest:guest@rabbitmq:5672/%2F")
         channel = await connection.channel()
@@ -53,11 +52,12 @@ async def listen_for_server_replies(user_id: str, complexity: str, websocket: We
         # Declare a unique reply queue for this listener
         reply_queue_name = f'{user_id}_q'
         queue = await channel.declare_queue(reply_queue_name)
+        consumer_tag = None
 
         async def on_response(message):
+            nonlocal consumer_tag
             async with message.process():
                 response_data = json.loads(message.body)
-                logger.info(f"response_data: {response_data}")
                 user1_id = response_data["user1"]
                 user2_id = response_data["user2"]
                 if user1_id == user_id:
@@ -65,21 +65,38 @@ async def listen_for_server_replies(user_id: str, complexity: str, websocket: We
                 else:
                     id = user1_id
                 logger.info(f"{id} has matched")
-                message = f"You have matched with {id}!"
+                # message = f"You have matched with {id}!"
+                message = {
+                    "is_matched": True,
+                    "user_id": f"{id}"
+                }
                 await websocket.send_text(json.dumps(message))
-                message_received.set()
+                if consumer_tag is not None:
+                    await queue.cancel(consumer_tag)
+                set_message_received(user_id)
 
         logger.info(f"{user_id} waiting for response...")
-        await queue.consume(on_response, timeout=30)
+        consumer_tag = await queue.consume(on_response)
         await asyncio.sleep(30)
+        if consumer_tag is not None:
+            logger.info(f"CANCELLING Consumer tag: {consumer_tag}")
+            await queue.cancel(consumer_tag)
         raise asyncio.TimeoutError
     except asyncio.TimeoutError as e:
         logger.info("Time has exceeded 30 seconds")
         await remove_user_from_queue(user_id=user_id, complexity=complexity)
-        await websocket.send_text(json.dumps("30 seconds has passed, please retry"))
-        message_received.set()
+        message = {
+            "is_matched": False,
+            "user_id": None
+        }
+        try:
+            await websocket.send_text(json.dumps(message))
+        except:
+            logger.info("WS disconnected")
     except Exception as e:
         logger.info(f"Error occurred: {str(e)}")
+    finally:
+        set_message_received(user_id)
 
 
 async def remove_user_from_queue(user_id: str, complexity: str):
@@ -100,7 +117,6 @@ async def remove_user_from_queue(user_id: str, complexity: str):
             aio_pika.Message(body=data.encode()),
             routing_key=queue_name,
         )
-
         return ''
     except Exception as e:
         logger.info(f"Error occurred: {str(e)}")

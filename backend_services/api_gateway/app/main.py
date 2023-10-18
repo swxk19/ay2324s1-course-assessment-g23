@@ -27,6 +27,7 @@ app.add_middleware(
     expose_headers=["*"]
 )
 
+
 async def forward_communication(ws_a: WebSocket, ws_b: websockets.client.WebSocketClientProtocol):
     """Handles communication from frontend -> microservice."""
     while True:
@@ -44,12 +45,14 @@ async def reverse_communication(ws_a: WebSocket, ws_b: websockets.client.WebSock
 
 @app.websocket("/ws")
 async def websocket_endpoint(ws_a: WebSocket):
-    matching_api_url = f"ws://{MATCHING_SERVICE_HOST}/ws/matching"
+    matching_api_url = f"ws://{MATCHING_SERVICE_HOST}:8003/ws/matching"
     await ws_a.accept()
     async with websockets.client.connect(matching_api_url) as ws_b_client:
         try:
-            fwd_task = asyncio.create_task(forward_communication(ws_a, ws_b_client))
-            rev_task = asyncio.create_task(reverse_communication(ws_a, ws_b_client))
+            fwd_task = asyncio.create_task(
+                forward_communication(ws_a, ws_b_client))
+            rev_task = asyncio.create_task(
+                reverse_communication(ws_a, ws_b_client))
             await asyncio.gather(fwd_task, rev_task)
 
         # Ignore any "connection closed" errors. They're expected because any
@@ -93,6 +96,7 @@ async def route_request(
                     path += f"/{session_id}"
                 return await client.delete(f"{microservice_url}{path}")
 
+
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
 async def handle_request(request: Request, session_id: str | None = Cookie(None)) -> JSONResponse:
     path = request.url.path
@@ -116,7 +120,8 @@ async def handle_request(request: Request, session_id: str | None = Cookie(None)
     output = JSONResponse(content=res_json)
     if ServiceError.is_service_error(res_json):
         service_error = ServiceError(**res_json)
-        raise HTTPException(status_code=service_error.status_code, detail=service_error.message)
+        raise HTTPException(
+            status_code=service_error.status_code, detail=service_error.message)
 
     if path == "/sessions" and method == "POST":
         login_json = UserLoginResponse(**res_json)
