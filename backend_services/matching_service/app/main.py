@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.websockets import WebSocketState
@@ -9,6 +11,11 @@ from data_classes import (
     UserWebSocket,
     UserWebSocketQueue,
 )
+
+
+QUEUE_TIMEOUT_SECONDS: int = 30
+"""Seconds before a queued user times out and gets removed from the queue."""
+
 
 app = FastAPI()
 app.add_middleware(
@@ -57,13 +64,15 @@ async def websocket_endpoint(websocket: WebSocket):
 async def handle_queue(complexity: Complexity, user_1: UserWebSocket) -> None:
     queue = queues[complexity]
 
-    # If no match, add user to queue.
+    # If no match, add user to queue and start timeout.
     if queue.is_empty():
         queue.push(user_1)
+        user_1.timeout_task = asyncio.create_task(handle_timeout(complexity, user_1))
         return
 
     # If has match, send both users their matches and close both websockets.
     user_2 = queue.pop()
+    user_2.timeout_task.cancel()
 
     await user_1.websocket.send_json(
         MatchResponse(is_matched=True, user_id=user_2.user_id).model_dump(mode="json")
@@ -79,6 +88,7 @@ async def handle_queue(complexity: Complexity, user_1: UserWebSocket) -> None:
 async def handle_cancel(complexity: Complexity, user: UserWebSocket) -> None:
     queue = queues[complexity]
     queue.remove_by_websocket(user.websocket)
+    user.timeout_task.cancel()
     await user.websocket.send_json(
         MatchResponse(is_matched=False, user_id=None).model_dump(mode="json")
     )
@@ -88,7 +98,9 @@ async def handle_cancel(complexity: Complexity, user: UserWebSocket) -> None:
 async def handle_cleanup(websocket: WebSocket) -> None:
     # Remove websocket from queue if it exists.
     for queue in queues.values():
-        queue.remove_by_websocket(websocket)
+        user = queue.remove_by_websocket(websocket)
+        if user:
+            user.timeout_task.cancel()
 
     try:
         # Close websocket if it hasn't closed yet.
@@ -103,3 +115,21 @@ async def handle_cleanup(websocket: WebSocket) -> None:
         if 'Cannot call "send" once a close message has been sent' in str(e):
             return
         raise e
+
+
+async def handle_timeout(complexity: Complexity, user: UserWebSocket) -> None:
+    try:
+        await asyncio.sleep(QUEUE_TIMEOUT_SECONDS)
+        queue = queues[complexity]
+        if user not in queue:
+            return
+
+        queue.remove_by_websocket(user.websocket)
+        await user.websocket.send_json(
+            MatchResponse(is_matched=False, user_id=None).model_dump(mode="json")
+        )
+        await user.websocket.close()
+
+    # Ignore error from being cancelled.
+    except asyncio.CancelledError:
+        pass

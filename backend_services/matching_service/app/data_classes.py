@@ -1,10 +1,19 @@
+import asyncio
 from dataclasses import dataclass
-from typing import Literal, TypeAlias
+from typing import Any, Literal, TypeAlias
 
 from fastapi import WebSocket
 from pydantic import BaseModel
 
 Complexity: TypeAlias = Literal["easy", "medium", "hard"]
+
+
+async def placeholder_func():
+    pass
+
+
+CANCELLED_TASK: asyncio.Task = asyncio.create_task(placeholder_func())
+CANCELLED_TASK.cancel()
 
 
 class MatchRequest(BaseModel):
@@ -30,6 +39,7 @@ class UserWebSocket:
 
     user_id: str
     websocket: WebSocket
+    timeout_task: asyncio.Task = CANCELLED_TASK
 
 
 class UserWebSocketQueue:
@@ -47,11 +57,19 @@ class UserWebSocketQueue:
     def pop(self) -> UserWebSocket:
         return self._queue.pop(0)
 
-    def remove_by_websocket(self, websocket: WebSocket) -> None:
+    def remove_by_websocket(self, websocket: WebSocket) -> UserWebSocket | None:
         for i, x in enumerate(self._queue):
             if x.websocket == websocket:
                 del self._queue[i]
                 break
+
+    def __contains__(self, item: Any) -> bool:
+        if not isinstance(item, UserWebSocket):
+            return False
+        for x in self._queue:
+            if x.websocket == item.websocket:
+                return True
+        return False
 
     def __len__(self) -> int:
         return len(self._queue)
