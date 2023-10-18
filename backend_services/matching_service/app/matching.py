@@ -67,6 +67,7 @@ async def wait_for_match(user_id: str, complexity: str, websocket: WebSocket):
                 logger.info(f"{id} has matched")
                 # message = f"You have matched with {id}!"
                 message = {
+                    "is_matched": True,
                     "user_id": f"{id}"
                 }
                 await websocket.send_text(json.dumps(message))
@@ -84,8 +85,12 @@ async def wait_for_match(user_id: str, complexity: str, websocket: WebSocket):
     except asyncio.TimeoutError as e:
         logger.info("Time has exceeded 30 seconds")
         await remove_user_from_queue(user_id=user_id, complexity=complexity)
+        message = {
+            "is_matched": False,
+            "user_id": None
+        }
         try:
-            await websocket.send_text(json.dumps("30 seconds has passed, please retry"))
+            await websocket.send_text(json.dumps(message))
         except:
             logger.info("WS disconnected")
     except Exception as e:
