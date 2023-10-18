@@ -45,6 +45,22 @@ async def send_user_to_queue(user_id, complexity):
 
 
 async def wait_for_match(user_id: str, complexity: str, websocket: WebSocket):
+    async def handle_incoming_messages():
+        try:
+            while True:
+                message = await websocket.receive_text()
+                body = json.loads(message)
+                # Process the received message here
+                logger.info(f"Received additional message: {message}")
+                action = body["action"]
+                user_id = body["user_id"]
+                complexity = body["complexity"]
+                if action == "cancel":
+                    await remove_user_from_queue(user_id, complexity)
+                elif action == "queue":
+                    await send_user_to_queue(user_id, complexity)
+        except Exception as e:
+            print(e)
     try:
         connection = await aio_pika.connect_robust("amqp://guest:guest@rabbitmq:5672/%2F")
         channel = await connection.channel()
@@ -53,9 +69,10 @@ async def wait_for_match(user_id: str, complexity: str, websocket: WebSocket):
         reply_queue_name = f'{user_id}_q'
         queue = await channel.declare_queue(reply_queue_name)
         consumer_tag = None
+        is_matched = False
 
         async def on_response(message):
-            nonlocal consumer_tag
+            nonlocal consumer_tag, is_matched
             async with message.process():
                 response_data = json.loads(message.body)
                 user1_id = response_data["user1"]
@@ -73,12 +90,16 @@ async def wait_for_match(user_id: str, complexity: str, websocket: WebSocket):
                 await websocket.send_text(json.dumps(message))
                 if consumer_tag is not None:
                     await queue.cancel(consumer_tag)
+                is_matched = True
                 set_message_received(user_id)
 
+        incoming_messages_task = asyncio.create_task(
+            handle_incoming_messages())
         logger.info(f"{user_id} waiting for response...")
         consumer_tag = await queue.consume(on_response)
         await asyncio.sleep(30)
-        if consumer_tag is not None:
+        if consumer_tag is not None and not is_matched:
+            incoming_messages_task.cancel()
             logger.info(f"CANCELLING Consumer tag: {consumer_tag}")
             await queue.cancel(consumer_tag)
         raise asyncio.TimeoutError
