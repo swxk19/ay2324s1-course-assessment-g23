@@ -26,7 +26,7 @@ type MatchingRequestPayload = QueuePayload | CancelPayload
 /** Payload that's returned by the matching-service. */
 interface MatchingResponsePayload {
     is_matched: boolean
-    user_id: string
+    user_id: string | null
 }
 
 /** The websocket used for matchmaking. */
