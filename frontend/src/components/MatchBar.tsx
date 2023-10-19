@@ -10,6 +10,7 @@ import { useTimer } from './TimerProvider.tsx'
 import MatchSuccess from "./MatchSuccess.tsx";
 import { useCancelQueue, useJoinQueue } from '../stores/matchingStore.ts'
 import type { Complexity } from '../api/questions.ts'
+import AlertMessage from './AlertMessage.tsx'
 
 const tooltipDescription =
     'Select a difficulty level and get matched with another user. ' +
@@ -20,7 +21,7 @@ const MatchBar: React.FC = () => {
     const { data: user } = useUser(sessionDetails?.user_id)
     const joinQueueMutation = useJoinQueue()
     const cancelQueueMutation = useCancelQueue()
-    const { isLoading: isFindingMatch, isSuccess: isMatchSuccess } = joinQueueMutation
+    const { isLoading: isFindingMatch, isSuccess: isMatchSuccess, isError: isMatchError } = joinQueueMutation
 
     const [difficulty, setDifficulty] = useState<Complexity>('Easy')
     const [isMatchingScreenVisible, setMatchingScreenVisible] = useState(false)
@@ -120,6 +121,11 @@ const MatchBar: React.FC = () => {
                 />
             )}
             {isMatchSuccess && <MatchSuccess />}
+            {isMatchError && (
+                <AlertMessage variant='error'>
+                    <h4>{joinQueueMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
         </>
     )
 }

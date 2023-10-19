@@ -28,7 +28,8 @@ class MatchResponse(BaseModel):
     """Payload sent to frontend."""
 
     is_matched: bool
-    user_id: str | None
+    detail: str
+    user_id: Optional[str] = None
 
 
 # Using normal dataclass instead of Pydantic because `WebSocket` and
