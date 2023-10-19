@@ -6,7 +6,7 @@ import MatchingScreen from './MatchingScreen.tsx'
 import MatchingStatusBar from './MatchingStatusBar.tsx'
 import { useSessionDetails } from '../stores/sessionStore.ts'
 import { useUser } from '../stores/userStore.ts'
-import {TimerProvider} from "./TimerProvider.tsx";
+import { useTimer } from './TimerProvider.tsx'
 import MatchSuccess from "./MatchSuccess.tsx";
 import { useCancelQueue, useJoinQueue } from '../stores/matchingStore.ts'
 import type { Complexity } from '../api/questions.ts'
@@ -15,6 +15,7 @@ const tooltipDescription =
     'Select a difficulty level and get matched with another user. ' +
     'Together, you both will collaboratively attempt a question of the chosen difficulty.'
 const MatchBar: React.FC = () => {
+    const { resetTimer } = useTimer();
     const { data: sessionDetails } = useSessionDetails()
     const { data: user } = useUser(sessionDetails?.user_id)
     const joinQueueMutation = useJoinQueue()
@@ -29,6 +30,7 @@ const MatchBar: React.FC = () => {
         if (!isFindingMatch) {
             setMatchingScreenVisible(false)
             setMatchingStatusBarVisible(false)
+            resetTimer()
         }
     }, [isFindingMatch]);
 
@@ -53,7 +55,7 @@ const MatchBar: React.FC = () => {
     }
 
     return (
-        <TimerProvider>
+        <>
             <span className='matchbar-container'>
                 <div className='welcome'>
                     <h2>Welcome back, {user?.username}!</h2>
@@ -118,7 +120,7 @@ const MatchBar: React.FC = () => {
                 />
             )}
             {isMatchSuccess && <MatchSuccess />}
-        </TimerProvider>
+        </>
     )
 }
 
