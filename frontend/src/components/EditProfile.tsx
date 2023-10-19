@@ -2,6 +2,7 @@ import type { UpdatedUser, User } from '../api/users'
 import { useUpdateUser } from '../stores/userStore'
 import '../styles/EditProfile.css'
 import React, { useState } from 'react'
+import AlertMessage from "./AlertMessage.tsx";
 
 interface EditProfileProps {
     user: User
@@ -54,6 +55,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onClose }) => {
                     <button>Save</button>
                 </form>
             </div>
+            {updateUserMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {updateUserMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
         </div>
     )
 }
