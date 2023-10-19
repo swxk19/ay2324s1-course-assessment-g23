@@ -8,6 +8,7 @@ import { useSessionDetails } from '../stores/sessionStore.ts'
 import { useUser } from '../stores/userStore.ts'
 import {TimerProvider} from "./TimerProvider.tsx";
 import MatchSuccess from "./MatchSuccess.tsx";
+import type { Complexity } from '../api/questions.ts'
 
 const tooltipDescription =
     'Select a difficulty level and get matched with another user. ' +
@@ -16,7 +17,7 @@ const MatchBar: React.FC = () => {
     const { data: sessionDetails } = useSessionDetails()
     const { data: user } = useUser(sessionDetails?.user_id)
     const [findMatch, setFindMatch] = useState(false)
-    const [difficulty, setDifficulty] = useState<string>('')
+    const [difficulty, setDifficulty] = useState<Complexity>('Easy')
     const [isMatchingScreenVisible, setMatchingScreenVisible] = useState(false)
     const [isMatchingStatusBarVisible, setMatchingStatusBarVisible] = useState(false)
     const [matchSuccess, setMatchSuccess] = useState(false);
@@ -38,7 +39,7 @@ const MatchBar: React.FC = () => {
         }
     }, [findMatch, secondsElapsed]);
 
-    const startFindMatch = (difficulty: string) => {
+    const startFindMatch = (difficulty: Complexity) => {
         setFindMatch(true)
         setMatchingScreenVisible(true)
         setDifficulty(difficulty)
