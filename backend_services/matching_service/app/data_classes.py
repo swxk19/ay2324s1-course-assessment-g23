@@ -1,6 +1,6 @@
 import asyncio
 from dataclasses import dataclass
-from typing import Any, Literal, TypeAlias
+from typing import Any, Literal, Optional, TypeAlias
 
 from fastapi import WebSocket
 from pydantic import BaseModel
@@ -20,8 +20,8 @@ class MatchRequest(BaseModel):
     """Payload received from frontend."""
 
     user_id: str
-    complexity: Complexity
     action: Literal["queue", "cancel"]
+    complexity: Optional[Complexity] = None
 
 
 class MatchResponse(BaseModel):

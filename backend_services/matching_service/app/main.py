@@ -45,9 +45,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
             match payload.action:
                 case "queue":
+                    assert payload.complexity is not None, "Missing `complexity` in queue payload."
                     await handle_queue(payload.complexity, user)
                 case "cancel":
-                    await handle_cancel(payload.complexity, user)
+                    await handle_cancel(user)
 
     # Ignore exceptions related to websocket disconnecting.
     except WebSocketDisconnect:
@@ -85,9 +86,9 @@ async def handle_queue(complexity: Complexity, user_1: UserWebSocket) -> None:
     await user_2.websocket.close()
 
 
-async def handle_cancel(complexity: Complexity, user: UserWebSocket) -> None:
-    queue = queues[complexity]
-    queue.remove_by_websocket(user.websocket)
+async def handle_cancel(user: UserWebSocket) -> None:
+    for queue in queues.values():
+        queue.remove_by_websocket(user.websocket)
     user.timeout_task.cancel()
     await user.websocket.send_json(
         MatchResponse(is_matched=False, user_id=None).model_dump(mode="json")
