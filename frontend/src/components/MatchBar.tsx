@@ -24,16 +24,13 @@ const MatchBar: React.FC = () => {
     const [difficulty, setDifficulty] = useState<Complexity>('Easy')
     const [isMatchingScreenVisible, setMatchingScreenVisible] = useState(false)
     const [isMatchingStatusBarVisible, setMatchingStatusBarVisible] = useState(false)
-    const [secondsElapsed, setSecondsElapsed] = useState(0);
 
     useEffect(() => {
-        if (isFindingMatch) { // Assuming you want to start the timer when findMatch becomes true
-            const timer = setTimeout(() => setSecondsElapsed(secondsElapsed + 1), 1000);
-            return () => clearTimeout(timer); // Cleanup the timeout when component is unmounted or if findMatch becomes false
+        if (!isFindingMatch) {
+            setMatchingScreenVisible(false)
+            setMatchingStatusBarVisible(false)
         }
-        setMatchingScreenVisible(false)
-        setMatchingStatusBarVisible(false)
-    }, [isFindingMatch, secondsElapsed]);
+    }, [isFindingMatch]);
 
     const startFindMatch = (difficulty: Complexity) => {
         joinQueueMutation.mutateAsync(difficulty)
