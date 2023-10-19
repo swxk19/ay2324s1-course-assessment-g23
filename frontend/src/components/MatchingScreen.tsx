@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Loader from './Loader.tsx'
 import {useTimer} from "./TimerProvider.tsx";
 
@@ -14,7 +14,10 @@ const MatchingScreen: React.FC<MatchingScreenProps> = ({
 }) => {
     const { seconds, startTimer, resetTimer } = useTimer();
 
-    startTimer()
+    useEffect(() => {
+        startTimer()
+    }, [startTimer])
+
     const handleMatchExit = () => {
         resetTimer();
         onMatchExit();
