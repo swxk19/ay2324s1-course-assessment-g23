@@ -8,6 +8,7 @@ import { useSessionDetails } from '../stores/sessionStore.ts'
 import { useUser } from '../stores/userStore.ts'
 import {TimerProvider} from "./TimerProvider.tsx";
 import MatchSuccess from "./MatchSuccess.tsx";
+import { useCancelQueue, useJoinQueue } from '../stores/matchingStore.ts'
 import type { Complexity } from '../api/questions.ts'
 
 const tooltipDescription =
@@ -16,37 +17,32 @@ const tooltipDescription =
 const MatchBar: React.FC = () => {
     const { data: sessionDetails } = useSessionDetails()
     const { data: user } = useUser(sessionDetails?.user_id)
-    const [findMatch, setFindMatch] = useState(false)
+    const joinQueueMutation = useJoinQueue()
+    const cancelQueueMutation = useCancelQueue()
+    const { isLoading: findMatch, isSuccess: matchSuccess } = joinQueueMutation
+
     const [difficulty, setDifficulty] = useState<Complexity>('Easy')
     const [isMatchingScreenVisible, setMatchingScreenVisible] = useState(false)
     const [isMatchingStatusBarVisible, setMatchingStatusBarVisible] = useState(false)
-    const [matchSuccess, setMatchSuccess] = useState(false);
     const [secondsElapsed, setSecondsElapsed] = useState(0);
 
     useEffect(() => {
         if (findMatch) { // Assuming you want to start the timer when findMatch becomes true
-            const timer = setTimeout(() => {
-                if (secondsElapsed < 5) {
-                    setSecondsElapsed(secondsElapsed + 1);
-                } else {
-                    setMatchSuccess(true); // Show the MatchSuccess component after 10 seconds
-                    setMatchingScreenVisible(false)
-                    setMatchingStatusBarVisible(false)
-                    clearTimeout(timer); // Clear the timeout if 10 seconds have passed
-                }
-            }, 1000);
+            const timer = setTimeout(() => setSecondsElapsed(secondsElapsed + 1), 1000);
             return () => clearTimeout(timer); // Cleanup the timeout when component is unmounted or if findMatch becomes false
         }
+        setMatchingScreenVisible(false)
+        setMatchingStatusBarVisible(false)
     }, [findMatch, secondsElapsed]);
 
     const startFindMatch = (difficulty: Complexity) => {
-        setFindMatch(true)
+        joinQueueMutation.mutateAsync(difficulty)
         setMatchingScreenVisible(true)
         setDifficulty(difficulty)
     }
 
     const stopFindMatch = () => {
-        setFindMatch(false)
+        cancelQueueMutation.mutateAsync()
         setMatchingScreenVisible(false)
         setMatchingStatusBarVisible(false)
     }

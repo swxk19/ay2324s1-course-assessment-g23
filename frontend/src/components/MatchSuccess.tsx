@@ -2,8 +2,12 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from './Loader.tsx';
 import Spinner from "./Spinner.tsx";
+import { useMatch } from '../stores/matchingStore.ts'
+import { useUser } from '../stores/userStore.ts'
 
 const MatchingScreen = () => {
+    const { data: matchedUserId } = useMatch()
+    const { data: matchedUser } = useUser(matchedUserId || undefined)
     const [showMatchFound, setShowMatchFound] = useState(true);
     const [showMatchedUser, setShowMatchedUser] = useState(false);
 
@@ -39,7 +43,7 @@ const MatchingScreen = () => {
                             variants={fadeInOut}
                             style={{ marginBottom: '2rem' }}
                         >
-                            Matched with user123!
+                            Matched with {matchedUser!.username}
                         </motion.h2>
                     )}
                     </div>
