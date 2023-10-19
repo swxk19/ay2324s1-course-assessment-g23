@@ -5,6 +5,7 @@ import Login from './pages/Login.tsx'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Signup from './pages/Signup.tsx'
 import { AnimatePresence } from 'framer-motion'
+import Room from "./pages/Room.tsx";
 
 const queryClient = new QueryClient()
 const App: React.FC = () => {
@@ -17,6 +18,7 @@ const App: React.FC = () => {
                     <Route key='Signup' path='/signup' element={<Signup />} />
                     <Route key='Questions' path='/questions' element={<Questions />} />
                     <Route key='Users' path='/users' element={<Users />} />
+                    <Route key='Room' path='/room' element={<Room />} />
                 </Routes>
             </AnimatePresence>
         </QueryClientProvider>
