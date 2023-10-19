@@ -91,7 +91,7 @@ async def handle_cancel(user: UserWebSocket) -> None:
         queue.remove_by_websocket(user.websocket)
     user.timeout_task.cancel()
     await user.websocket.send_json(
-        MatchResponse(is_matched=False, user_id=None).model_dump(mode="json")
+        MatchResponse(is_matched=False).model_dump(mode="json")
     )
     await user.websocket.close()
 
@@ -127,7 +127,7 @@ async def handle_timeout(complexity: Complexity, user: UserWebSocket) -> None:
 
         queue.remove_by_websocket(user.websocket)
         await user.websocket.send_json(
-            MatchResponse(is_matched=False, user_id=None).model_dump(mode="json")
+            MatchResponse(is_matched=False).model_dump(mode="json")
         )
         await user.websocket.close()
 
