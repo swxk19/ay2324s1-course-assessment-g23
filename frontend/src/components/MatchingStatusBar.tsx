@@ -1,10 +1,11 @@
 import React from 'react'
 import {useTimer} from "./TimerProvider.tsx";
 import '../styles/Match.css'
+import type { Complexity } from '../api/questions.ts'
 
 
 type MatchingScreenProps = {
-    difficulty: string
+    difficulty: Complexity
     onMatchExit: () => void
     onMaximise: () => void
 }

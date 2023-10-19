@@ -6,48 +6,42 @@ import MatchingScreen from './MatchingScreen.tsx'
 import MatchingStatusBar from './MatchingStatusBar.tsx'
 import { useSessionDetails } from '../stores/sessionStore.ts'
 import { useUser } from '../stores/userStore.ts'
-import {TimerProvider} from "./TimerProvider.tsx";
+import { useTimer } from './TimerProvider.tsx'
 import MatchSuccess from "./MatchSuccess.tsx";
+import { useCancelQueue, useJoinQueue } from '../stores/matchingStore.ts'
+import type { Complexity } from '../api/questions.ts'
 
 const tooltipDescription =
     'Select a difficulty level and get matched with another user. ' +
     'Together, you both will collaboratively attempt a question of the chosen difficulty.'
 const MatchBar: React.FC = () => {
+    const { resetTimer } = useTimer();
     const { data: sessionDetails } = useSessionDetails()
     const { data: user } = useUser(sessionDetails?.user_id)
-    const [findMatch, setFindMatch] = useState(false)
-    const [difficulty, setDifficulty] = useState<string>('')
+    const joinQueueMutation = useJoinQueue()
+    const cancelQueueMutation = useCancelQueue()
+    const { isLoading: isFindingMatch, isSuccess: isMatchSuccess } = joinQueueMutation
+
+    const [difficulty, setDifficulty] = useState<Complexity>('Easy')
     const [isMatchingScreenVisible, setMatchingScreenVisible] = useState(false)
     const [isMatchingStatusBarVisible, setMatchingStatusBarVisible] = useState(false)
-    const [matchSuccess, setMatchSuccess] = useState(false);
-    const [secondsElapsed, setSecondsElapsed] = useState(0);
 
     useEffect(() => {
-        if (findMatch) { // Assuming you want to start the timer when findMatch becomes true
-            const timer = setTimeout(() => {
-                if (secondsElapsed < 5) {
-                    setSecondsElapsed(secondsElapsed + 1);
-                } else {
-                    setMatchSuccess(true); // Show the MatchSuccess component after 10 seconds
-                    setMatchingScreenVisible(false)
-                    setMatchingStatusBarVisible(false)
-                    clearTimeout(timer); // Clear the timeout if 10 seconds have passed
-                }
-            }, 1000);
-            return () => clearTimeout(timer); // Cleanup the timeout when component is unmounted or if findMatch becomes false
+        if (!isFindingMatch) {
+            setMatchingScreenVisible(false)
+            setMatchingStatusBarVisible(false)
+            resetTimer()
         }
-    }, [findMatch, secondsElapsed]);
+    }, [isFindingMatch]);
 
-    const startFindMatch = (difficulty: string) => {
-        setFindMatch(true)
+    const startFindMatch = (difficulty: Complexity) => {
+        joinQueueMutation.mutateAsync(difficulty)
         setMatchingScreenVisible(true)
         setDifficulty(difficulty)
     }
 
     const stopFindMatch = () => {
-        setFindMatch(false)
-        setMatchingScreenVisible(false)
-        setMatchingStatusBarVisible(false)
+        cancelQueueMutation.mutateAsync()
     }
 
     const handleMinimise = () => {
@@ -61,13 +55,13 @@ const MatchBar: React.FC = () => {
     }
 
     return (
-        <TimerProvider>
+        <>
             <span className='matchbar-container'>
                 <div className='welcome'>
                     <h2>Welcome back, {user?.username}!</h2>
                 </div>
                 <div className='match'>
-                    {!findMatch && (
+                    {!isFindingMatch && (
                         <>
                             <div className='match-title'>
                                 <h2>Find a Match</h2>
@@ -125,8 +119,8 @@ const MatchBar: React.FC = () => {
                     onMinimise={handleMinimise}
                 />
             )}
-            {matchSuccess && <MatchSuccess />}
-        </TimerProvider>
+            {isMatchSuccess && <MatchSuccess />}
+        </>
     )
 }
 

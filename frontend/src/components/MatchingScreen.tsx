@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 import Loader from './Loader.tsx'
 import {useTimer} from "./TimerProvider.tsx";
+import type { Complexity } from '../api/questions.ts'
 
 type MatchingScreenProps = {
-    difficulty: string
+    difficulty: Complexity
     onMatchExit: () => void
     onMinimise: () => void
 }

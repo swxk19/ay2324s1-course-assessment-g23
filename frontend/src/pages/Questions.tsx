@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSessionDetails } from '../stores/sessionStore.ts'
 import MatchBar from '../components/MatchBar.tsx'
+import { TimerProvider } from '../components/TimerProvider.tsx'
 
 const Questions = () => {
     const { data: sessionDetails } = useSessionDetails()
@@ -21,7 +22,7 @@ const Questions = () => {
         <>
             <Navbar />
             <div className='question-page-container'>
-                {isUser && <MatchBar />}
+                {isUser && <TimerProvider><MatchBar /></TimerProvider>}
                 <QuestionTable />
             </div>
         </>
