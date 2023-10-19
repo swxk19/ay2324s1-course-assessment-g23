@@ -27,7 +27,7 @@ const MatchingScreen = () => {
     };
 
     return (
-        <div className='dark-overlay' style={{ backgroundColor: 'black', opacity: ' 100%' }}>
+        <div className='dark-overlay' style={{ backgroundColor: '#242424', opacity: ' 100%' }}>
             <div className='home-page-container' style={{ opacity: '100%' }}>
                 <AnimatePresence>
                     <div>
