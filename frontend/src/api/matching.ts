@@ -4,6 +4,7 @@ import type { Complexity } from './questions'
 /** URL for matching websocket API. */
 const MATCHING_API_URL = 'ws://localhost:8000/ws'
 
+/** Details needed to join the matchmaking queue. */
 export interface MatchingRequest {
     user_id: string
     complexity: Complexity
@@ -19,15 +20,31 @@ interface CancelPayload {
     action: 'cancel'
 }
 
+/** Payload that's accepted by the matching-service. */
 type MatchingRequestPayload = QueuePayload | CancelPayload
 
+/** Payload that's returned by the matching-service. */
 interface MatchingResponsePayload {
     is_matched: boolean
     user_id: string
 }
 
+/** The websocket used for matchmaking. */
 let ws: WebSocket | null = null
 
+/**
+ * Joins the matchmaking queue.
+ *
+ * The promise resolves with the matched user's ID upon successful match,
+ * else it rejects with an `ApiError` upon queue-timeout, cancellation or
+ * connection loss.
+ *
+ * Also rejects with `ApiError` if a match is already ongoing.
+ *
+ * @param matchRequest Details needed to start queuing for a match.
+ * @returns Matched user's ID.
+ * @throws {ApiError} Throws an ApiError if the API response indicates an error.
+ */
 export async function getMatch(matchRequest: MatchingRequest): Promise<string> {
     return new Promise((resolve, reject) => {
         if (ws !== null) return reject(new ApiError(4000, 'A match is already ongoing.'))
@@ -58,6 +75,13 @@ export async function getMatch(matchRequest: MatchingRequest): Promise<string> {
     })
 }
 
+/**
+ * Cancels the ongoing matchmaking queue.
+ *
+ * @param matchRequest Details needed to start queuing for a match.
+ * @returns Matched user's ID.
+ * @throws {ApiError} Throws an ApiError if there's no match currently ongoing.
+ */
 export async function cancelMatch(user_id: string): Promise<void> {
     return new Promise((resolve, reject) => {
         if (ws === null) return reject(new ApiError(4000, 'No match to cancel.'))
