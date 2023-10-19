@@ -28,6 +28,7 @@ class MatchResponse(BaseModel):
     """Payload sent to frontend."""
 
     is_matched: bool
+    detail: str
     user_id: Optional[str] = None
 
 

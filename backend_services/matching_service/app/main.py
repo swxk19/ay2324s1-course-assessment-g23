@@ -13,6 +13,10 @@ from data_classes import (
 )
 
 
+TIMEOUT_MESSAGE = "Timed out. Couldn't find a match."
+CANCEL_MESSAGE = "Queuing cancelled."
+SUCCESS_MESSAGE = "Match found!"
+
 QUEUE_TIMEOUT_SECONDS: int = 30
 """Seconds before a queued user times out and gets removed from the queue."""
 
@@ -76,10 +80,18 @@ async def handle_queue(complexity: Complexity, user_1: UserWebSocket) -> None:
     user_2.timeout_task.cancel()
 
     await user_1.websocket.send_json(
-        MatchResponse(is_matched=True, user_id=user_2.user_id).model_dump(mode="json")
+        MatchResponse(
+            is_matched=True,
+            detail=SUCCESS_MESSAGE,
+            user_id=user_2.user_id,
+        ).model_dump(mode="json")
     )
     await user_2.websocket.send_json(
-        MatchResponse(is_matched=True, user_id=user_1.user_id).model_dump(mode="json")
+        MatchResponse(
+            is_matched=True,
+            detail=SUCCESS_MESSAGE,
+            user_id=user_1.user_id,
+        ).model_dump(mode="json")
     )
 
     await user_1.websocket.close()
@@ -91,7 +103,7 @@ async def handle_cancel(user: UserWebSocket) -> None:
         queue.remove_by_websocket(user.websocket)
     user.timeout_task.cancel()
     await user.websocket.send_json(
-        MatchResponse(is_matched=False).model_dump(mode="json")
+        MatchResponse(is_matched=False, detail=CANCEL_MESSAGE).model_dump(mode="json")
     )
     await user.websocket.close()
 
@@ -127,7 +139,7 @@ async def handle_timeout(complexity: Complexity, user: UserWebSocket) -> None:
 
         queue.remove_by_websocket(user.websocket)
         await user.websocket.send_json(
-            MatchResponse(is_matched=False).model_dump(mode="json")
+            MatchResponse(is_matched=False, detail=TIMEOUT_MESSAGE).model_dump(mode="json")
         )
         await user.websocket.close()
 
