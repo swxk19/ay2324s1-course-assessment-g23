@@ -43,7 +43,7 @@ const MatchingScreen = () => {
                         </motion.h2>
                     )}
                     </div>
-                    <Loader />
+                    <Loader key='loader' />
                     {showMatchedUser && (
                         <motion.h2
                             key="matchedUser"
