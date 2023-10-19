@@ -2,9 +2,6 @@ FROM ay2324s1-course-assessment-g23-base_api:latest
 
 WORKDIR /
 
-RUN pip install pika==1.3.2 && \
-    pip install aio_pika
-
 COPY ./app /app
 
 WORKDIR /app

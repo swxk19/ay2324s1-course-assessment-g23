@@ -86,7 +86,6 @@ services:
       - matching-queue
     depends_on:
       - base_api
-      - rabbitmq
   users_database:
     build:
       context: ./backend_services/users_service/database
