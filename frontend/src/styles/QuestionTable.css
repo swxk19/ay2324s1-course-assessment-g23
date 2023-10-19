@@ -1,19 +1,28 @@
-.question-container {
-    padding: 5rem;
+.question-page-container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 60rem;
 }
+
 
 .question-container td {
-    padding-right: 1rem;
+    padding: 0.75rem 1rem;
 }
 
+
 .question-container th {
-    padding-right: 2rem;
+    padding: 0 2rem 0.5rem 1rem;
     text-align: left;
-    min-width: 7rem;
+    min-width: 100%;
+    border-bottom: 2px solid #303030;
+}
+
+#id-header {
+    width: 7rem;
 }
 
 .question-container input {
-    padding: 0.5rem 0rem 0.5rem 0.5rem;
+    padding: 0.5rem 0 0.5rem 0.5rem;
     width: 100%;
 }
 
@@ -74,3 +83,18 @@
 Dialog {
     color: #242424;
 }
+
+.question-table tbody tr:nth-child(even) {
+    background-color: #303030;
+}
+
+/* Apply styles to odd rows */
+.question-table tbody tr:nth-child(odd) {
+    background-color: #242424;
+}
+
+.question-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+

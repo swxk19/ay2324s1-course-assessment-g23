@@ -6,26 +6,42 @@ const USERS_API_URL = 'http://localhost:8000/users'
 /** HTTP request headers for users API. */
 const USERS_API_HEADER = { 'Content-Type': 'application/json' }
 
-/** Represents a user. */
-export interface User {
-    user_id: string
+/** Represents the details needed for signing up as a new user. */
+export interface UserSignupDetails {
     username: string
     email: string
     password: string
 }
 
+/** Represents a user. */
+export interface User {
+    user_id: string
+    username: string
+    email: string
+    role: string
+}
+
+export interface UpdatedUser {
+    user_id: string
+    username?: string
+    password?: string
+    email?: string
+    role?: string
+}
+
 /**
  * Stores a new user.
  *
- * @param {Omit<User, 'user_id'>} user The user to store. All fields except ID are required.
- * @returns {Promise<string>} Resolves with the UUID for the stored user.
+ * @param signupDetails - The signup details for creating a new user.
+ * @returns Resolves with the UUID for the stored user.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
-export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {
+export async function storeUser(signupDetails: UserSignupDetails): Promise<string> {
     const response = await fetch(USERS_API_URL, {
         method: 'POST',
         headers: USERS_API_HEADER,
-        body: JSON.stringify(user),
+        body: JSON.stringify(signupDetails),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -37,14 +53,15 @@ export async function storeUser(user: Omit<User, 'user_id'>): Promise<string> {
 /**
  * Retrieves a user by its ID.
  *
- * @param {string} id The ID of the user to retrieve.
- * @returns {Promise<User>} Resolves with the User object if found.
+ * @param id - The ID of the user to retrieve.
+ * @returns Resolves with the User object if found.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getUser(id: string): Promise<User> {
     const response = await fetch(`${USERS_API_URL}/${id}`, {
         method: 'GET',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -56,13 +73,14 @@ export async function getUser(id: string): Promise<User> {
 /**
  * Retrieves all users.
  *
- * @returns {Promise<User[]>} An array of users.
+ * @returns An array of users.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getAllUsers(): Promise<User[]> {
-    const response = await fetch(`${USERS_API_URL}/all`, {
+    const response = await fetch(`${USERS_API_URL}_all`, {
         method: 'GET',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -74,18 +92,32 @@ export async function getAllUsers(): Promise<User[]> {
 /**
  * Updates an existing user by its ID.
  *
- * @param {Pick<User, 'user_id'> & Partial<Omit<User, 'user_id'>>} updatedUser
- * User with the fields to update. All fields except `id` are optional.
- * @returns {Promise<void>} Resolves when the user is successfully updated.
+ * @param updatedUser - User with the fields to update. All fields except `user_id` are optional.
+ * @returns Resolves when the user is successfully updated.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
-export async function updateUser(
-    updatedUser: Pick<User, 'user_id'> & Partial<Omit<User, 'user_id'>>
-): Promise<void> {
-    const response = await fetch(USERS_API_URL, {
+export async function updateUser(updatedUser: UpdatedUser): Promise<void> {
+    // Split "role" from the rest, as it uses a different API.
+    const { user_id, role, ...rolelessUpdatedUser } = updatedUser
+
+    // Attempt to update "role" first, as it requires a higher permission.
+    // (ie. if fail to update role, it will fail to update everything)
+    if (role) {
+        const response = await fetch(`${USERS_API_URL}_role/${user_id}`, {
+            method: 'PUT',
+            headers: USERS_API_HEADER,
+            body: JSON.stringify({ role }),
+            credentials: 'include',
+        })
+
+        if (!response.ok) throw await ApiError.parseResponse(response)
+    }
+
+    const response = await fetch(`${USERS_API_URL}/${user_id}`, {
         method: 'PUT',
         headers: USERS_API_HEADER,
-        body: JSON.stringify(updatedUser),
+        body: JSON.stringify(rolelessUpdatedUser),
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -94,14 +126,15 @@ export async function updateUser(
 /**
  * Deletes a user by its ID.
  *
- * @param {string} id The ID of the user to be deleted.
- * @returns {Promise<void>} Resolves when the user is successfully deleted.
+ * @param id - The ID of the user to be deleted.
+ * @returns Resolves when the user is successfully deleted.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteUser(id: string): Promise<void> {
     const response = await fetch(`${USERS_API_URL}/${id}`, {
         method: 'DELETE',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)
@@ -110,13 +143,14 @@ export async function deleteUser(id: string): Promise<void> {
 /**
  * Deletes all users.
  *
- * @returns {Promise<void>} Resolves when all users are successfully deleted.
+ * @returns Resolves when all users are successfully deleted.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function deleteAllUsers(): Promise<void> {
-    const response = await fetch(`${USERS_API_URL}/all`, {
+    const response = await fetch(`${USERS_API_URL}_all`, {
         method: 'DELETE',
         headers: USERS_API_HEADER,
+        credentials: 'include',
     })
 
     if (!response.ok) throw await ApiError.parseResponse(response)

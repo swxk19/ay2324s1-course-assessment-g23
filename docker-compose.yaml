@@ -2,43 +2,156 @@ version: "3"
 services:
   frontend:
     container_name: frontend
-    build: 
+    build:
       context: ./frontend
     ports:
       - 80:80
     networks:
       - client-side
-  api:
-    build: ./api
-    container_name: api
+  base_api:
+    build:
+      context: ./backend_services
+      dockerfile: ./Dockerfile
+    container_name: base_api
     networks:
-      - server-side
+      - backend-apis
+  api_gateway:
+    build:
+      context: ./backend_services/api_gateway
+      dockerfile: ../API_Dockerfile
+    container_name: api_gateway
+    networks:
       - client-side
+      - backend-apis
     ports:
       - 8000:8000
     environment:
-      - POSTGRES_HOST=database
+      - USERS_SERVICE_HOST=users_api
+      - SESSIONS_SERVICE_HOST=users_api
+      - QUESTIONS_SERVICE_HOST=questions_api
+      - MATCHING_SERVICE_HOST=matching_api
+      - API_PORT=8000
+    depends_on:
+      - base_api
+      - users_api
+      - questions_api
+      - matching_api
+  users_api:
+    build:
+      context: ./backend_services/users_service/api
+      dockerfile: ../../API_Dockerfile
+    container_name: users_api
+    ports:
+      - 8001:8000
+    networks:
+      - backend-apis
+      - users
+    environment:
+      - POSTGRES_HOST=users_database
       - POSTGRES_PORT=5432
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  database:
-    build: ./database
-    container_name: database
+    depends_on:
+      - users_database
+      - base_api
+  questions_api:
+    build:
+      context: ./backend_services/questions_service/api
+      dockerfile: ../../API_Dockerfile
+    container_name: questions_api
+    ports:
+      - 8002:8000
+    networks:
+      - backend-apis
+      - questions
+    environment:
+      - POSTGRES_HOST=questions_database
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - questions_database
+      - base_api
+  matching_api:
+    build:
+      context: ./backend_services/matching_service
+      dockerfile: Dockerfile
+    container_name: matching_api
+    ports:
+      - 8003:8003
+    networks:
+      - backend-apis
+      - matching-queue
+    depends_on:
+      - base_api
+      - rabbitmq
+  users_database:
+    build:
+      context: ./backend_services/users_service/database
+      dockerfile: ../../DB_Dockerfile
+    container_name: users_database
     ports:
       - 5432:5432
     networks:
-      - server-side
+      - users
     volumes:
-      - sql-data:/var/lib/postgresql
+      - users-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=${PGDATA}
+  questions_database:
+    build:
+      context: ./backend_services/questions_service/database
+      dockerfile: ../../DB_Dockerfile
+    container_name: questions_database
+    ports:
+      - 5433:5432
+    networks:
+      - questions
+    volumes:
+      - questions-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=${PGDATA}
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: RabbitMQ
+    ports:
+      - "5672:5672"  # RabbitMQ default AMQP port
+      - "15672:15672"  # RabbitMQ Management Console port
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - matching-queue
+  rmq_server:
+    build:
+      context: ./backend_services/matching_service/rmq_server
+      dockerfile: Dockerfile
+    container_name: rmq_server
+    networks:
+      - matching-queue
+    depends_on:
+      - matching_api
+      - rabbitmq
 volumes:
-  sql-data:
+  users-data:
+    external: true
+  questions-data:
+    external: true
+  rabbitmq-data:
     external: true
 networks:
+  users:
+  questions:
   client-side:
-  server-side:
+  backend-apis:
+  matching-queue:

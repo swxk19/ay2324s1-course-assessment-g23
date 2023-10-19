@@ -35,9 +35,12 @@ export function useAllUsers() {
 /**
  * Hook for getting a specific user's state from the backend using its ID.
  *
+ * If no user ID is given, the user will be `undefined` (without throwing
+ * errors). This is incase the user ID might not yet be known.
+ *
  * The fetching of the user from the backend is done automatically.
  *
- * @param id The ID of the user to fetch.
+ * @param id - The ID of the user to fetch (optional).
  *
  * @example
  * ```ts
@@ -48,10 +51,10 @@ export function useAllUsers() {
  * }
  * ```
  */
-export function useUser(id: string) {
-    return useQuery<User, ApiError>({
-        queryKey: ['user', id],
-        queryFn: () => getUser(id),
+export function useUser(id?: string) {
+    return useQuery<User | null, ApiError>({
+        queryKey: ['user', id || null],
+        queryFn: () => (id ? getUser(id) : null),
     })
 }
 
@@ -66,8 +69,8 @@ export function useUser(id: string) {
  * const MyComponent: React.FC = () => {
  *     const storeUserMutation = useStoreUser()
  *
- *     const handleStoreUser = (newUser: Omit<User, 'user_id'>) => {
- *         storeUserMutation.mutate(newUser)
+ *     const handleStoreUser = (signupDetails: UserSignupDetails) => {
+ *         storeUserMutation.mutate(signupDetails)
  *         // ... rest of the code ...
  *     }
  *     // ... rest of the code ...

@@ -4,7 +4,6 @@
     font-weight: 400;
 
     color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
 
     font-synthesis: none;
@@ -12,6 +11,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 a {
@@ -46,23 +49,62 @@ button {
     cursor: pointer;
     transition: border-color 0.25s;
 }
+
 button:hover {
     border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-}
+
 
 @media (prefers-color-scheme: light) {
     :root {
-        color: #213547;
+        color: white;
         background-color: #ffffff;
     }
+
     a:hover {
         color: #747bff;
     }
+
     button {
         background-color: #f9f9f9;
     }
+}
+
+.complexity-color-Easy {
+    color: #00b8a2;
+    font-weight: bold;
+}
+
+.complexity-color-Medium {
+    color: #febf1d;
+    font-weight: bold;
+}
+
+.complexity-color-Hard {
+    color: #fe375f;
+    font-weight: bold;
+}
+
+.bg-complexity-color-Easy {
+    background-color: #00b8a2;
+}
+
+.bg-complexity-color-Medium {
+    background-color: #febf1d;
+}
+
+.bg-complexity-color-Hard {
+    background-color: #fe375f;
+}
+
+.split-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.pane {
+    flex: 1;
+    height: 100vh;
+    box-sizing: border-box;
 }
