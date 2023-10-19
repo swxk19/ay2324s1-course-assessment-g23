@@ -19,7 +19,7 @@ const MatchBar: React.FC = () => {
     const { data: user } = useUser(sessionDetails?.user_id)
     const joinQueueMutation = useJoinQueue()
     const cancelQueueMutation = useCancelQueue()
-    const { isLoading: findMatch, isSuccess: matchSuccess } = joinQueueMutation
+    const { isLoading: isFindingMatch, isSuccess: isMatchSuccess } = joinQueueMutation
 
     const [difficulty, setDifficulty] = useState<Complexity>('Easy')
     const [isMatchingScreenVisible, setMatchingScreenVisible] = useState(false)
@@ -27,13 +27,13 @@ const MatchBar: React.FC = () => {
     const [secondsElapsed, setSecondsElapsed] = useState(0);
 
     useEffect(() => {
-        if (findMatch) { // Assuming you want to start the timer when findMatch becomes true
+        if (isFindingMatch) { // Assuming you want to start the timer when findMatch becomes true
             const timer = setTimeout(() => setSecondsElapsed(secondsElapsed + 1), 1000);
             return () => clearTimeout(timer); // Cleanup the timeout when component is unmounted or if findMatch becomes false
         }
         setMatchingScreenVisible(false)
         setMatchingStatusBarVisible(false)
-    }, [findMatch, secondsElapsed]);
+    }, [isFindingMatch, secondsElapsed]);
 
     const startFindMatch = (difficulty: Complexity) => {
         joinQueueMutation.mutateAsync(difficulty)
@@ -64,7 +64,7 @@ const MatchBar: React.FC = () => {
                     <h2>Welcome back, {user?.username}!</h2>
                 </div>
                 <div className='match'>
-                    {!findMatch && (
+                    {!isFindingMatch && (
                         <>
                             <div className='match-title'>
                                 <h2>Find a Match</h2>
@@ -122,7 +122,7 @@ const MatchBar: React.FC = () => {
                     onMinimise={handleMinimise}
                 />
             )}
-            {matchSuccess && <MatchSuccess />}
+            {isMatchSuccess && <MatchSuccess />}
         </TimerProvider>
     )
 }
