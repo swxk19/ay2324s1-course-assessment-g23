@@ -40,8 +40,6 @@ const MatchBar: React.FC = () => {
 
     const stopFindMatch = () => {
         cancelQueueMutation.mutateAsync()
-        setMatchingScreenVisible(false)
-        setMatchingStatusBarVisible(false)
     }
 
     const handleMinimise = () => {
