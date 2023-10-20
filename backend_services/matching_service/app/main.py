@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 from fastapi import FastAPI, WebSocket
-=======
-from fastapi import FastAPI, HTTPException,  WebSocket, WebSocketDisconnect
->>>>>>> bb4bd72 (Implement basic websocket for single text editor on backend)
 import json
 from fastapi.middleware.cors import CORSMiddleware
 import logging
@@ -58,25 +54,5 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception as e:
         # Log any other exceptions for debugging
         print(f"An error occurred: {e}")
-<<<<<<< HEAD
     finally:
         await websocket.close()
-=======
-
-
-clients = []
-@app.websocket("/ws2/editor")
-async def collab_editor(websocket: WebSocket):
-    await websocket.accept()
-    clients.append(websocket)
-
-    try:
-        while True:
-            data = await websocket.receive_text()
-            delta = data[len("send-changes:"):]
-
-            for client in clients:
-                await client.send_text(delta)
-    except WebSocketDisconnect:
-        clients.remove(websocket)
->>>>>>> bb4bd72 (Implement basic websocket for single text editor on backend)
