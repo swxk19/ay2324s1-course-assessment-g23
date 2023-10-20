@@ -16,9 +16,10 @@ export const Room = (roomId: string) => {
     const [code, setCode] = useState('');
 
     useEffect(() => {
-        const socket = new WebSocket('ws://localhost:8000/ws/collab');
+      const socket = new WebSocket('ws://localhost:8000/ws/collab');
 
-        socket.addEventListener('open', (event) => {
+      socket.addEventListener('open', (event) => {
+        console.log('Connected to room')
         socket.send(JSON.stringify({ type: 'CONNECTED_TO_ROOM', data: { roomId } }));
       });
 

@@ -77,8 +77,6 @@ async def websocket_endpoint(ws_a: WebSocket):
 async def websocket_endpoint(ws_a: WebSocket):
     matching_api_url = f"ws://{MATCHING_SERVICE_HOST}:8003/ws/matching"\
 
-    collaboration_api_url = f"ws://{COLLABORATION_SERVICE_HOST}:8000/ws/collab"\
-
     await ws_a.accept()
     async with websockets.client.connect(matching_api_url) as ws_b_client:
         try:
