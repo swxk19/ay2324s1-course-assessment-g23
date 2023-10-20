@@ -4,12 +4,6 @@ import type { Complexity } from './questions'
 /** URL for matching websocket API. */
 const MATCHING_API_URL = 'ws://localhost:8000/ws'
 
-/** Placeholder status-code for websocket errors (since websocket don't use status-codes). */
-const WEBSOCKET_ERROR_STATUS_CODE = 4000
-
-/** Placeholder status-code for incorrect usage of the API functions. */
-const INCORRECT_USE_STATUS_CODE = 6969
-
 /** Details needed to join the matchmaking queue. */
 export interface MatchingRequest {
     user_id: string
@@ -55,7 +49,9 @@ let ws: WebSocket | null = null
 export async function getMatch(matchRequest: MatchingRequest): Promise<string> {
     return new Promise((resolve, reject) => {
         if (ws !== null)
-            return reject(new ApiError(INCORRECT_USE_STATUS_CODE, 'A match is already ongoing.'))
+            return reject(
+                new ApiError(ApiError.FRONTEND_ERROR_STATUS_CODE, 'A match is already ongoing.')
+            )
 
         ws = new WebSocket(MATCHING_API_URL)
 
@@ -71,13 +67,13 @@ export async function getMatch(matchRequest: MatchingRequest): Promise<string> {
         ws.onmessage = (event) => {
             const responsePayload: MatchingResponsePayload = JSON.parse(event.data)
             if (responsePayload.is_matched) resolve(responsePayload.user_id!)
-            else reject(new ApiError(WEBSOCKET_ERROR_STATUS_CODE, responsePayload.detail))
+            else reject(new ApiError(ApiError.WEBSOCKET_ERROR_STATUS_CODE, responsePayload.detail))
             ws!.close()
             ws = null
         }
 
         ws.onclose = () => {
-            reject(new ApiError(WEBSOCKET_ERROR_STATUS_CODE, 'Connection died'))
+            reject(new ApiError(ApiError.WEBSOCKET_ERROR_STATUS_CODE, 'Connection died.'))
             ws = null
         }
     })
@@ -93,7 +89,7 @@ export async function getMatch(matchRequest: MatchingRequest): Promise<string> {
 export async function cancelMatch(user_id: string): Promise<void> {
     return new Promise((resolve, reject) => {
         if (ws === null)
-            return reject(new ApiError(INCORRECT_USE_STATUS_CODE, 'No match to cancel.'))
+            return reject(new ApiError(ApiError.FRONTEND_ERROR_STATUS_CODE, 'No match to cancel.'))
 
         const payload: MatchingRequestPayload = {
             user_id,
