@@ -74,6 +74,18 @@ services:
     depends_on:
       - questions_database
       - base_api
+  collaboration_api:
+    build:
+      context: ./backend_services/collaboration_service/api
+      dockerfile: ../../API_Dockerfile
+    container_name: collaboration_api
+    ports:
+      - 8004:8000
+    networks:
+      - backend-apis
+      - collaboration
+    depends_on:
+      - base_api
   matching_api:
     build:
       context: ./backend_services/matching_service
@@ -155,3 +167,4 @@ networks:
   client-side:
   backend-apis:
   matching-queue:
+  collaboration:
