@@ -8,7 +8,6 @@ import { TimerProvider } from '../components/TimerProvider.tsx'
 
 const Questions = () => {
     const { data: sessionDetails, isFetching: isFetchingSession } = useSessionDetails()
-    const isUser = sessionDetails?.role === 'normal'
 
     const navigate = useNavigate()
 
@@ -22,7 +21,9 @@ const Questions = () => {
         <>
             <Navbar />
             <div className='question-page-container'>
-                {isUser && <TimerProvider><MatchBar /></TimerProvider>}
+                <TimerProvider>
+                    <MatchBar />
+                </TimerProvider>
                 <QuestionTable />
             </div>
         </>
