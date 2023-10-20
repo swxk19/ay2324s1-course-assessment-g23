@@ -30,6 +30,7 @@ services:
       - SESSIONS_SERVICE_HOST=users_api
       - QUESTIONS_SERVICE_HOST=questions_api
       - MATCHING_SERVICE_HOST=matching_api
+      - COLLABORATION_SERVICE_HOST=collaboration_api
       - API_PORT=8000
     depends_on:
       - base_api
