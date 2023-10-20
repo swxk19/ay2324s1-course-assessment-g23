@@ -30,6 +30,7 @@ services:
       - SESSIONS_SERVICE_HOST=users_api
       - QUESTIONS_SERVICE_HOST=questions_api
       - MATCHING_SERVICE_HOST=matching_api
+      - COLLABORATION_SERVICE_HOST=collaboration_api
       - API_PORT=8000
     depends_on:
       - base_api
@@ -73,6 +74,18 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - questions_database
+      - base_api
+  collaboration_api:
+    build:
+      context: ./backend_services/collaboration_service/api
+      dockerfile: ../../API_Dockerfile
+    container_name: collaboration_api
+    ports:
+      - 8004:8000
+    networks:
+      - backend-apis
+      - collaboration
+    depends_on:
       - base_api
   matching_api:
     build:
@@ -155,3 +168,4 @@ networks:
   client-side:
   backend-apis:
   matching-queue:
+  collaboration:
