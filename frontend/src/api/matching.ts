@@ -82,8 +82,7 @@ export async function getMatch(matchRequest: MatchingRequest): Promise<string> {
 /**
  * Cancels the ongoing matchmaking queue.
  *
- * @param matchRequest Details needed to start queuing for a match.
- * @returns Matched user's ID.
+ * @param user_id Current user's ID.
  * @throws {ApiError} Throws an ApiError if there's no match currently ongoing.
  */
 export async function cancelMatch(user_id: string): Promise<void> {
