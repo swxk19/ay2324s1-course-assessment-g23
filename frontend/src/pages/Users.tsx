@@ -1,7 +1,7 @@
-import UserTable from '../components/UserTable/UserTable.tsx'
-import Navbar from '../components/Navbar.tsx'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar.tsx'
+import UserTable from '../components/UserTable/UserTable.tsx'
 import { useSessionDetails } from '../stores/sessionStore.ts'
 
 const Users = () => {

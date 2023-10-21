@@ -1,10 +1,10 @@
-import { QuestionTable } from '../components/QuestionTable/QuestionTable.tsx'
-import Navbar from '../components/Navbar.tsx'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSessionDetails } from '../stores/sessionStore.ts'
 import MatchBar from '../components/MatchBar.tsx'
+import Navbar from '../components/Navbar.tsx'
+import { QuestionTable } from '../components/QuestionTable/QuestionTable.tsx'
 import { TimerProvider } from '../components/TimerProvider.tsx'
+import { useSessionDetails } from '../stores/sessionStore.ts'
 
 const Questions = () => {
     const { data: sessionDetails, isFetching: isFetchingSession } = useSessionDetails()

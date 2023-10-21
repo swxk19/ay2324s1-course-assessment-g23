@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
 import {
     Button,
     Dialog,
@@ -11,9 +12,8 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { type Question, updateQuestion } from '../../api/questions.ts'
+import React, { useState } from 'react'
+import { type Question } from '../../api/questions.ts'
 import { useUpdateQuestion } from '../../stores/questionStore.ts'
 import AlertMessage from '../AlertMessage.tsx'
 

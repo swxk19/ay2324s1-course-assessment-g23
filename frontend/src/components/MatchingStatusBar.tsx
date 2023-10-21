@@ -1,7 +1,7 @@
 import React from 'react'
-import { useTimer } from './TimerProvider.tsx'
-import '../styles/Match.css'
 import type { Complexity } from '../api/questions.ts'
+import '../styles/Match.css'
+import { useTimer } from './TimerProvider.tsx'
 
 type MatchingScreenProps = {
     difficulty: Complexity

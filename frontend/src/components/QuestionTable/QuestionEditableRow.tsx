@@ -1,9 +1,9 @@
+import CancelIcon from '@mui/icons-material/Cancel'
+import SaveIcon from '@mui/icons-material/Save'
+import { IconButton } from '@mui/material'
 import React, { ChangeEvent } from 'react'
 import { type Question } from '../../api/questions.ts'
 import '../../styles/QuestionTable.css'
-import { IconButton } from '@mui/material'
-import SaveIcon from '@mui/icons-material/Save'
-import CancelIcon from '@mui/icons-material/Cancel'
 
 // Define a TypeScript interface for the props
 interface EditableRowProps {
