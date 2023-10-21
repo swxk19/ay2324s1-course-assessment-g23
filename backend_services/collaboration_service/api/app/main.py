@@ -33,6 +33,7 @@ async def websocket_endpoint(websocket: WebSocket):
             if event == "send-changes":
                 delta = data.get("data")
                 for client in clients:
+                    if client != websocket:
                         await client.send_json({"event": "receive-changes", "data": delta})
 
     except WebSocketDisconnect:

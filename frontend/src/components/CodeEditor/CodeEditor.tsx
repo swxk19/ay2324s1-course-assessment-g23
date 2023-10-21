@@ -34,7 +34,7 @@ export const CodeEditor: React.FC = () => {
         if (socket == null || quill == null) return
 
         const editHandler = (delta: Delta, oldDelta: Delta, source: string) => {
-            if (source !== 'user' || quill == null) return;
+          if (source != 'user' || quill == null) return;
             socket.send(JSON.stringify({ event: "send-changes", data: delta }));
           }
 
@@ -44,9 +44,8 @@ export const CodeEditor: React.FC = () => {
 
         socket.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          console.log(data.event)
 
-          if (data.event === "receive-changes") {
+          if (data.event == "receive-changes") {
             quill.updateContents(data.data);
           }
         }

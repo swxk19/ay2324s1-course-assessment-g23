@@ -32,7 +32,6 @@ async def forward_communication(ws_a: WebSocket, ws_b: websockets.client.WebSock
     """Handles communication from frontend -> microservice."""
     while True:
         data = await ws_a.receive_text()
-        print(data)
         await ws_b.send(data)
 
 
@@ -43,36 +42,18 @@ async def reverse_communication(ws_a: WebSocket, ws_b: websockets.client.WebSock
         assert isinstance(data, str)
         await ws_a.send_text(data)
 
-
-async def forward_communication_json(ws_a: WebSocket, ws_b: websockets.client.WebSocketClientProtocol):
-    """Handles communication from frontend -> microservice."""
-    while True:
-        data = await ws_a.receive_json()
-        print(data)
-        await ws_b.send(json.dumps(data))
-
-async def reverse_communication_json(ws_a: WebSocket, ws_b: websockets.client.WebSocketClientProtocol):
-    """Handles communication from microservice -> frontend."""
-    while True:
-        data = await ws_b.recv()
-        assert isinstance(data, str)
-        received_data = json.loads(data)
-        await ws_a.send_json(received_data)
-
-
 @app.websocket("/ws/collab")
 async def websocket_endpoint(ws_a: WebSocket):
 
     collaboration_api_url = f"ws://{COLLABORATION_SERVICE_HOST}:8000/ws/collab"\
 
     await ws_a.accept()
-    print("connect", "################")
     async with websockets.client.connect(collaboration_api_url) as ws_b_client:
         try:
             fwd_task = asyncio.create_task(
-                forward_communication_json(ws_a, ws_b_client))
+                forward_communication(ws_a, ws_b_client))
             rev_task = asyncio.create_task(
-                reverse_communication_json(ws_a, ws_b_client))
+                reverse_communication(ws_a, ws_b_client))
             await asyncio.gather(fwd_task, rev_task)
 
         # Ignore any "connection closed" errors. They're expected because any
@@ -86,7 +67,6 @@ async def websocket_endpoint(ws_a: WebSocket):
             # If any websockets aren't closed, close them.
             # `ws_a` and `ws_b_client` are from different packages, so they use
             # different websocket-states.
-            print("closed", "##############")
             if ws_a.client_state != WebSocketState.DISCONNECTED:  # FastAPI's websocket.
                 await ws_a.close()
             if ws_b_client.state != State.CLOSED:  # websockets's websocket
