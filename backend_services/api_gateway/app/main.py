@@ -53,9 +53,9 @@ async def websocket_endpoint(ws_a: WebSocket, route: str):
             requested_service = matching_api_url
         case "collab":
             requested_service = collaboration_api_url
-
-    if route is None:
-        return
+        case _:
+            # If route doesn't match any service above, exit.
+            return
 
     await ws_a.accept()
     async with websockets.client.connect(requested_service) as ws_b_client:
