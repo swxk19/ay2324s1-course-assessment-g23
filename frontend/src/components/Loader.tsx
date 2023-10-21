@@ -2,13 +2,7 @@ import { motion } from 'framer-motion'
 
 /** Adapted from https://codesandbox.io/s/framer-motion-loader-tpbpg?file=/src/loader.jsx */
 
-const colors = [
-    '#00b8a2',
-
-    '#fec800',
-
-    '#fe375f',
-]
+const colors = ['#00b8a2', '#fec800', '#fe375f']
 
 const containerVariants = {
     initial: {},
@@ -41,7 +35,7 @@ const Loader = ({ count = colors.length }) => {
                 display: 'flex',
                 gap: 10,
                 height: 50,
-                justifyContent: 'center'
+                justifyContent: 'center',
             }}
         >
             {Array(count)

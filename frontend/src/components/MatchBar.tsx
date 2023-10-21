@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import '../styles/MatchBar.css'
 import { Info, Star, Whatshot } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
@@ -7,7 +7,7 @@ import MatchingStatusBar from './MatchingStatusBar.tsx'
 import { useSessionDetails } from '../stores/sessionStore.ts'
 import { useUser } from '../stores/userStore.ts'
 import { useTimer } from './TimerProvider.tsx'
-import MatchSuccess from "./MatchSuccess.tsx";
+import MatchSuccess from './MatchSuccess.tsx'
 import { useCancelQueue, useJoinQueue } from '../stores/matchingStore.ts'
 import type { Complexity } from '../api/questions.ts'
 import AlertMessage from './AlertMessage.tsx'
@@ -16,12 +16,16 @@ const tooltipDescription =
     'Select a difficulty level and get matched with another user. ' +
     'Together, you both will collaboratively attempt a question of the chosen difficulty.'
 const MatchBar: React.FC = () => {
-    const { resetTimer } = useTimer();
+    const { resetTimer } = useTimer()
     const { data: sessionDetails } = useSessionDetails()
     const { data: user } = useUser(sessionDetails?.user_id)
     const joinQueueMutation = useJoinQueue()
     const cancelQueueMutation = useCancelQueue()
-    const { isLoading: isFindingMatch, isSuccess: isMatchSuccess, isError: isMatchError } = joinQueueMutation
+    const {
+        isLoading: isFindingMatch,
+        isSuccess: isMatchSuccess,
+        isError: isMatchError,
+    } = joinQueueMutation
 
     const [difficulty, setDifficulty] = useState<Complexity>('Easy')
     const [isMatchingScreenVisible, setMatchingScreenVisible] = useState(false)
@@ -33,7 +37,7 @@ const MatchBar: React.FC = () => {
             setMatchingStatusBarVisible(false)
             resetTimer()
         }
-    }, [isFindingMatch]);
+    }, [isFindingMatch])
 
     const startFindMatch = (difficulty: Complexity) => {
         joinQueueMutation.mutateAsync(difficulty)

@@ -1,22 +1,31 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from 'react'
+import { motion } from 'framer-motion'
 
 interface SpinnerProps {
-    text: string;
+    text: string
 }
 
 const Spinner: React.FC<SpinnerProps> = ({ text }) => {
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <div style={{
-                width: '250px',
-                height: '250px',
-                borderRadius: '50%',
-                position: 'relative',
+        <div
+            style={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-            }}>
+                height: '100vh',
+            }}
+        >
+            <div
+                style={{
+                    width: '250px',
+                    height: '250px',
+                    borderRadius: '50%',
+                    position: 'relative',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
                 <motion.div
                     style={{
                         width: '100%',
@@ -29,7 +38,7 @@ const Spinner: React.FC<SpinnerProps> = ({ text }) => {
                         borderLeftColor: '#4A90E2',
                         position: 'absolute',
                         top: 0,
-                        left: 0
+                        left: 0,
                     }}
                     animate={{ rotate: 360 }}
                     transition={{
@@ -38,13 +47,10 @@ const Spinner: React.FC<SpinnerProps> = ({ text }) => {
                         duration: 2,
                     }}
                 />
-                <h2 style={{ position: 'relative', zIndex: 1 }}>
-                    {text}
-                </h2>
+                <h2 style={{ position: 'relative', zIndex: 1 }}>{text}</h2>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Spinner;
-
+export default Spinner

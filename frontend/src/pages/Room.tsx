@@ -10,11 +10,11 @@ export const Room = () => {
                 </Link>
             </nav>
             <div className='split-container'>
-                <div className='pane' style={{ paddingLeft: '30px'}}>
+                <div className='pane' style={{ paddingLeft: '30px' }}>
                     Question Placeholder
                 </div>
                 <div className='pane'>
-                <CodeEditor />
+                    <CodeEditor />
                 </div>
             </div>
         </div>

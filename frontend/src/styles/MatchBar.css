@@ -50,7 +50,6 @@
     margin: 0 0.5rem;
     font-weight: bold;
     font-size: 1.25rem;
-
 }
 
 .icon-text-wrapper {
@@ -78,7 +77,7 @@
     }
 
     .matchbar-container {
-        width:100%;
+        width: 100%;
     }
 
     .match {
