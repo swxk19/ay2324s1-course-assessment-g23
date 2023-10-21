@@ -31,12 +31,12 @@ async def join_collab_editor(websocket: WebSocket):
         while True:
             data = await websocket.receive_json()
 
-            event_handler(data, websocket)
+            editor_event_handler(data, websocket)
 
     except WebSocketDisconnect:
         clients.remove(websocket)
 
-async def event_handler(data, websocket):
+async def editor_event_handler(data, websocket):
     global clients
     global document
 

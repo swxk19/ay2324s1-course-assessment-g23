@@ -77,7 +77,7 @@ services:
       - base_api
   collaboration_api:
     build:
-      context: ./backend_services/collaboration_service/api
+      context: ./backend_services/collaboration_service
       dockerfile: Dockerfile
     container_name: collaboration_api
     ports:
