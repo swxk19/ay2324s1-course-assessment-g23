@@ -30,21 +30,14 @@ async def join_collab_editor(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_json()
-
-            editor_event_handler(data, websocket)
+            event = data.get("event")
+            if event == "send-changes":
+                payload = data.get("data")
+                delta = payload.get("delta")
+                document = payload.get("fullDoc")
+                for client in clients:
+                    if client != websocket:
+                        await client.send_json({"event": "receive-changes", "data": delta})
 
     except WebSocketDisconnect:
         clients.remove(websocket)
-
-async def editor_event_handler(data, websocket):
-    global clients
-    global document
-
-    event = data.get("event")
-    if event == "send-changes":
-        payload = data.get("data")
-        delta = payload.get("delta")
-        document = payload.get("fullDoc")
-        for client in clients:
-            if client != websocket:
-                await client.send_json({"event": "receive-changes", "data": delta})
