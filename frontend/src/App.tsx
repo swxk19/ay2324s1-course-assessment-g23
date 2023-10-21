@@ -5,7 +5,7 @@ import Login from './pages/Login.tsx'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Signup from './pages/Signup.tsx'
 import { AnimatePresence } from 'framer-motion'
-import Room from "./pages/Room.tsx";
+import Room from './pages/Room.tsx'
 
 const queryClient = new QueryClient()
 const App: React.FC = () => {
