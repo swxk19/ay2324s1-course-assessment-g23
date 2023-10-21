@@ -30,6 +30,7 @@ class MatchResponse(BaseModel):
     is_matched: bool
     detail: str
     user_id: Optional[str] = None
+    room_id: Optional[str] = None
 
 
 # Using normal dataclass instead of Pydantic because `WebSocket` and

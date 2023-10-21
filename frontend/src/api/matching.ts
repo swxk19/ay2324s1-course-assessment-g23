@@ -10,6 +10,11 @@ export interface MatchingRequest {
     complexity: Complexity
 }
 
+export interface Match {
+    user_id: string
+    room_id: string
+}
+
 interface QueuePayload {
     user_id: string
     complexity: Lowercase<Complexity>
@@ -28,6 +33,7 @@ interface MatchingResponsePayload {
     is_matched: boolean
     detail: string
     user_id: string | null
+    room_id: string | null
 }
 
 /** The websocket used for matchmaking. */
@@ -36,17 +42,17 @@ let ws: WebSocket | null = null
 /**
  * Joins the matchmaking queue.
  *
- * The promise resolves with the matched user's ID upon successful match,
+ * The promise resolves with the matched user and room IDs upon successful match,
  * else it rejects with an `ApiError` upon queue-timeout, cancellation or
  * connection loss.
  *
  * Also rejects with `ApiError` if a match is already ongoing.
  *
  * @param matchRequest Details needed to start queuing for a match.
- * @returns Matched user's ID.
+ * @returns Matched user and room IDs.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
-export async function getMatch(matchRequest: MatchingRequest): Promise<string> {
+export async function getMatch(matchRequest: MatchingRequest): Promise<Match> {
     return new Promise((resolve, reject) => {
         if (ws !== null)
             return reject(
@@ -66,7 +72,11 @@ export async function getMatch(matchRequest: MatchingRequest): Promise<string> {
 
         ws.onmessage = (event) => {
             const responsePayload: MatchingResponsePayload = JSON.parse(event.data)
-            if (responsePayload.is_matched) resolve(responsePayload.user_id!)
+            if (responsePayload.is_matched)
+                resolve({
+                    user_id: responsePayload.user_id!,
+                    room_id: responsePayload.room_id!,
+                })
             else reject(new ApiError(ApiError.WEBSOCKET_ERROR_STATUS_CODE, responsePayload.detail))
             ws!.close()
             ws = null

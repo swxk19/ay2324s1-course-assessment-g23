@@ -3,6 +3,7 @@ import asyncio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.websockets import WebSocketState
+import uuid
 
 from data_classes import (
     Complexity,
@@ -79,11 +80,13 @@ async def handle_queue(complexity: Complexity, user_1: UserWebSocket) -> None:
     user_2 = queue.pop()
     user_2.timeout_task.cancel()
 
+    new_room_id = str(uuid.uuid4())
     await user_1.websocket.send_json(
         MatchResponse(
             is_matched=True,
             detail=SUCCESS_MESSAGE,
             user_id=user_2.user_id,
+            room_id=new_room_id,
         ).model_dump(mode="json")
     )
     await user_2.websocket.send_json(
@@ -91,6 +94,7 @@ async def handle_queue(complexity: Complexity, user_1: UserWebSocket) -> None:
             is_matched=True,
             detail=SUCCESS_MESSAGE,
             user_id=user_1.user_id,
+            room_id=new_room_id,
         ).model_dump(mode="json")
     )
 

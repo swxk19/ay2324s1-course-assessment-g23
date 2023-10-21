@@ -6,8 +6,8 @@ import Loader from './Loader.tsx'
 import Spinner from './Spinner.tsx'
 
 const MatchingScreen = () => {
-    const { data: matchedUserId } = useMatch()
-    const { data: matchedUser } = useUser(matchedUserId || undefined)
+    const { data: match } = useMatch()
+    const { data: matchedUser } = useUser(match?.user_id)
     const [showMatchFound, setShowMatchFound] = useState(true)
     const [showMatchedUser, setShowMatchedUser] = useState(false)
 
