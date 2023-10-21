@@ -55,7 +55,6 @@ export const CodeEditor: React.FC = () => {
           const data = JSON.parse(event.data);
 
           if (data.event == "open") {
-            console.log(data.data)
             quill.setText(data.data)
           }
 

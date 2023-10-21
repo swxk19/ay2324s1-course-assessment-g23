@@ -42,42 +42,23 @@ async def reverse_communication(ws_a: WebSocket, ws_b: websockets.client.WebSock
         assert isinstance(data, str)
         await ws_a.send_text(data)
 
-@app.websocket("/ws/collab")
-async def websocket_endpoint(ws_a: WebSocket):
+@app.websocket("/ws/{route:path}")
+async def websocket_endpoint(ws_a: WebSocket, route: str):
+    matching_api_url = f"ws://{MATCHING_SERVICE_HOST}:8003/ws/matching"
+    collaboration_api_url = f"ws://{COLLABORATION_SERVICE_HOST}:8000/ws/collab"
 
-    collaboration_api_url = f"ws://{COLLABORATION_SERVICE_HOST}:8000/ws/collab"\
+    requested_service = None
+    match route:
+        case "":
+            requested_service = matching_api_url
+        case "collab":
+            requested_service = collaboration_api_url
 
-    await ws_a.accept()
-    async with websockets.client.connect(collaboration_api_url) as ws_b_client:
-        try:
-            fwd_task = asyncio.create_task(
-                forward_communication(ws_a, ws_b_client))
-            rev_task = asyncio.create_task(
-                reverse_communication(ws_a, ws_b_client))
-            await asyncio.gather(fwd_task, rev_task)
-
-        # Ignore any "connection closed" errors. They're expected because any
-        # of the websockets methods might fail when the websocket closes.
-        except fastapi.websockets.WebSocketDisconnect:
-            pass
-        except websockets.exceptions.ConnectionClosedOK:
-            pass
-
-        finally:
-            # If any websockets aren't closed, close them.
-            # `ws_a` and `ws_b_client` are from different packages, so they use
-            # different websocket-states.
-            if ws_a.client_state != WebSocketState.DISCONNECTED:  # FastAPI's websocket.
-                await ws_a.close()
-            if ws_b_client.state != State.CLOSED:  # websockets's websocket
-                await ws_b_client.close()
-
-@app.websocket("/ws")
-async def websocket_endpoint(ws_a: WebSocket):
-    matching_api_url = f"ws://{MATCHING_SERVICE_HOST}:8003/ws/matching"\
+    if route is None:
+        return
 
     await ws_a.accept()
-    async with websockets.client.connect(matching_api_url) as ws_b_client:
+    async with websockets.client.connect(requested_service) as ws_b_client:
         try:
             fwd_task = asyncio.create_task(
                 forward_communication(ws_a, ws_b_client))
