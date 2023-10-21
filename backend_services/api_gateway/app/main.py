@@ -47,15 +47,14 @@ async def websocket_endpoint(ws_a: WebSocket, route: str):
     matching_api_url = f"ws://{MATCHING_SERVICE_HOST}:8003/ws/matching"
     collaboration_api_url = f"ws://{COLLABORATION_SERVICE_HOST}:8000/ws/collab"
 
-    requested_service = None
-    match route:
-        case "matching":
+    match route.split('/'):
+        case ["matching"]:
             requested_service = matching_api_url
-        case "collab":
-            requested_service = collaboration_api_url
-
-    if route is None:
-        return
+        case ["collab", room_id]:
+            requested_service = collaboration_api_url + f"/{room_id}"
+        case _:
+            # If route doesn't match any service above, exit.
+            return
 
     await ws_a.accept()
     async with websockets.client.connect(requested_service) as ws_b_client:

@@ -18,7 +18,7 @@ const App: React.FC = () => {
                     <Route key='Signup' path='/signup' element={<Signup />} />
                     <Route key='Questions' path='/questions' element={<Questions />} />
                     <Route key='Users' path='/users' element={<Users />} />
-                    <Route key='Room' path='/room' element={<Room />} />
+                    <Route key='Room' path='/room/:roomId' element={<Room />} />
                 </Routes>
             </AnimatePresence>
         </QueryClientProvider>

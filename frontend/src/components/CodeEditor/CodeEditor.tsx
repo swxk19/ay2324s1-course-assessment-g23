@@ -3,6 +3,7 @@ import Delta from 'quill-delta'
 import 'quill/dist/quill.snow.css'
 
 import React, { useCallback, useEffect, useState } from 'react'
+import { useParams } from 'react-router'
 
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -17,11 +18,12 @@ const TOOLBAR_OPTIONS = [
 ]
 
 export const CodeEditor: React.FC = () => {
+    const { roomId } = useParams()
     const [socket, setSocket] = useState<WebSocket | null>(null)
     const [quill, setQuill] = useState<Quill | null>(null)
 
     useEffect(() => {
-        const socket = new WebSocket('ws://localhost:8000/ws/collab')
+        const socket = new WebSocket(`ws://localhost:8000/ws/collab/${roomId}`)
         setSocket(socket)
 
         return () => {
