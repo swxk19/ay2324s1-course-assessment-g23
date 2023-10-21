@@ -14,25 +14,26 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-# clients = []
-# @app.websocket("/ws2/editor")
-# async def collab_editor(websocket: WebSocket):
-#     await websocket.accept()
-#     clients.append(websocket)
-
-#     try:
-#         while True:
-#             data = await websocket.receive_text()
-#             delta = data[len("send-changes:"):]
-
-#             for client in clients:
-#                 await client.send_text("")
-#     except WebSocketDisconnect:
-#         clients.remove(websocket)
-
+clients = []
 @app.websocket("/ws/collab")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
+    clients.append(websocket)
+
     # Send an "open" event to the client
     await websocket.send_json({"event": "open"})
+    try:
+        while True:
+            # Wait for incoming messages from the client
+            data = await websocket.receive_json()
+
+            # Check the event type
+            event = data.get("event")
+            if event == "send-changes":
+                delta = data.get("data")
+                for client in clients:
+                        await client.send_json({"event": "receive-changes", "data": delta})
+
+    except WebSocketDisconnect:
+        clients.remove(websocket)
