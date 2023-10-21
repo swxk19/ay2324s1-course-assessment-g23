@@ -77,8 +77,8 @@ services:
       - base_api
   collaboration_api:
     build:
-      context: ./backend_services/collaboration_service/api
-      dockerfile: ../../API_Dockerfile
+      context: ./backend_services/collaboration_service
+      dockerfile: Dockerfile
     container_name: collaboration_api
     ports:
       - 8004:8000
