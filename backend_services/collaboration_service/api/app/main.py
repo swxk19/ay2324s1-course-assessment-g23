@@ -1,7 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
-
 # create app
 app = FastAPI()
 
@@ -17,7 +16,7 @@ app.add_middleware(
 clients = []
 document = ""
 @app.websocket("/ws/collab")
-async def websocket_endpoint(websocket: WebSocket):
+async def join_collab_editor(websocket: WebSocket):
     global clients
     global document
 
@@ -30,19 +29,22 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         while True:
-            # Wait for incoming messages from the client
             data = await websocket.receive_json()
 
-            # Check the event type
-            event = data.get("event")
-            if event == "send-changes":
-                payload = data.get("data")
-                delta = payload.get("delta")
-                document = payload.get("fullDoc")
-                for client in clients:
-                    if client != websocket:
-                        await client.send_json({"event": "receive-changes", "data": delta})
-
+            event_handler(data, websocket)
 
     except WebSocketDisconnect:
         clients.remove(websocket)
+
+async def event_handler(data, websocket):
+    global clients
+    global document
+
+    event = data.get("event")
+    if event == "send-changes":
+        payload = data.get("data")
+        delta = payload.get("delta")
+        document = payload.get("fullDoc")
+        for client in clients:
+            if client != websocket:
+                await client.send_json({"event": "receive-changes", "data": delta})
