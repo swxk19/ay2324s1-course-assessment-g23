@@ -1,3 +1,4 @@
+from data_classes import Room
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,19 +14,26 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-clients = []
-document = ""
-@app.websocket("/ws/collab")
-async def join_collab_editor(websocket: WebSocket):
-    global clients
-    global document
+
+rooms: dict[str, Room] = {}
+"""Dict where keys are the room-ID, values are the room's info."""
+
+
+@app.websocket("/ws/collab/{room_id}")
+async def join_collab_editor(websocket: WebSocket, room_id: str):
+    global rooms
 
     await websocket.accept()
 
-    clients.append(websocket)
+    # If the room_id doesn't exist in the dict yet, create it.
+    if room_id not in rooms:
+        rooms[room_id] = Room()
+    room = rooms[room_id]
+
+    room.clients.append(websocket)
 
     # send current room document to newly connected client
-    await websocket.send_json({"event": "open", "data": document })
+    await websocket.send_json({"event": "open", "data": room.full_document})
 
     try:
         while True:
@@ -34,10 +42,10 @@ async def join_collab_editor(websocket: WebSocket):
             if event == "send-changes":
                 payload = data.get("data")
                 delta = payload.get("delta")
-                document = payload.get("fullDoc")
-                for client in clients:
+                room.full_document = payload.get("fullDoc")
+                for client in room.clients:
                     if client != websocket:
                         await client.send_json({"event": "receive-changes", "data": delta})
 
     except WebSocketDisconnect:
-        clients.remove(websocket)
+        room.clients.remove(websocket)
