@@ -1,10 +1,10 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
-import { UserSignupDetails } from '../api/users.ts'
-import '../styles/SignupPage.css'
-import { Link, useNavigate } from 'react-router-dom'
-import { useSignupUser } from '../stores/sessionStore.ts'
-import AlertMessage from '../components/AlertMessage.tsx'
 import { motion } from 'framer-motion'
+import { ChangeEvent, FormEvent, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserSignupDetails } from '../api/users.ts'
+import AlertMessage from '../components/AlertMessage.tsx'
+import { useSignupUser } from '../stores/sessionStore.ts'
+import '../styles/SignupPage.css'
 
 const Signup = () => {
     const signupUserMutation = useSignupUser()

@@ -1,9 +1,9 @@
-import '../styles/LoginPage.css'
-import { Link, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { useLoginUser, useSessionDetails } from '../stores/sessionStore'
-import AlertMessage from '../components/AlertMessage'
 import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import AlertMessage from '../components/AlertMessage'
+import { useLoginUser, useSessionDetails } from '../stores/sessionStore'
+import '../styles/LoginPage.css'
 
 const Login = () => {
     const { data: sessionDetails, isFetching: isFetchingSession } = useSessionDetails()

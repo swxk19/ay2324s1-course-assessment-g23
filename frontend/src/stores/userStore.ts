@@ -1,14 +1,14 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ApiError } from '../api/error'
 import {
-    getUser,
+    User,
+    deleteAllUsers,
+    deleteUser,
     getAllUsers,
+    getUser,
     storeUser,
     updateUser,
-    deleteUser,
-    deleteAllUsers,
-    User,
 } from '../api/users'
-import { ApiError } from '../api/error'
 
 /**
  * Hook for getting users state from backend.

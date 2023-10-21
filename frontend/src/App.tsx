@@ -1,11 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import Questions from './pages/Questions.tsx'
-import Users from './pages/Users.tsx'
-import Login from './pages/Login.tsx'
-import { Route, Routes, useLocation } from 'react-router-dom'
-import Signup from './pages/Signup.tsx'
 import { AnimatePresence } from 'framer-motion'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import Login from './pages/Login.tsx'
+import Questions from './pages/Questions.tsx'
 import Room from './pages/Room.tsx'
+import Signup from './pages/Signup.tsx'
+import Users from './pages/Users.tsx'
 
 const queryClient = new QueryClient()
 const App: React.FC = () => {

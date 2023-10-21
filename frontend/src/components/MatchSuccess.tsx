@@ -1,9 +1,9 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Loader from './Loader.tsx'
-import Spinner from './Spinner.tsx'
 import { useMatch } from '../stores/matchingStore.ts'
 import { useUser } from '../stores/userStore.ts'
+import Loader from './Loader.tsx'
+import Spinner from './Spinner.tsx'
 
 const MatchingScreen = () => {
     const { data: matchedUserId } = useMatch()

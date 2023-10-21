@@ -1,7 +1,7 @@
+import React, { useState } from 'react'
 import type { UpdatedUser, User } from '../api/users'
 import { useUpdateUser } from '../stores/userStore'
 import '../styles/EditProfile.css'
-import React, { useState } from 'react'
 import AlertMessage from './AlertMessage.tsx'
 
 interface EditProfileProps {

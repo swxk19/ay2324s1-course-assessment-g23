@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import '../styles/Navbar.css'
 import { Link, useMatch, useResolvedPath } from 'react-router-dom'
-import EditProfile from './EditProfile.tsx'
 import { useLogoutUser, useSessionDetails } from '../stores/sessionStore.ts'
 import { useUser } from '../stores/userStore.ts'
+import '../styles/Navbar.css'
+import EditProfile from './EditProfile.tsx'
 
 const Navbar: React.FC = () => {
     const { data: sessionDetails } = useSessionDetails()

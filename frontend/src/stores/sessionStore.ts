@@ -1,8 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { userLogin, userLogout, SessionDetails, getSession } from '../api/auth'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import Cookies from 'js-cookie'
+import { SessionDetails, getSession, userLogin, userLogout } from '../api/auth'
 import { ApiError } from '../api/error'
 import { storeUser } from '../api/users'
-import Cookies from 'js-cookie'
 
 const SESSION_ID_COOKIE_NAME = 'session_id'
 
