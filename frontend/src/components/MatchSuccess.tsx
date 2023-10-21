@@ -1,15 +1,17 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { useMatch } from '../stores/matchingStore.ts'
 import { useUser } from '../stores/userStore.ts'
 import Loader from './Loader.tsx'
 import Spinner from './Spinner.tsx'
 
 const MatchingScreen = () => {
-    const { data: matchedUserId } = useMatch()
-    const { data: matchedUser } = useUser(matchedUserId || undefined)
+    const { data: match } = useMatch()
+    const { data: matchedUser } = useUser(match?.user_id)
     const [showMatchFound, setShowMatchFound] = useState(true)
     const [showMatchedUser, setShowMatchedUser] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -19,6 +21,15 @@ const MatchingScreen = () => {
 
         return () => clearTimeout(timer)
     }, [])
+
+    useEffect(() => {
+        // Navigate to room after showing "Match Found" and "Redirecting" messages
+        const timer = setTimeout(() => {
+            if (match) navigate(`/room/${match.room_id}`)
+        }, 4000)
+
+        return () => clearTimeout(timer)
+    }, [match])
 
     const fadeInOut = {
         initial: { opacity: 0 },

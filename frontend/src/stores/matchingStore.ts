@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ApiError } from '../api/error'
-import { cancelMatch, getMatch } from '../api/matching'
+import { Match, cancelMatch, getMatch } from '../api/matching'
 import { Complexity } from '../api/questions'
 import { useSessionDetails } from './sessionStore'
 
@@ -19,7 +19,7 @@ import { useSessionDetails } from './sessionStore'
  * ```
  */
 export function useMatch() {
-    return useQuery<string | null, ApiError>({
+    return useQuery<Match | null, ApiError>({
         queryKey: ['matching'],
         initialData: null,
         enabled: false,
