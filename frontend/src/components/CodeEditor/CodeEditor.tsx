@@ -35,7 +35,16 @@ export const CodeEditor: React.FC = () => {
 
         const editHandler = (delta: Delta, oldDelta: Delta, source: string) => {
           if (source != 'user' || quill == null) return;
-            socket.send(JSON.stringify({ event: "send-changes", data: delta }));
+
+          const payload = {
+            event: "send-changes",
+            data: {
+              delta: delta,
+              fullDoc: quill.getText()
+            }
+          };
+
+          socket.send(JSON.stringify(payload));
           }
 
         socket.onopen = () => {
@@ -44,6 +53,11 @@ export const CodeEditor: React.FC = () => {
 
         socket.onmessage = (event) => {
           const data = JSON.parse(event.data);
+
+          if (data.event == "open") {
+            console.log(data.data)
+            quill.setText(data.data)
+          }
 
           if (data.event == "receive-changes") {
             quill.updateContents(data.data);
@@ -68,7 +82,6 @@ export const CodeEditor: React.FC = () => {
             theme: "snow",
             modules: { toolbar: TOOLBAR_OPTIONS },
           })
-        q.setText("test")
         setQuill(q)
 
     }, [])

@@ -15,14 +15,19 @@ app.add_middleware(
 )
 
 clients = []
+document = ""
 @app.websocket("/ws/collab")
 async def websocket_endpoint(websocket: WebSocket):
+    global clients
+    global document
+
     await websocket.accept()
 
     clients.append(websocket)
 
-    # Send an "open" event to the client
-    await websocket.send_json({"event": "open"})
+    # send current room document to newly connected client
+    await websocket.send_json({"event": "open", "data": document })
+
     try:
         while True:
             # Wait for incoming messages from the client
@@ -31,10 +36,13 @@ async def websocket_endpoint(websocket: WebSocket):
             # Check the event type
             event = data.get("event")
             if event == "send-changes":
-                delta = data.get("data")
+                payload = data.get("data")
+                delta = payload.get("delta")
+                document = payload.get("fullDoc")
                 for client in clients:
                     if client != websocket:
                         await client.send_json({"event": "receive-changes", "data": delta})
+
 
     except WebSocketDisconnect:
         clients.remove(websocket)
