@@ -1,4 +1,4 @@
-from data_classes import Room
+from data_classes import QuillPayload, Room
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -37,7 +37,7 @@ async def join_collab_editor(websocket: WebSocket, room_id: str):
 
     try:
         while True:
-            data = await websocket.receive_json()
+            data: QuillPayload = await websocket.receive_json()
             event = data.get("event")
             if event == "send-changes":
                 payload = data.get("data")

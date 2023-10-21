@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Any, TypedDict
 
 from fastapi import WebSocket
 
@@ -11,3 +12,13 @@ class Room:
 
     clients: list[WebSocket] = field(default_factory=list)
     full_document: str = ""
+
+
+class _QuillData(TypedDict):
+    delta: dict[str, Any]
+    fullDoc: str
+
+
+class QuillPayload(TypedDict):
+    event: str
+    data: _QuillData
