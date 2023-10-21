@@ -49,7 +49,7 @@ async def websocket_endpoint(ws_a: WebSocket, route: str):
 
     requested_service = None
     match route:
-        case "":
+        case "matching":
             requested_service = matching_api_url
         case "collab":
             requested_service = collaboration_api_url
