@@ -24,7 +24,7 @@ const ConfirmationBox: React.FC<EditProfileProps> = ({ onClose, onExit }) => {
                     borderRadius: '15px',
                     width: '400px',
                     height: '200px',
-                    padding: '20px 20px 20px 30px',
+                    padding: '20px',
                 }}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={
