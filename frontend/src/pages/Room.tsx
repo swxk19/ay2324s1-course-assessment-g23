@@ -1,8 +1,22 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
 import CodeEditor from '../components/CodeEditor/CodeEditor'
+import ConfirmationBox from '../components/CodeEditor/ConfirmationBox.tsx'
 
 export const Room = () => {
+    const [showConfirmation, setShowConfirmation] = useState(false)
+    const navigate = useNavigate()
+    const handleExit = () => {
+        setTimeout(() => {
+            navigate('/questions')
+        }, 4000) // 4000 milliseconds (4 seconds) delay
+    }
+
     return (
         <div>
+            {showConfirmation && (
+                <ConfirmationBox onClose={() => setShowConfirmation(false)} onExit={handleExit} />
+            )}
             <nav className='nav' style={{ padding: ' 8px 20px' }}>
                 <h2
                     style={{
@@ -14,7 +28,10 @@ export const Room = () => {
                 >
                     PeerPrep
                 </h2>
-                <button style={{ backgroundColor: '#fe375f', width: '200px', margin: '0' }}>
+                <button
+                    style={{ backgroundColor: '#fe375f', width: '200px', margin: '0' }}
+                    onClick={() => setShowConfirmation(true)}
+                >
                     Exit Room
                 </button>
             </nav>
