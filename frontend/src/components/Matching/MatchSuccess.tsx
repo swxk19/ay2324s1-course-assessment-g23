@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { useMatch } from '../stores/matchingStore.ts'
-import { useUser } from '../stores/userStore.ts'
-import Loader from './Loader.tsx'
-import Spinner from './Spinner.tsx'
+import { useMatch } from '../../stores/matchingStore.ts'
+import { useUser } from '../../stores/userStore.ts'
+import Loader from '../LoadingAnimation/Loader.tsx'
+import Spinner from '../LoadingAnimation/Spinner.tsx'
 
 const MatchingScreen = () => {
     const { data: match } = useMatch()

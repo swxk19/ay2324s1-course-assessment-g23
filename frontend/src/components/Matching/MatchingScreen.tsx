@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import type { Complexity } from '../api/questions.ts'
-import Loader from './Loader.tsx'
-import { useTimer } from './TimerProvider.tsx'
+import type { Complexity } from '../../api/questions.ts'
+import Loader from '../LoadingAnimation/Loader.tsx'
+import { useTimer } from '../TimerProvider.tsx'
 
 type MatchingScreenProps = {
     difficulty: Complexity

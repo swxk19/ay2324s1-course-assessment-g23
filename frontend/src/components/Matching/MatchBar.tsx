@@ -1,16 +1,16 @@
 import { Info, Star, Whatshot } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import type { Complexity } from '../api/questions.ts'
-import { useCancelQueue, useJoinQueue } from '../stores/matchingStore.ts'
-import { useSessionDetails } from '../stores/sessionStore.ts'
-import { useUser } from '../stores/userStore.ts'
-import '../styles/MatchBar.css'
-import AlertMessage from './AlertMessage.tsx'
+import type { Complexity } from '../../api/questions.ts'
+import { useCancelQueue, useJoinQueue } from '../../stores/matchingStore.ts'
+import { useSessionDetails } from '../../stores/sessionStore.ts'
+import { useUser } from '../../stores/userStore.ts'
+import '../../styles/MatchBar.css'
+import AlertMessage from '../AlertMessage.tsx'
 import MatchSuccess from './MatchSuccess.tsx'
 import MatchingScreen from './MatchingScreen.tsx'
 import MatchingStatusBar from './MatchingStatusBar.tsx'
-import { useTimer } from './TimerProvider.tsx'
+import { useTimer } from '../TimerProvider.tsx'
 
 const tooltipDescription =
     'Select a difficulty level and get matched with another user. ' +
