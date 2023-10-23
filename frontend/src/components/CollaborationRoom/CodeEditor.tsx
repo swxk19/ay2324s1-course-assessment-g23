@@ -1,3 +1,4 @@
+import hljs from "highlight.js"
 import Quill from 'quill'
 import Delta from 'quill-delta'
 import 'quill/dist/quill.snow.css'
@@ -5,24 +6,13 @@ import 'quill/dist/quill.snow.css'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
-const TOOLBAR_OPTIONS = [
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    [{ font: [] }],
-    [{ list: 'ordered' }, { list: 'bullet' }],
-    ['bold', 'italic', 'underline'],
-    [{ color: [] }, { background: [] }],
-    [{ script: 'sub' }, { script: 'super' }],
-    [{ align: [] }],
-    ['image', 'blockquote', 'code-block'],
-    ['clean'],
-]
-
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<WebSocket | null>(null)
     const [quill, setQuill] = useState<Quill | null>(null)
 
     useEffect(() => {
+        hljs.configure({languages: ['typescript', 'python']});
         const socket = new WebSocket(`ws://localhost:8000/ws/collab/${roomId}`)
         setSocket(socket)
 
@@ -36,7 +26,6 @@ export const CodeEditor: React.FC = () => {
 
         const editHandler = (delta: Delta, oldDelta: Delta, source: string) => {
             if (source != 'user' || quill == null) return
-
             const payload = {
                 event: 'send-changes',
                 data: {
@@ -46,6 +35,7 @@ export const CodeEditor: React.FC = () => {
             }
 
             socket.send(JSON.stringify(payload))
+            quill.format('code-block', delta)
         }
 
         socket.onopen = () => {
@@ -65,7 +55,6 @@ export const CodeEditor: React.FC = () => {
         }
 
         quill.on('text-change', editHandler)
-
         return () => {
             quill.off('text-change', editHandler)
         }
@@ -79,7 +68,12 @@ export const CodeEditor: React.FC = () => {
         wrapper.append(editor)
         const q = new Quill(editor, {
             theme: 'snow',
-            modules: { toolbar: TOOLBAR_OPTIONS },
+            modules: {
+                syntax: {
+                    highlight: (text: string) => hljs.highlightAuto(text).value
+                },
+            toolbar: [] ,
+            },
         })
         setQuill(q)
     }, [])
