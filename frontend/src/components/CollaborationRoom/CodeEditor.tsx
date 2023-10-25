@@ -1,7 +1,9 @@
 import hljs from "highlight.js"
+import 'highlight.js/styles/monokai-sublime.css'
 import Quill from 'quill'
 import Delta from 'quill-delta'
 import 'quill/dist/quill.snow.css'
+
 
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
@@ -12,7 +14,7 @@ export const CodeEditor: React.FC = () => {
     const [quill, setQuill] = useState<Quill | null>(null)
 
     useEffect(() => {
-        hljs.configure({languages: ['typescript', 'python']});
+        hljs.configure({languages: ['python', 'javascript']});
         const socket = new WebSocket(`ws://localhost:8000/ws/collab/${roomId}`)
         setSocket(socket)
 
@@ -47,6 +49,7 @@ export const CodeEditor: React.FC = () => {
 
             if (data.event == 'open') {
                 quill.setText(data.data)
+                quill.format('code-block', true)
             }
 
             if (data.event == 'receive-changes') {
@@ -72,9 +75,16 @@ export const CodeEditor: React.FC = () => {
                 syntax: {
                     highlight: (text: string) => hljs.highlightAuto(text).value
                 },
-            toolbar: [] ,
+            toolbar: false
             },
         })
+        q.format('code-block', "")
+
+        const quillElement = wrapper.querySelector('.ql-editor') as HTMLElement;
+        if (quillElement) {
+            quillElement.style.cssText = 'background-color: #24241c; padding: 0;';
+        }
+
         setQuill(q)
     }, [])
 
