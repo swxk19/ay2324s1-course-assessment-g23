@@ -4,7 +4,10 @@ import 'quill/dist/quill.snow.css'
 import CodeMirror from '@uiw/react-codemirror';
 import { langs } from '@uiw/codemirror-extensions-langs';
 import { javascript } from '@codemirror/lang-javascript';
-import { python } from "@codemirror/lang-python";
+import {getIndentation} from "@codemirror/language"
+// import {python} from "@codemirror/lang-python"
+import { StreamLanguage } from '@codemirror/language';
+import {python} from '@codemirror/legacy-modes/mode/python'
 import { createTheme } from '@uiw/codemirror-themes';
 import { useRef } from 'react'
 import { tags as t } from '@lezer/highlight';
@@ -151,7 +154,7 @@ export const CodeEditor: React.FC = () => {
         setQuill(q)
     }, [])
 
-    return <div> <CodeMirror extensions={[javascript({ jsx: true })]} theme={myTheme} value={value} height="200px"  onChange={onChange} /><div id='container' ref={wrapperRef}></div></div>;
+    return <div> <CodeMirror extensions={[StreamLanguage.define(python)]} theme={myTheme} value={value} height="200px"  onChange={onChange} /><div id='container' ref={wrapperRef}></div></div>;
 }
 
 export default CodeEditor
