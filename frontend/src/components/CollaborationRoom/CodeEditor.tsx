@@ -63,7 +63,6 @@ export const CodeEditor: React.FC = () => {
         const userEdit = (eventName: string, ...args: any[]) => {
             if (eventName == 'text-change') {
                 if (lock > 0) {
-                    console.log('lock')
                     quill?.off('editor-change', userEdit)
                     setLock((prevLock) => prevLock - 1)
                 } else {
@@ -72,16 +71,14 @@ export const CodeEditor: React.FC = () => {
             }
         }
         if (lock <= 0) {
-            console.log('unlock')
+            // mounts only init
             quill?.on('editor-change', userEdit)
         }
 
         const editHandler = (delta: Delta) => {
             quill?.off('editor-change', userEdit)
             if (socket == null || quill == null || lock > 0) return
-            console.log('push')
             quill?.on('editor-change', userEdit)
-            console.log('unlock')
             const payload = {
                 event: 'send-changes',
                 data: {
@@ -100,16 +97,14 @@ export const CodeEditor: React.FC = () => {
             const data = JSON.parse(event.data)
 
             if (data.event == 'open') {
-                quill?.off('editor-change', userEdit)
+                quill?.off('editor-change', userEdit) // this is treated like a semaphore
                 quill?.setText(data.data)
                 setValue(quill.getText())
                 quill?.on('editor-change', userEdit)
             }
 
             if (data.event == 'receive-changes') {
-                console.log('receive')
-                quill?.off('editor-change', userEdit)
-                console.log('lock', lock)
+                quill?.off('editor-change', userEdit) // this is treated like a semaphore
                 quill?.updateContents(data.data)
                 setValue(quill.getText())
                 quill?.on('editor-change', userEdit)
@@ -119,7 +114,6 @@ export const CodeEditor: React.FC = () => {
 
     useEffect(() => {
         if (quill == null || lock > 0 || quill.getText() == value) return
-        console.log(lock, 'setText')
         quill.setText(value)
     }, [value, quill, lock])
 
