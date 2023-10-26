@@ -17,7 +17,7 @@ const ConfirmationBox: React.FC<EditProfileProps> = ({ onClose, onExit }) => {
     }
 
     return (
-        <div className='dark-overlay' style={{ zIndex: 2 }}>
+        <div className='dark-overlay' style={{ zIndex: 4 }}>
             <motion.div
                 style={{
                     backgroundColor: '#303030',
