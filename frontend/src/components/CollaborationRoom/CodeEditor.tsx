@@ -62,6 +62,7 @@ export const CodeEditor: React.FC = () => {
         const userEdit = (eventName: string, ...args: any[]) => {
             if (eventName == 'text-change') {
                 if (lock > 0) {
+                    console.log('lock')
                     quill?.off('editor-change', userEdit)
                     setLock((prevLock) => prevLock - 1)
                 } else {
@@ -69,11 +70,14 @@ export const CodeEditor: React.FC = () => {
                 }
             }
         }
+        if (lock <= 0) {
+            quill?.on('editor-change', userEdit)
+        }
+
         const editHandler = (delta: Delta) => {
             quill?.off('editor-change', userEdit)
             if (socket == null || quill == null || lock > 0) return
             quill?.on('editor-change', userEdit)
-            console.log(lock, 'push', delta)
             const payload = {
                 event: 'send-changes',
                 data: {
@@ -96,14 +100,16 @@ export const CodeEditor: React.FC = () => {
             }
 
             if (data.event == 'receive-changes') {
-                console.log(lock, 'receive')
-                setLock(1)
                 quill?.off('editor-change', userEdit)
+                setLock(2)
                 quill?.updateContents(data.data)
                 setValue(quill.getText())
+                setLock(0)
+                if (lock <= 0) {
+                    quill?.on('editor-change', userEdit)
+                }
             }
         }
-        quill?.on('editor-change', userEdit)
     }, [lock, quill, socket])
 
     useEffect(() => {
@@ -117,7 +123,6 @@ export const CodeEditor: React.FC = () => {
 
     const onChange = useCallback(
         (val: string, viewUpdate: any) => {
-            console.log(lock)
             setValue(val)
         },
         [lock]
