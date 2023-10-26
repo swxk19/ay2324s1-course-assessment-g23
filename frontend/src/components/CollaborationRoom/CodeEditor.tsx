@@ -100,18 +100,19 @@ export const CodeEditor: React.FC = () => {
             const data = JSON.parse(event.data)
 
             if (data.event == 'open') {
+                quill?.off('editor-change', userEdit)
                 quill?.setText(data.data)
+                setValue(quill.getText())
+                quill?.on('editor-change', userEdit)
             }
 
             if (data.event == 'receive-changes') {
-                setLock(2)
                 console.log('receive')
                 quill?.off('editor-change', userEdit)
                 console.log('lock', lock)
                 quill?.updateContents(data.data)
                 setValue(quill.getText())
                 quill?.on('editor-change', userEdit)
-                setLock(0)
             }
         }
     }, [lock, quill, socket])
