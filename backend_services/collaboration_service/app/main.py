@@ -42,6 +42,7 @@ async def join_collab_editor(websocket: WebSocket, room_id: str):
             if event == "send-changes":
                 payload = data.get("data")
                 delta = payload.get("delta")
+                id = payload.get("id")
                 room.full_document = payload.get("fullDoc")
                 for client in room.clients:
                     if client != websocket:
