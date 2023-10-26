@@ -2,10 +2,6 @@ import Quill from 'quill'
 import Delta from 'quill-delta'
 import 'quill/dist/quill.snow.css'
 import CodeMirror from '@uiw/react-codemirror';
-import { langs } from '@uiw/codemirror-extensions-langs';
-import { javascript } from '@codemirror/lang-javascript';
-import {getIndentation} from "@codemirror/language"
-// import {python} from "@codemirror/lang-python"
 import { StreamLanguage } from '@codemirror/language';
 import {python} from '@codemirror/legacy-modes/mode/python'
 import { createTheme } from '@uiw/codemirror-themes';
@@ -30,13 +26,13 @@ const myTheme = createTheme({
     },
     styles: [
       { tag: t.comment, color: '#787b8099' },
-      { tag: t.variableName, color: '#0080ff' },
+      { tag: t.variableName, color: '##E6E6FA' },
       { tag: [t.string, t.special(t.brace)], color: '#5c6166' },
-      { tag: t.number, color: '#5c6166' },
+      { tag: t.number, color: '#00FF00' },
       { tag: t.bool, color: '#5c6166' },
       { tag: t.null, color: '#5c6166' },
       { tag: t.keyword, color: '#5c6166' },
-      { tag: t.operator, color: '#5c6166' },
+      { tag: t.operator, color: '#FFD700' },
       { tag: t.className, color: '#5c6166' },
       { tag: t.definition(t.typeName), color: '#5c6166' },
       { tag: t.typeName, color: '#5c6166' },
@@ -52,9 +48,6 @@ export const CodeEditor: React.FC = () => {
     const [quill, setQuill] = useState<Quill | null>(null)
     const [lock, setLock] = useState(0)
     const [value, setValue] = useState("")
-    const [delta, setDelta] = useState<Delta | null>(null)
-
-    const lockRef = useRef(lock)
 
     useEffect(() => {
 
@@ -72,15 +65,17 @@ export const CodeEditor: React.FC = () => {
         const userEdit = (eventName: string, ...args: any[]) => {
             if (eventName == "text-change") {
                 if (lock > 0) {
+                    quill?.off('editor-change', userEdit)
                     setLock(prevLock => prevLock - 1)
                 } else {
-                    // setLock(0)
                     editHandler(args[0])
                 }
             }
         }
     const editHandler = (delta: Delta) => {
-        if (socket == null || quill == null) return
+        quill?.off('editor-change', userEdit)
+        if (socket == null || quill == null || lock > 0) return
+        quill?.on('editor-change', userEdit)
         console.log(lock, 'push', delta)
         const payload = {
             event: 'send-changes',
@@ -107,10 +102,10 @@ export const CodeEditor: React.FC = () => {
 
         if (data.event == 'receive-changes') {
             console.log(lock, 'receive')
+            setLock(1)
             quill?.off('editor-change', userEdit)
             quill?.updateContents(data.data)
             setValue(quill.getText())
-            quill?.on('editor-change', userEdit)
         }
     }
         quill?.on('editor-change', userEdit)
@@ -123,13 +118,11 @@ export const CodeEditor: React.FC = () => {
 
     useEffect(() => {
         if (quill == null) return
-        // if (lockRef.current > 0) return
         quill.setText(value)
     }, [value, quill])
 
     const onChange = useCallback((val: string, viewUpdate: any) => {
         console.log(lock)
-        if (lock > 0) return
         setValue(val);
       }, [lock]);
 
