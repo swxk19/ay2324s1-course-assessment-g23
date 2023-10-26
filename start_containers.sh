@@ -1,6 +1,12 @@
 #!/bin/bash
 
-# Check if volumes already exist, if not create them
+# Directory of this script.
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Run the below code relative to this script's directory.
+cd "$SCRIPT_DIR"
+
+# Check if volumes already exist, if not create them.
 if [ "$(docker volume ls | grep users-data)" == "" ]; then
     docker volume create users-data
 fi
