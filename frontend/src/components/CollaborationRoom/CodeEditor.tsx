@@ -47,6 +47,7 @@ export const CodeEditor: React.FC = () => {
     const [quill, setQuill] = useState<Quill | null>(null)
     const [lock, setLock] = useState(0)
     const [value, setValue] = useState('')
+    const [quillValue, setQuillValue] = useState('')
 
     useEffect(() => {
         const socket = new WebSocket(`ws://localhost:8000/ws/collab/${roomId}`)
@@ -71,13 +72,16 @@ export const CodeEditor: React.FC = () => {
             }
         }
         if (lock <= 0) {
+            console.log('unlock')
             quill?.on('editor-change', userEdit)
         }
 
         const editHandler = (delta: Delta) => {
             quill?.off('editor-change', userEdit)
             if (socket == null || quill == null || lock > 0) return
+            console.log('push')
             quill?.on('editor-change', userEdit)
+            console.log('unlock')
             const payload = {
                 event: 'send-changes',
                 data: {
@@ -100,26 +104,23 @@ export const CodeEditor: React.FC = () => {
             }
 
             if (data.event == 'receive-changes') {
-                quill?.off('editor-change', userEdit)
                 setLock(2)
+                console.log('receive')
+                quill?.off('editor-change', userEdit)
+                console.log('lock', lock)
                 quill?.updateContents(data.data)
                 setValue(quill.getText())
+                quill?.on('editor-change', userEdit)
                 setLock(0)
-                if (lock <= 0) {
-                    quill?.on('editor-change', userEdit)
-                }
             }
         }
     }, [lock, quill, socket])
 
     useEffect(() => {
-        if (socket == null || quill == null) return
-    }, [socket, quill, lock])
-
-    useEffect(() => {
-        if (quill == null) return
+        if (quill == null || lock > 0 || quill.getText() == value) return
+        console.log(lock, 'setText')
         quill.setText(value)
-    }, [value, quill])
+    }, [value, quill, lock])
 
     const onChange = useCallback(
         (val: string, viewUpdate: any) => {
