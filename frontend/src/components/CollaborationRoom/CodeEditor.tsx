@@ -1,20 +1,59 @@
-import hljs from "highlight.js"
-import 'highlight.js/styles/monokai-sublime.css'
 import Quill from 'quill'
 import Delta from 'quill-delta'
 import 'quill/dist/quill.snow.css'
-
+import CodeMirror from '@uiw/react-codemirror';
+import { langs } from '@uiw/codemirror-extensions-langs';
+import { javascript } from '@codemirror/lang-javascript';
+import { createTheme } from '@uiw/codemirror-themes';
+import { useRef } from 'react'
+import { tags as t } from '@lezer/highlight';
 
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
+
+const myTheme = createTheme({
+    theme: 'dark',
+    settings: {
+      background: '#000000',
+      backgroundImage: '',
+      foreground: '#75baff',
+      caret: '#5d00ff',
+      selection: '#036dd626',
+      selectionMatch: '#036dd626',
+      lineHighlight: '#8a91991a',
+      gutterBackground: '#000000',
+      gutterForeground: '#8a919966',
+    },
+    styles: [
+      { tag: t.comment, color: '#787b8099' },
+      { tag: t.variableName, color: '#0080ff' },
+      { tag: [t.string, t.special(t.brace)], color: '#5c6166' },
+      { tag: t.number, color: '#5c6166' },
+      { tag: t.bool, color: '#5c6166' },
+      { tag: t.null, color: '#5c6166' },
+      { tag: t.keyword, color: '#5c6166' },
+      { tag: t.operator, color: '#5c6166' },
+      { tag: t.className, color: '#5c6166' },
+      { tag: t.definition(t.typeName), color: '#5c6166' },
+      { tag: t.typeName, color: '#5c6166' },
+      { tag: t.angleBracket, color: '#5c6166' },
+      { tag: t.tagName, color: '#5c6166' },
+      { tag: t.attributeName, color: '#5c6166' },
+    ],
+  });
 
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<WebSocket | null>(null)
     const [quill, setQuill] = useState<Quill | null>(null)
+    const [lock, setLock] = useState(0)
+    const [value, setValue] = useState("")
+    const [delta, setDelta] = useState<Delta | null>(null)
+
+    const lockRef = useRef(lock)
 
     useEffect(() => {
-        hljs.configure({languages: ['python', 'javascript']});
+
         const socket = new WebSocket(`ws://localhost:8000/ws/collab/${roomId}`)
         setSocket(socket)
 
@@ -23,47 +62,74 @@ export const CodeEditor: React.FC = () => {
         }
     }, [])
 
+
     useEffect(() => {
         if (socket == null || quill == null) return
-
-        const editHandler = (delta: Delta, oldDelta: Delta, source: string) => {
-            if (source != 'user' || quill == null) return
-            const payload = {
-                event: 'send-changes',
-                data: {
-                    delta: delta,
-                    fullDoc: quill.getText(),
-                },
+        const userEdit = (eventName: string, ...args: any[]) => {
+            if (eventName == "text-change") {
+                if (lock > 0) {
+                    setLock(prevLock => prevLock - 1)
+                } else {
+                    // setLock(0)
+                    editHandler(args[0])
+                }
             }
-
-            socket.send(JSON.stringify(payload))
-            quill.format('code-block', delta)
         }
+    const editHandler = (delta: Delta) => {
+        if (socket == null || quill == null) return
+        console.log(lock, 'push', delta)
+        const payload = {
+            event: 'send-changes',
+            data: {
+                delta: delta,
+                fullDoc: quill.getText(),
+            },
+        }
+        socket.send(JSON.stringify(payload))
+    }
+
 
         socket.onopen = () => {
             console.log('WebSocket connection is open')
         }
 
         socket.onmessage = (event) => {
-            const data = JSON.parse(event.data)
+        const data = JSON.parse(event.data)
 
-            if (data.event == 'open') {
-                quill.setText(data.data)
-                quill.format('code-block', true)
-            }
-
-            if (data.event == 'receive-changes') {
-                quill.updateContents(data.data)
-            }
+        if (data.event == 'open') {
+            quill?.setText(data.data)
+            quill?.format('code-block', true)
         }
 
-        quill.on('text-change', editHandler)
-        return () => {
-            quill.off('text-change', editHandler)
+        if (data.event == 'receive-changes') {
+            console.log(lock, 'receive')
+            quill?.off('editor-change', userEdit)
+            quill?.updateContents(data.data)
+            setValue(quill.getText())
+            quill?.on('editor-change', userEdit)
         }
-    }, [socket, quill])
+    }
+        quill?.on('editor-change', userEdit)
+    }, [lock, quill, socket])
 
-    const wrapperRef = useCallback((wrapper: HTMLElement | null) => {
+    useEffect(() => {
+        if (socket == null || quill == null) return
+
+    }, [socket, quill, lock])
+
+    useEffect(() => {
+        if (quill == null) return
+        // if (lockRef.current > 0) return
+        quill.setText(value)
+    }, [value, quill])
+
+    const onChange = useCallback((val: string, viewUpdate: any) => {
+        console.log(lock)
+        if (lock > 0) return
+        setValue(val);
+      }, [lock]);
+
+      const wrapperRef = useCallback((wrapper: HTMLElement | null) => {
         if (wrapper == null) return
 
         wrapper.innerHTML = ''
@@ -72,13 +138,9 @@ export const CodeEditor: React.FC = () => {
         const q = new Quill(editor, {
             theme: 'snow',
             modules: {
-                syntax: {
-                    highlight: (text: string) => hljs.highlightAuto(text).value
-                },
-            toolbar: false
+                toolbar: false
             },
         })
-        q.format('code-block', "")
 
         const quillElement = wrapper.querySelector('.ql-editor') as HTMLElement;
         if (quillElement) {
@@ -88,7 +150,7 @@ export const CodeEditor: React.FC = () => {
         setQuill(q)
     }, [])
 
-    return <div id='container' ref={wrapperRef}></div>
+    return <div> <CodeMirror theme={myTheme} value={value} height="200px"  onChange={onChange} /><div id='container' ref={wrapperRef}></div></div>;
 }
 
 export default CodeEditor
