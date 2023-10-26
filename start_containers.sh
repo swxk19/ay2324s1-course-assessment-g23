@@ -14,5 +14,8 @@ if [ "$(docker volume ls | grep questions-data)" == "" ]; then
     docker volume create questions-data
 fi
 
-# Bring down the services and remove all images, before building/starting.
-docker-compose down --rmi all && docker-compose --env-file .env up --build "$@"
+# Stop any currently-running services.
+docker-compose down
+
+# Rebuild and start the services.
+docker-compose --env-file .env up --build "$@"
