@@ -22,6 +22,7 @@ const ChatBox: React.FC = () => {
     const [isMinimized, setIsMinimized] = useState(true)
     const chatHeaderControls = useAnimation()
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
+    const messagesEndRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         const socket = new WebSocket(
@@ -51,7 +52,13 @@ const ChatBox: React.FC = () => {
                 setChatMessages((prevChatMessages) => [...prevChatMessages, newMessage])
             }
         }
+
+        scrollToBottom()
     }, [socket])
+
+    useEffect(() => {
+        scrollToBottom()
+    }, [chatMessages]) // Assuming `chatMessages` is the list/array containing your chat messages
 
     const chatBoxVariants = {
         minimized: { height: '50px' },
@@ -93,6 +100,10 @@ const ChatBox: React.FC = () => {
         }
     }
 
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+
     return (
         <motion.div ref={constraintsRef}>
             <motion.div
@@ -130,6 +141,7 @@ const ChatBox: React.FC = () => {
                         {chatMessages.map((message, index) => (
                             <ChatMessage key={index} text={message.text} sender={message.sender} />
                         ))}
+                        <div ref={messagesEndRef} />
                     </div>
                     <div style={{ backgroundColor: 'white', padding: '10px' }}>
                         <form onSubmit={sendMessage}>
