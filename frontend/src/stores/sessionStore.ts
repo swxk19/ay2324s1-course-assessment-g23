@@ -55,8 +55,8 @@ export function useLoginUser() {
     const queryClient = useQueryClient()
 
     return useMutation(userLogin, {
-        onSuccess: (data) => {
-            queryClient.setQueryData(['session'], data)
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['session'] })
         },
         onError: (error: ApiError) => {},
     })

@@ -48,13 +48,10 @@ export async function getSession(): Promise<SessionDetails | null> {
  * request's `Set-Cookie` header.
  *
  * @param {UserLoginDetails} loginDetails The user's login details, containing username and password.
- * @returns {Promise<{ user_details: SessionDetails, message: string }>}
- * Resolves with the user session details and message.
+ * @returns {Promise<string>} Resolves with the login message.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
-export async function userLogin(
-    loginDetails: UserLoginDetails
-): Promise<{ user_details: SessionDetails; message: string }> {
+export async function userLogin(loginDetails: UserLoginDetails): Promise<string> {
     const response = await fetch(AUTH_API_URL, {
         method: 'POST',
         headers: AUTH_API_HEADER,
@@ -64,8 +61,8 @@ export async function userLogin(
 
     if (!response.ok) throw await ApiError.parseResponse(response)
 
-    const data: { user_details: SessionDetails; message: string } = await response.json()
-    return data
+    const data: { message: string } = await response.json()
+    return data.message
 }
 
 /**
