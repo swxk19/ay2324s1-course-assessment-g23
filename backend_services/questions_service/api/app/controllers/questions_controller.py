@@ -1,15 +1,15 @@
 from api_models.questions import CreateQuestionResponse, DeleteQuestionResponse, GetQuestionResponse, UpdateQuestionResponse
-from api_models.error import ServiceError
+from fastapi import HTTPException
 from questions_database import QUESTIONS_DATABASE as db
 from utils import questions_util
 
-def create_question(question_id: str, title: str, description: str, category: str, complexity: str) -> CreateQuestionResponse | ServiceError:
+def create_question(question_id: str, title: str, description: str, category: str, complexity: str) -> CreateQuestionResponse:
     if not questions_util.is_valid_complexity(complexity):
-        return ServiceError(status_code=422, message="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
+        raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
     if questions_util.qid_exists(question_id):
-        return ServiceError(status_code=500, message='Internal server error (qid already exists)')
+        raise HTTPException(status_code=500, detail='Internal server error (qid already exists)')
     if questions_util.title_exists(title):
-        return ServiceError(status_code=409, message='Title already exists')
+        raise HTTPException(status_code=409, detail='Title already exists')
 
     db.execute_sql_write("INSERT INTO questions (question_id, title, description, category, complexity) VALUES (%s, %s, %s, %s, %s)",
                          params=(question_id, title, description, category, complexity))
@@ -22,9 +22,9 @@ def get_all_questions() -> list[GetQuestionResponse]:
     questions = [dict(zip(FIELD_NAMES, row)) for row in rows]
     return [GetQuestionResponse(**q) for q in questions] # type: ignore
 
-def get_question(question_id: str) -> GetQuestionResponse | ServiceError:
+def get_question(question_id: str) -> GetQuestionResponse:
     if not questions_util.qid_exists(question_id):
-        return ServiceError(status_code=404, message='Question id does not exist')
+        raise HTTPException(status_code=404, detail='Question id does not exist')
 
     FIELD_NAMES = ['question_id', 'title', 'description', 'category', 'complexity']
 
@@ -34,13 +34,13 @@ def get_question(question_id: str) -> GetQuestionResponse | ServiceError:
     question = dict(zip(FIELD_NAMES, row))
     return GetQuestionResponse(**question) # type: ignore
 
-def update_question_info(question_id: str, title: str, description: str, category: str, complexity: str) -> UpdateQuestionResponse | ServiceError:
+def update_question_info(question_id: str, title: str, description: str, category: str, complexity: str) -> UpdateQuestionResponse:
     if not questions_util.qid_exists(question_id):
-        return ServiceError(status_code=404, message="Question does not exist")
+        raise HTTPException(status_code=404, detail="Question does not exist")
     if questions_util.check_duplicate_title(question_id, title):
-        return ServiceError(status_code=409, message="Title already exists")
+        raise HTTPException(status_code=409, detail="Title already exists")
     if not questions_util.is_valid_complexity(complexity):
-        return ServiceError(status_code=422, message="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
+        raise HTTPException(status_code=422, detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard")
 
     db.execute_sql_write("""UPDATE questions
                         SET title = %s, description = %s, category = %s, complexity = %s
@@ -52,9 +52,9 @@ def delete_all_questions() -> DeleteQuestionResponse:
     db.execute_sql_write("DELETE FROM questions")
     return DeleteQuestionResponse(message='All questions deleted')
 
-def delete_question(question_id: str) -> DeleteQuestionResponse | ServiceError:
+def delete_question(question_id: str) -> DeleteQuestionResponse:
     if not questions_util.qid_exists(question_id):
-        return ServiceError(status_code=404, message="Question does not exist")
+        raise HTTPException(status_code=404, detail="Question does not exist")
 
     db.execute_sql_write("DELETE FROM questions WHERE question_id = %s", params=(question_id,))
     return DeleteQuestionResponse(message=f"Question({question_id}) deleted")
