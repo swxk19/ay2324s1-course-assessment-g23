@@ -2,7 +2,8 @@ import uuid
 from fastapi import Cookie, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest, UserLoginResponse, UserLogoutResponse
+from api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest, UserLogoutResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from controllers import users_controller as uc, sessions_controller as sc
 
 # create app
@@ -47,7 +48,7 @@ async def update_user_role(user_id: str, r: UpdateUserRoleRequest) -> UpdateUser
     return uc.update_user_role(user_id, r.role)
 
 @app.post("/sessions")
-async def user_login(r: UserLoginRequest) -> UserLoginResponse:
+async def user_login(r: UserLoginRequest) -> JSONResponse:
     return sc.user_login(r.username, r.password)
 
 @app.get("/sessions_all")

@@ -1,11 +1,12 @@
 import hashlib
 from api_models.users import GetSessionResponse, UserLoginResponse, UserLogoutResponse
 from fastapi import HTTPException
+from fastapi.responses import JSONResponse
 from user_database import USER_DATABASE as db
 from utils import users_util, sessions_util
 from datetime import datetime
 
-def user_login(username: str, password: str) -> UserLoginResponse:
+def user_login(username: str, password: str) -> JSONResponse:
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
     login_result = sessions_util.is_valid_login(username, hashed_password) # returns False if invalid login
@@ -13,7 +14,10 @@ def user_login(username: str, password: str) -> UserLoginResponse:
     if login_result:
         user_id, role = login_result
         session_id = sessions_util.create_session(user_id, role)
-        return UserLoginResponse(session_id=session_id, message=f'User {username} successfully logged in')
+        response_payload = UserLoginResponse(message=f'User {username} successfully logged in')
+        response = JSONResponse(content=response_payload.model_dump(mode="json"))
+        response.set_cookie(key='session_id', value=session_id)
+        return response
     else:
         if users_util.username_exists(username):
             raise HTTPException(status_code=401, detail='Invalid password')
