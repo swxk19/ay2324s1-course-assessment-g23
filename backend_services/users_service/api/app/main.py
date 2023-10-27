@@ -3,7 +3,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest, UserLoginResponse, UserLogoutResponse
-from api_models.error import ServiceError
 from controllers import users_controller as uc, sessions_controller as sc
 
 # create app
@@ -19,7 +18,7 @@ app.add_middleware(
 )
 
 @app.post("/users", status_code=200, response_model=None)
-async def create_user(r: CreateUserRequest) -> CreateUserResponse | ServiceError:
+async def create_user(r: CreateUserRequest) -> CreateUserResponse:
     user_id = str(uuid.uuid4())
     return uc.create_user(user_id, r.username, r.email, r.password)
 
@@ -36,19 +35,19 @@ async def delete_all_users() -> DeleteUserResponse:
     return uc.delete_all_users()
 
 @app.delete("/users/{user_id}", status_code=200, response_model=None)
-async def delete_user(user_id: str) -> DeleteUserResponse | ServiceError:
+async def delete_user(user_id: str) -> DeleteUserResponse:
     return uc.delete_user(user_id)
 
 @app.put("/users/{user_id}", status_code=200, response_model=None)
-async def update_user_info(user_id: str, r: UpdateUserRequest) -> UpdateUserResponse | ServiceError:
+async def update_user_info(user_id: str, r: UpdateUserRequest) -> UpdateUserResponse:
     return uc.update_user_info(user_id, r.username, r.password, r.email)
 
 @app.put("/users_role/{user_id}", status_code=200, response_model=None)
-async def update_user_role(user_id: str, r: UpdateUserRoleRequest) -> UpdateUserRoleResponse | ServiceError:
+async def update_user_role(user_id: str, r: UpdateUserRoleRequest) -> UpdateUserRoleResponse:
     return uc.update_user_role(user_id, r.role)
 
 @app.post("/sessions", status_code=200, response_model=None)
-async def user_login(r: UserLoginRequest) -> UserLoginResponse | ServiceError:
+async def user_login(r: UserLoginRequest) -> UserLoginResponse:
     return sc.user_login(r.username, r.password)
 
 @app.get("/sessions_all",  status_code=200, response_model=None)
@@ -56,9 +55,9 @@ async def get_all_sessions() -> list[GetSessionResponse]:
     return sc.get_all_sessions()
 
 @app.get("/sessions/{session_id}",  status_code=200, response_model=None)
-async def get_session(session_id: str) -> GetSessionResponse | ServiceError:
+async def get_session(session_id: str) -> GetSessionResponse:
     return sc.get_session(session_id)
 
 @app.delete("/sessions/{session_id}",  status_code=200, response_model=None)
-async def user_logout(session_id: str) -> UserLogoutResponse | ServiceError:
+async def user_logout(session_id: str) -> UserLogoutResponse:
     return sc.user_logout(session_id)
