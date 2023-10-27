@@ -2,17 +2,16 @@ import asyncio
 from typing import Any, cast
 from fastapi import Cookie, FastAPI, HTTPException, Request, WebSocket
 import fastapi
-from fastapi.responses import JSONResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 from fastapi.websockets import WebSocketState
 from websockets.protocol import State
 import httpx
 import json
 from fastapi.middleware.cors import CORSMiddleware
-from api_models.error import ServiceError
 from api_models.users import UserLoginResponse
+from service_registry import service_registry
 from utils.api_permissions import Method
 import websockets.client
-from utils.api_gateway_util import has_permission, map_path_microservice_url, connect_matching_service_websocket
 from utils.addresses import MATCHING_SERVICE_HOST, COLLABORATION_SERVICE_HOST, COMMUNICATION_SERVICE_HOST
 import websockets.exceptions
 
@@ -86,61 +85,23 @@ async def websocket_endpoint(ws_a: WebSocket, route: str):
                 await ws_b_client.close()
 
 
-async def route_request(
-    method: Method,
-    path: str,
-    service: str,
-    microservice_url: str,
-    session_id: str | None,
-    data: Any
-) -> httpx.Response:
+@app.api_route("/{service_prefix}/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def route_to_service(service_prefix: str, path: str, request: Request):
+    global service_registry
+    try:
+        service_address = service_registry.get_service_address(service_prefix)
+    except:
+        return PlainTextResponse(content="Endpoint not found", status_code=404)
+
     # Forward the request to the microservice
-    async with httpx.AsyncClient() as client:
-        match method:
-            case "GET":
-                if service == "sessions":
-                    path += f"/{session_id}"
-                return await client.get(f"{microservice_url}{path}")
-            case "POST":
-                return await client.post(f"{microservice_url}{path}", data=data)
-            case "PUT":
-                return await client.put(f"{microservice_url}{path}", data=data)
-            case "DELETE":
-                if service == "sessions":
-                    path += f"/{session_id}"
-                return await client.delete(f"{microservice_url}{path}")
+    async with httpx.AsyncClient() as client:        
+        res = await client.request(
+            method=request.method,
+            url=f"http://{service_address}/{path}",
+            headers=request.headers,
+            cookies=request.cookies,
+            data=await request.body(),  # type: ignore
+        )
 
-
-@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def handle_request(request: Request, session_id: str | None = Cookie(None)) -> JSONResponse:
-    path = request.url.path
-    method = cast(Method, request.method)
-
-    # Determine the microservice URL based on the path
-    service, microservice_url = map_path_microservice_url(path)
-    if service is None:
-        return JSONResponse(status_code=404, content="Endpoint not found")
-
-    if not await has_permission(session_id, path, method):
-        return JSONResponse(status_code=401, content="Unauthorized access")
-
-    data = await request.body()
-    res = await route_request(method, path, service, microservice_url, session_id, data)
-
-    if res.status_code != 200:
-        return JSONResponse(status_code=res.status_code, content=res.content)
-
-    res_json: dict = res.json()
-    output = JSONResponse(content=res_json)
-    if ServiceError.is_service_error(res_json):
-        service_error = ServiceError(**res_json)
-        raise HTTPException(
-            status_code=service_error.status_code, detail=service_error.message)
-
-    if path == "/sessions" and method == "POST":
-        login_json = UserLoginResponse(**res_json)
-        output.set_cookie(key='session_id', value=login_json.session_id)
-    elif path == "/sessions" and method == "DELETE":
-        output.delete_cookie('session_id')
-
-    return output
+        # Return the response from the microservice
+        return StreamingResponse(content=res.iter_bytes(), headers=dict(res.headers), status_code=res.status_code)
