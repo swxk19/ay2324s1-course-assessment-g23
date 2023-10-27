@@ -26,7 +26,10 @@ def get_all_sessions() -> list[GetSessionResponse]:
     sessions = [dict(zip(FIELD_NAMES, row)) for row in rows]
     return [GetSessionResponse(**x) for x in sessions]
 
-def get_session(session_id: str) -> GetSessionResponse:
+def get_session(session_id: str | None) -> GetSessionResponse:
+    if session_id is None:
+        raise HTTPException(status_code=401, detail='Unauthorized session')
+
     FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
 
     result = db.execute_sql_read_fetchone('SELECT * FROM sessions WHERE session_id = %s',

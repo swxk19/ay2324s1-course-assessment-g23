@@ -1,5 +1,5 @@
 import uuid
-from fastapi import FastAPI, Request
+from fastapi import Cookie, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest, UserLoginResponse, UserLogoutResponse
@@ -54,8 +54,8 @@ async def user_login(r: UserLoginRequest) -> UserLoginResponse:
 async def get_all_sessions() -> list[GetSessionResponse]:
     return sc.get_all_sessions()
 
-@app.get("/sessions/{session_id}")
-async def get_session(session_id: str) -> GetSessionResponse:
+@app.get("/sessions")
+async def get_session(session_id: str | None = Cookie(None)) -> GetSessionResponse:
     return sc.get_session(session_id)
 
 @app.delete("/sessions/{session_id}")
