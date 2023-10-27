@@ -53,10 +53,15 @@ def get_session(session_id: str | None) -> GetSessionResponse:
 
     raise HTTPException(status_code=401, detail='Unauthorized session')
 
-def user_logout(session_id: str) -> UserLogoutResponse:
+def user_logout(session_id: str | None) -> JSONResponse:
+    if session_id is None:
+        raise HTTPException(status_code=400, detail='No session ID given')
     try:
         sessions_util.delete_session(session_id)
-        return UserLogoutResponse(message=f'Session {session_id} successfully deleted')
+        response_payload = UserLogoutResponse(message=f'Session {session_id} successfully deleted')
+        response = JSONResponse(content=response_payload.model_dump(mode="json"))
+        response.delete_cookie('session_id')
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'Unable to logout user: {e}')
 

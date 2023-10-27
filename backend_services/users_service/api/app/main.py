@@ -59,6 +59,6 @@ async def get_all_sessions() -> list[GetSessionResponse]:
 async def get_session(session_id: str | None = Cookie(None)) -> GetSessionResponse:
     return sc.get_session(session_id)
 
-@app.delete("/sessions/{session_id}")
-async def user_logout(session_id: str) -> UserLogoutResponse:
+@app.delete("/sessions")
+async def user_logout(session_id: str | None = Cookie(None)) -> JSONResponse:
     return sc.user_logout(session_id)
