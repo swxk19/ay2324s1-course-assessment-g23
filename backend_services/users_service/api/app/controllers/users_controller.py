@@ -1,17 +1,16 @@
 import hashlib
 from fastapi import HTTPException
-from api_models.error import ServiceError
 from api_models.users import CreateUserResponse, DeleteUserResponse, GetUserResponse, UpdateUserResponse, UpdateUserRoleResponse
 from user_database import USER_DATABASE as db
 from utils import users_util
 
-def create_user(user_id: str, username: str, email: str, password: str) -> CreateUserResponse | ServiceError:
+def create_user(user_id: str, username: str, email: str, password: str) -> CreateUserResponse:
     if users_util.uid_exists(user_id):
-        return ServiceError(status_code=500, message='Internal server error (uid already exists)')
+        raise HTTPException(status_code=500, detail='Internal server error (uid already exists)')
     if users_util.username_exists(username):
-        return ServiceError(status_code=409, message='Username already exists')
+        raise HTTPException(status_code=409, detail='Username already exists')
     if users_util.email_exists(email):
-        return ServiceError(status_code=409, message='Email already exists')
+        raise HTTPException(status_code=409, detail='Email already exists')
 
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
@@ -32,13 +31,13 @@ def get_user(user_id: str) -> GetUserResponse:
     user = dict(zip(FIELD_NAMES, row))
     return GetUserResponse(**user)  # type: ignore
 
-def update_user_info(user_id: str, username: str | None, password: str | None, email: str | None) -> UpdateUserResponse | ServiceError:
+def update_user_info(user_id: str, username: str | None, password: str | None, email: str | None) -> UpdateUserResponse:
     if not users_util.uid_exists(user_id):
-        return ServiceError(status_code=404, message="User does not exist")
+        raise HTTPException(status_code=404, detail="User does not exist")
     if username and users_util.check_duplicate_username(user_id, username):
-        return ServiceError(status_code=409, message='Username already exists')
+        raise HTTPException(status_code=409, detail='Username already exists')
     if email and users_util.check_duplicate_email(user_id, email):
-        return ServiceError(status_code=409, message='Email already exists')
+        raise HTTPException(status_code=409, detail='Email already exists')
 
     columns_values = {
         'username': username,
@@ -65,19 +64,19 @@ def delete_all_users() -> DeleteUserResponse:
     db.execute_sql_write("DELETE FROM users")
     return DeleteUserResponse(message='All users deleted')
 
-def delete_user(user_id: str) -> DeleteUserResponse | ServiceError:
+def delete_user(user_id: str) -> DeleteUserResponse:
     if not users_util.uid_exists(user_id):
-        return ServiceError(status_code=404, message="User does not exist")
+        raise HTTPException(status_code=404, detail="User does not exist")
 
     if users_util.is_maintainer(user_id) and users_util.get_num_maintainers() == 1:
-        return ServiceError(status_code=403, message="Cannot delete last maintainer")
+        raise HTTPException(status_code=403, detail="Cannot delete last maintainer")
 
     db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))
     return DeleteUserResponse(message=f'User id {user_id} deleted')
 
-def update_user_role(user_id: str, role: str) -> UpdateUserRoleResponse | ServiceError:
+def update_user_role(user_id: str, role: str) -> UpdateUserRoleResponse:
     if role == "normal" and users_util.get_num_maintainers() <= 1:
-        return ServiceError(status_code=409, message='Only one maintainer left')
+        raise HTTPException(status_code=409, detail='Only one maintainer left')
 
     db.execute_sql_write("UPDATE users SET role = %s WHERE user_id = %s", params=(role, user_id))
 
