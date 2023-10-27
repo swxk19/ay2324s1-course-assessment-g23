@@ -28,6 +28,8 @@ def get_user(user_id: str) -> GetUserResponse:
     FIELD_NAMES = ['user_id', 'username', 'email', 'role']
     row = db.execute_sql_read_fetchone(f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s",
                                         params=(user_id,))
+    if row is None:
+        raise HTTPException(status_code=404)
     user = dict(zip(FIELD_NAMES, row))
     return GetUserResponse(**user)  # type: ignore
 
