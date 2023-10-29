@@ -3,7 +3,7 @@ from fastapi import Cookie, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from shared_definitions.api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import JSONResponse, Response
 from controllers import users_controller as uc, sessions_controller as sc
 
 # create app
@@ -52,5 +52,5 @@ async def user_login(r: UserLoginRequest) -> JSONResponse:
     return sc.user_login(r.username, r.password)
 
 @app.delete("/sessions")
-async def user_logout(session_id: str | None = Cookie(None)) -> JSONResponse:
-    return sc.user_logout(session_id)
+async def user_logout(refresh_token: str | None = Cookie(None)) -> Response:
+    return sc.user_logout(refresh_token)
