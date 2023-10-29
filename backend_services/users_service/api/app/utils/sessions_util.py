@@ -12,10 +12,6 @@ def is_valid_login(username: str, hashed_password: str) -> tuple[str, str] | Lit
     user_id, role = result
     return user_id, role
 
-def is_expired_session(expiration_time: datetime) -> bool:
-    current_time = datetime.now()
-    return current_time > expiration_time
-
 def create_session(user_id: str, role: str) -> str:
     session_id = str(uuid.uuid4())
     creation_time = datetime.now()

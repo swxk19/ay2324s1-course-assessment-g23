@@ -23,28 +23,6 @@ def user_login(username: str, password: str) -> JSONResponse:
             raise HTTPException(status_code=401, detail='Invalid password')
         raise HTTPException(status_code=401, detail='Account does not exist')
 
-def get_session(session_id: str | None) -> GetSessionResponse:
-    if session_id is None:
-        raise HTTPException(status_code=401, detail='Unauthorized session')
-
-    FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
-
-    result = db.execute_sql_read_fetchone('SELECT * FROM sessions WHERE session_id = %s',
-                                 params=(session_id,))
-
-    if result is None:
-        raise HTTPException(status_code=401, detail='Unauthorized session')
-
-    expiration_time = result[4]
-    assert isinstance(expiration_time, datetime), \
-        f"Expected `expiration_time` to be type `datetime`, got {type(expiration_time)}."
-
-    if not sessions_util.is_expired_session(expiration_time):
-        # Convert `datetime` instances to string before returning.
-        converted = [x.isoformat() if isinstance(x, datetime) else x for x in result]
-        return GetSessionResponse(**dict(zip(FIELD_NAMES, converted)))
-
-    raise HTTPException(status_code=401, detail='Unauthorized session')
 
 def user_logout(session_id: str | None) -> JSONResponse:
     if session_id is None:

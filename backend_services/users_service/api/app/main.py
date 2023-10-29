@@ -51,10 +51,6 @@ async def update_user_role(user_id: str, r: UpdateUserRoleRequest) -> UpdateUser
 async def user_login(r: UserLoginRequest) -> JSONResponse:
     return sc.user_login(r.username, r.password)
 
-@app.get("/sessions")
-async def get_session(session_id: str | None = Cookie(None)) -> GetSessionResponse:
-    return sc.get_session(session_id)
-
 @app.delete("/sessions")
 async def user_logout(session_id: str | None = Cookie(None)) -> JSONResponse:
     return sc.user_logout(session_id)
