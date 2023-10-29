@@ -2,7 +2,7 @@ import uuid
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from api_models.questions import CreateQuestionRequest, CreateQuestionResponse, DeleteQuestionResponse, GetQuestionResponse, UpdateQuestionRequest, UpdateQuestionResponse
+from shared_definitions.api_models.questions import CreateQuestionRequest, CreateQuestionResponse, DeleteQuestionResponse, GetQuestionResponse, UpdateQuestionRequest, UpdateQuestionResponse
 from controllers import questions_controller as qc
 
 # create app
