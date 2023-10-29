@@ -23,13 +23,6 @@ def user_login(username: str, password: str) -> JSONResponse:
             raise HTTPException(status_code=401, detail='Invalid password')
         raise HTTPException(status_code=401, detail='Account does not exist')
 
-def get_all_sessions() -> list[GetSessionResponse]:
-    FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
-
-    rows = db.execute_sql_read_fetchall(f"SELECT * FROM sessions")
-    sessions = [dict(zip(FIELD_NAMES, row)) for row in rows]
-    return [GetSessionResponse(**x) for x in sessions]
-
 def get_session(session_id: str | None) -> GetSessionResponse:
     if session_id is None:
         raise HTTPException(status_code=401, detail='Unauthorized session')
