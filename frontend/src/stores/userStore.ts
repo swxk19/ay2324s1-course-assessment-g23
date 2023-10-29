@@ -35,7 +35,7 @@ export function useAllUsers() {
 /**
  * Hook for getting a specific user's state from the backend using its ID.
  *
- * If no user ID is given, the user will be `undefined` (without throwing
+ * If no user ID is given, the user will be `null` (without throwing
  * errors). This is incase the user ID might not yet be known.
  *
  * The fetching of the user from the backend is done automatically.

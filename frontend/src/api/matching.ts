@@ -48,7 +48,7 @@ let ws: WebSocket | null = null
  *
  * Also rejects with `ApiError` if a match is already ongoing.
  *
- * @param matchRequest Details needed to start queuing for a match.
+ * @param matchRequest - Details needed to start queuing for a match.
  * @returns Matched user and room IDs.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
@@ -92,7 +92,7 @@ export async function getMatch(matchRequest: MatchingRequest): Promise<Match> {
 /**
  * Cancels the ongoing matchmaking queue.
  *
- * @param user_id Current user's ID.
+ * @param user_id - Current user's ID.
  * @throws {ApiError} Throws an ApiError if there's no match currently ongoing.
  */
 export async function cancelMatch(user_id: string): Promise<void> {

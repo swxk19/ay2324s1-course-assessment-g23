@@ -7,7 +7,7 @@ import { storeUser } from '../api/users'
 const SESSION_ID_COOKIE_NAME = 'session_id'
 
 /**
- * Hook for getting session details from the query cache.
+ * Hook for getting session details from backend
  *
  * @example
  * ```ts
@@ -34,7 +34,10 @@ export function useSessionDetails() {
 }
 
 /**
- * Hook for logging in a user and maintaining the session details in the query cache.
+ * Mutation-hook for logging in a user.
+ *
+ * Automatically refetches and updates the session state from the
+ * `useSessionDetails` hook.
  *
  * @example
  * ```ts
@@ -63,7 +66,10 @@ export function useLoginUser() {
 }
 
 /**
- * Hook for logging out a user and removing the session details from the query cache.
+ * Mutation-hook for logging out a user.
+ *
+ * Automatically refetches and updates the session state from the
+ * `useSessionDetails` hook.
  *
  * @example
  * ```ts
@@ -91,7 +97,7 @@ export function useLogoutUser() {
 }
 
 /**
- * Hook for signing up a new user.
+ * Mutation-hook for signing up a new user.
  *
  * @example
  * ```tsx

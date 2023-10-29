@@ -24,7 +24,7 @@ export interface UserLoginDetails {
 /**
  * Gets current session details.
  *
- * @returns {Promise<SessionDetails | null>} Resolves with the session details or null if no valid session is found.
+ * @returns Resolves with the session details or null if no valid session is found.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getSession(): Promise<SessionDetails | null> {
@@ -47,8 +47,8 @@ export async function getSession(): Promise<SessionDetails | null> {
  * Logs in a user. The session ID is expected be set as a cookie by the response
  * request's `Set-Cookie` header.
  *
- * @param {UserLoginDetails} loginDetails The user's login details, containing username and password.
- * @returns {Promise<string>} Resolves with the login message.
+ * @param loginDetails - The user's login details, containing username and password.
+ * @returns Resolves with the login message.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function userLogin(loginDetails: UserLoginDetails): Promise<string> {
@@ -68,7 +68,7 @@ export async function userLogin(loginDetails: UserLoginDetails): Promise<string>
 /**
  * Logs out a user.
  *
- * @returns {Promise<string>} Resolves with the logout message.
+ * @returns Resolves with the logout message.
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function userLogout(): Promise<string> {
