@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import ChatBox from '../components/ChatBox/ChatBox.tsx'
 import CodeEditor from '../components/CollaborationRoom/CodeEditor'
+import CodeExecutor from '../components/CollaborationRoom/CodeExecutor.tsx'
 import ConfirmationBox from '../components/CollaborationRoom/ConfirmationBox.tsx'
 import QuestionDescription from '../components/CollaborationRoom/QuestionDescription.tsx'
 import '../styles/Room.css'
@@ -40,12 +41,15 @@ export const Room = () => {
                     Exit Room
                 </button>
             </nav>
-            <div className='split-container' style={{ padding: '20px' }}>
-                <div className='pane' style={{ backgroundColor: '#303030', marginRight: '10px' }}>
+            <div className='horizontal-split-container'>
+                <div className='pane' style={{ flex: '1', marginRight: '10px' }}>
                     <QuestionDescription />
                 </div>
-                <div className='pane' style={{ backgroundColor: '#303030', marginLeft: '10px' }}>
-                    <CodeEditor />
+                <div className='vertical-split-container'>
+                    <div className='editor-container'>
+                        <CodeEditor />
+                    </div>
+                    <CodeExecutor />
                 </div>
             </div>
         </div>

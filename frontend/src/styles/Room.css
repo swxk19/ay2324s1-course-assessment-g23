@@ -1,13 +1,25 @@
-.split-container {
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto:wght@300;400&display=swap');
+
+.horizontal-split-container {
     display: flex;
-    height: 100%;
     width: 100%;
+    height: calc(100vh - 64px);
+    padding: 10px;
+}
+
+.vertical-split-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    height: 100%;
+    width: 50%;
 }
 
 .pane {
-    flex: 1;
-    height: 100vh;
+    height: auto;
     box-sizing: border-box;
+    border-radius: 5px;
+    background-color: #303030;
 }
 
 .hidden-chat {
@@ -117,4 +129,41 @@
     font-style: italic;
     font-size: 12px;
     color: #575757;
+}
+
+.editor-container {
+    height: 100%;
+    background-color: #303030;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.ce-container {
+    display: flex;
+    font-size: 13px;
+    justify-content: right;
+    gap: 10px;
+    background-color: #303030;
+    border-radius: 5px;
+    margin-top: 10px;
+    padding: 5px 10px;
+}
+
+.error-output {
+    background-color: #3d1c1c;
+    color: #db4242;
+    height: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: "Roboto Mono", serif;
+}
+
+.code-output {
+    background-color: #242424;
+    height: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: "Roboto Mono", serif;
 }
