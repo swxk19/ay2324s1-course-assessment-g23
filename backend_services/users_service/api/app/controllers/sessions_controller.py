@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from user_database import USER_DATABASE as db
 from utils import users_util, sessions_util
 from datetime import datetime
+from shared_definitions.auth.core import create_access_token, create_refresh_token
 
 def user_login(username: str, password: str) -> JSONResponse:
     hashed_password = hashlib.md5(password.encode()).hexdigest()
@@ -13,10 +14,14 @@ def user_login(username: str, password: str) -> JSONResponse:
 
     if login_result:
         user_id, role = login_result
-        session_id = sessions_util.create_session(user_id, role)
+        access_token = create_access_token(user_id, role)
+        refresh_token = create_refresh_token(user_id, role)
+        sessions_util.store_refresh_token(refresh_token)
+
         response_payload = UserLoginResponse(message=f'User {username} successfully logged in')
         response = JSONResponse(content=response_payload.model_dump(mode="json"))
-        response.set_cookie(key='session_id', value=session_id)
+        response.set_cookie(key='refresh_token', value=refresh_token)
+        response.set_cookie(key='access_token', value=access_token)
         return response
     else:
         if users_util.username_exists(username):

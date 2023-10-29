@@ -12,14 +12,8 @@ def is_valid_login(username: str, hashed_password: str) -> tuple[str, str] | Lit
     user_id, role = result
     return user_id, role
 
-def create_session(user_id: str, role: str) -> str:
-    session_id = str(uuid.uuid4())
-    creation_time = datetime.now()
-    expiration_time = creation_time + timedelta(minutes=15)
-
-    db.execute_sql_write("INSERT INTO sessions (session_id, user_id, role, creation_time, expiration_time) VALUES (%s, %s, %s, %s, %s)",
-                         params=(session_id, user_id, role, creation_time, expiration_time))
-    return session_id
+def store_refresh_token(refresh_token: str) -> None:
+    db.execute_sql_write("INSERT INTO refresh_tokens VALUES (%s)", params=(refresh_token,))
 
 def delete_session(session_id: str) -> Literal[True]:
     db.execute_sql_write("DELETE FROM sessions WHERE session_id = %s", params=(session_id,))
