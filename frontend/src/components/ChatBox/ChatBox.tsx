@@ -2,8 +2,7 @@ import { Add, Circle, Remove } from '@mui/icons-material'
 import { motion, useAnimation } from 'framer-motion'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
-import { useSessionDetails } from '../../stores/sessionStore.ts'
-import { useUser } from '../../stores/userStore.ts'
+import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/Room.css'
 import ChatMessage from './ChatMessage.tsx'
 
@@ -15,8 +14,7 @@ type ChatMessage = {
 const ChatBox: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<WebSocket | null>(null)
-    const { data: sessionDetails } = useSessionDetails()
-    const { data: user } = useUser(sessionDetails?.user_id)
+    const { data: user } = useCurrentUser()
     const constraintsRef = useRef(null)
     const [formValue, setFormValue] = useState('')
     const [isMinimized, setIsMinimized] = useState(true)

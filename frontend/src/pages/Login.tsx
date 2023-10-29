@@ -2,11 +2,12 @@ import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AlertMessage from '../components/AlertMessage'
-import { useLoginUser, useSessionDetails } from '../stores/sessionStore'
+import { useLoginUser } from '../stores/sessionStore'
+import { useCurrentUser } from '../stores/userStore'
 import '../styles/LoginPage.css'
 
 const Login = () => {
-    const { data: sessionDetails, isFetching: isFetchingSession } = useSessionDetails()
+    const { data: user, isFetching: isFetchingCurrentUser } = useCurrentUser()
     const loginUserMutation = useLoginUser()
     const navigate = useNavigate()
     const [username, setUsername] = useState('')
@@ -14,9 +15,9 @@ const Login = () => {
 
     // Redirect if already logged in.
     useEffect(() => {
-        const isLoggedIn = sessionDetails !== null
-        if (isLoggedIn && !isFetchingSession) navigate('/questions')
-    }, [sessionDetails, isFetchingSession, navigate])
+        const isLoggedIn = user !== null
+        if (isLoggedIn && !isFetchingCurrentUser) navigate('/questions')
+    }, [user, isFetchingCurrentUser, navigate])
 
     const handleLogin = async () => {
         await loginUserMutation.mutateAsync({ username, password })

@@ -6,7 +6,7 @@ import {
     useStoreQuestion,
     useUpdateQuestion,
 } from '../../stores/questionStore.ts'
-import { useSessionDetails } from '../../stores/sessionStore.ts'
+import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/AlertMessage.css'
 import '../../styles/QuestionTable.css'
 import AlertMessage from '../AlertMessage.tsx'
@@ -15,7 +15,7 @@ import { QuestionForm } from './QuestionForm.tsx'
 import QuestionReadOnlyRow from './QuestionReadOnlyRow.tsx'
 
 const QuestionTable: React.FC = () => {
-    const { data: sessionDetails } = useSessionDetails()
+    const { data: user } = useCurrentUser()
     const { data: questions } = useAllQuestions()
     const storeQuestionMutation = useStoreQuestion()
     const updateQuestionMutation = useUpdateQuestion()
@@ -73,7 +73,7 @@ const QuestionTable: React.FC = () => {
 
     const handleDeleteClick = (questionId: string) => deleteQuestionMutation.mutate(questionId)
 
-    const isMaintainer = sessionDetails?.role === 'maintainer'
+    const isMaintainer = user?.role === 'maintainer'
     return (
         <div className='question-container'>
             <h2>Questions</h2>

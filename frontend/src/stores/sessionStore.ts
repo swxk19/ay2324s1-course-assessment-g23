@@ -1,43 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import Cookies from 'js-cookie'
-import { SessionDetails, getSession, userLogin, userLogout } from '../api/auth'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { userLogin, userLogout } from '../api/auth'
 import { ApiError } from '../api/error'
 import { storeUser } from '../api/users'
 
-const SESSION_ID_COOKIE_NAME = 'session_id'
-
-/**
- * Hook for getting session details from backend
- *
- * @example
- * ```ts
- * const MyComponent: React.FC = () => {
- *     const { data: sessionDetails } = useSessionDetails()
- *     // ... rest of the code ...
- * }
- * ```
- */
-export function useSessionDetails() {
-    return useQuery<SessionDetails | null, ApiError>({
-        queryKey: ['session'],
-        queryFn: async () => {
-            const hasSessionIdCookie = Cookies.get(SESSION_ID_COOKIE_NAME) !== undefined
-            if (!hasSessionIdCookie) return null
-
-            const sessionDetails = await getSession()
-            // If `session_id` cookie is stale, remove stale cookie.
-            if (sessionDetails === null) Cookies.remove(SESSION_ID_COOKIE_NAME)
-            return sessionDetails
-        },
-        initialData: null,
-    })
-}
+export const ACCESS_TOKEN_COOKIE_NAME = 'access_token'
+export const REFRESH_TOKEN_COOKIE_NAME = 'refresh_token'
 
 /**
  * Mutation-hook for logging in a user.
  *
- * Automatically refetches and updates the session state from the
- * `useSessionDetails` hook.
+ * Automatically refetches and updates the current-user state from the
+ * `useCurrentUser` hook.
  *
  * @example
  * ```ts
@@ -59,7 +32,7 @@ export function useLoginUser() {
 
     return useMutation(userLogin, {
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['session'] })
+            queryClient.invalidateQueries({ queryKey: ['current_user'] })
         },
         onError: (error: ApiError) => {},
     })
@@ -68,8 +41,8 @@ export function useLoginUser() {
 /**
  * Mutation-hook for logging out a user.
  *
- * Automatically refetches and updates the session state from the
- * `useSessionDetails` hook.
+ * Automatically refetches and updates the current-user state from the
+ * `useCurrentUser` hook.
  *
  * @example
  * ```ts
@@ -89,8 +62,7 @@ export function useLogoutUser() {
 
     return useMutation(userLogout, {
         onSuccess: () => {
-            Cookies.remove(SESSION_ID_COOKIE_NAME)
-            queryClient.setQueryData(['session'], null)
+            queryClient.invalidateQueries({ queryKey: ['current_user'] })
         },
         onError: (error: ApiError) => {},
     })

@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import { Link, useMatch, useResolvedPath } from 'react-router-dom'
-import { useLogoutUser, useSessionDetails } from '../stores/sessionStore.ts'
-import { useUser } from '../stores/userStore.ts'
+import { useLogoutUser } from '../stores/sessionStore.ts'
+import { useCurrentUser } from '../stores/userStore.ts'
 import '../styles/Navbar.css'
 import EditProfile from './EditProfile.tsx'
 
 const Navbar: React.FC = () => {
-    const { data: sessionDetails } = useSessionDetails()
-    const { data: user } = useUser(sessionDetails?.user_id)
+    const { data: user } = useCurrentUser()
     const logoutUserMutation = useLogoutUser()
     const [dropDownOpen, setDropDownOpen] = useState(false)
     const [editProfileOpen, setEditProfileOpen] = useState(false)
@@ -29,9 +28,7 @@ const Navbar: React.FC = () => {
                 </Link>
                 <ul>
                     <CustomLink to='/questions'>Questions</CustomLink>
-                    {sessionDetails?.role === 'maintainer' && (
-                        <CustomLink to='/users'>Users</CustomLink>
-                    )}
+                    {user?.role === 'maintainer' && <CustomLink to='/users'>Users</CustomLink>}
                     <li
                         className={`profile-button ${dropDownOpen ? 'active' : 'inactive'}`}
                         onClick={() => setDropDownOpen(!dropDownOpen)}
