@@ -1,6 +1,4 @@
 from typing import Literal
-import uuid
-from datetime import datetime, timedelta
 
 from user_database import USER_DATABASE as db
 
@@ -18,8 +16,3 @@ def store_refresh_token(refresh_token: str) -> None:
 def delete_session(session_id: str) -> Literal[True]:
     db.execute_sql_write("DELETE FROM sessions WHERE session_id = %s", params=(session_id,))
     return True
-
-def is_logged_in(session_id: str) -> bool:
-    cur = db.execute_sql_read_fetchone("SELECT COUNT(*) FROM sessions WHERE session_id = %s", params=(session_id,))
-    assert cur is not None
-    return cur[0] > 0
