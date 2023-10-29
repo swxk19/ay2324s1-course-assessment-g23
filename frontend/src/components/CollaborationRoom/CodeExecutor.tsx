@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 const CodeExecutor: React.FC = () => {
     const [isExecuting, setIsExecuting] = useState(false)
-    const [isError, setIsError] = useState(true)
+    const [isError, setIsError] = useState(false)
 
     const handleExecute = () => {
         setIsExecuting(true)
