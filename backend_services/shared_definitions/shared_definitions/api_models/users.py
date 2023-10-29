@@ -57,7 +57,3 @@ class GetSessionResponse(BaseModel):
     role: str
     creation_time: str
     expiration_time: str
-
-
-class UserLogoutResponse(BaseModel):
-    message: str
