@@ -1,4 +1,5 @@
 import asyncio
+import re
 from typing import Any, cast
 from fastapi import Cookie, FastAPI, HTTPException, Request, WebSocket
 import fastapi
@@ -103,5 +104,39 @@ async def route_to_service(service_prefix: str, path: str, request: Request):
             data=await request.body(),  # type: ignore
         )
 
-        # Return the response from the microservice
-        return StreamingResponse(content=res.iter_bytes(), headers=dict(res.headers), status_code=res.status_code)
+        return httpx_response_to_fastapi(res)
+
+
+def httpx_response_to_fastapi(httpx_res: httpx.Response) -> StreamingResponse:
+    headers = dict(httpx_res.headers)
+    if "set-cookie" not in headers:
+        return StreamingResponse(
+            content=httpx_res.iter_bytes(),
+            headers=headers,
+            status_code=httpx_res.status_code,
+        )
+
+    # Fixes malformed "folded" set-cookie header.
+    malformed_set_cookie = headers["set-cookie"]
+    del headers["set-cookie"]
+    cookie_regex = r'(\w+)=("[^"]*"|[^;,]+)(?:;\s*expires=(\w{3},\s[\w\s:]+GMT))?(?:;\s*Max-Age=([^;]+))?(?:;\s*Path=([^;]+))?(?:;\s*SameSite=([^;,]+))?'
+    cookies = re.findall(cookie_regex, malformed_set_cookie)
+    parsed_cookies = [
+        {
+            "key": cookie[0],
+            "value": str(cookie[1]).replace('"', ""),
+            "expires": cookie[2],
+            "max_age": cookie[3],
+            "path": cookie[4],
+            "samesite": cookie[5],
+        }
+        for cookie in cookies
+    ]
+    response = StreamingResponse(
+        content=httpx_res.iter_bytes(),
+        headers=headers,
+        status_code=httpx_res.status_code,
+    )
+    for cookie in parsed_cookies:
+        response.set_cookie(**cookie)
+    return response
