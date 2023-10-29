@@ -1,8 +1,10 @@
 import uuid
-from fastapi import Cookie, FastAPI, Request
+from fastapi import Cookie, Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from shared_definitions.api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest
+from shared_definitions.auth.core import TokenData
+from shared_definitions.auth.fastapi_dependencies import decode_access_token_data
 from fastapi.responses import JSONResponse, Response
 from controllers import users_controller as uc, sessions_controller as sc
 
@@ -22,6 +24,10 @@ app.add_middleware(
 async def create_user(r: CreateUserRequest) -> CreateUserResponse:
     user_id = str(uuid.uuid4())
     return uc.create_user(user_id, r.username, r.email, r.password)
+
+@app.get("/user_me")
+async def get_current_user(access_token_data: TokenData = Depends(decode_access_token_data)) -> GetUserResponse:
+    return uc.get_current_user(access_token_data)
 
 @app.get("/users/{user_id}")
 async def get_user(user_id: str) -> GetUserResponse:
