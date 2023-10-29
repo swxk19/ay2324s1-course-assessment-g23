@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from shared_definitions.api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest
 from shared_definitions.auth.core import TokenData
-from shared_definitions.auth.fastapi_dependencies import decode_access_token_data
+from shared_definitions.auth.fastapi_dependencies import decode_access_token_data, decode_refresh_token_data
 from fastapi.responses import JSONResponse, Response
 from controllers import users_controller as uc, sessions_controller as sc
 
@@ -60,3 +60,7 @@ async def user_login(r: UserLoginRequest) -> JSONResponse:
 @app.delete("/token")
 async def user_logout(refresh_token: str | None = Cookie(None)) -> Response:
     return sc.user_logout(refresh_token)
+
+@app.get("/refresh")
+async def refresh_access_token(refresh_token_data: TokenData = Depends(decode_refresh_token_data)) -> Response:
+    return sc.get_new_access_token(refresh_token_data)

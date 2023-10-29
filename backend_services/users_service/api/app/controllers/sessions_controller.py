@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse, Response
 from user_database import USER_DATABASE as db
 from utils import users_util, sessions_util
 from datetime import datetime
-from shared_definitions.auth.core import create_access_token, create_refresh_token
+from shared_definitions.auth.core import create_access_token, create_refresh_token, TokenData
 
 def user_login(username: str, password: str) -> JSONResponse:
     hashed_password = hashlib.md5(password.encode()).hexdigest()
@@ -40,3 +40,10 @@ def user_logout(refresh_token: str | None) -> Response:
         response.delete_cookie('refresh_token')
         response.delete_cookie('access_token')
         return response
+
+
+def get_new_access_token(refresh_token_data: TokenData) -> Response:
+    access_token = create_access_token(refresh_token_data.user_id, refresh_token_data.role)
+    response = Response(status_code=HTTPStatus.NO_CONTENT)
+    response.set_cookie(key='access_token', value=access_token)
+    return response
