@@ -53,10 +53,10 @@ async def update_user_info(user_id: str, r: UpdateUserRequest) -> UpdateUserResp
 async def update_user_role(user_id: str, r: UpdateUserRoleRequest) -> UpdateUserRoleResponse:
     return uc.update_user_role(user_id, r.role)
 
-@app.post("/sessions")
+@app.post("/token")
 async def user_login(r: UserLoginRequest) -> JSONResponse:
     return sc.user_login(r.username, r.password)
 
-@app.delete("/sessions")
+@app.delete("/token")
 async def user_logout(refresh_token: str | None = Cookie(None)) -> Response:
     return sc.user_logout(refresh_token)
