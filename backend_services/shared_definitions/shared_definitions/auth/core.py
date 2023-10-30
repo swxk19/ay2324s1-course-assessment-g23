@@ -30,14 +30,14 @@ class TokenData(BaseModel):
 
 
 def _create_token(user_id: str, role: Role, token_type: TokenType, duration: timedelta) -> str:
-    JWT_RS256_SECRET_KEY = _get_env_variable("JWT_RS256_SECRET_KEY")
+    JWT_RS256_PRIVATE_KEY = _get_env_variable("JWT_RS256_PRIVATE_KEY")
     to_encode = TokenData(
         user_id=user_id,
         role=role,
         token_type=token_type,
         exp=datetime.utcnow() + duration,
     )
-    encoded_jwt = jwt.encode(to_encode.model_dump(), JWT_RS256_SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode.model_dump(), JWT_RS256_PRIVATE_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
