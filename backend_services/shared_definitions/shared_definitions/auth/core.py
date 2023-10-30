@@ -12,7 +12,8 @@ def _get_env_variable(key: str) -> str:
     return value
 
 
-JWT_HS256_SECRET_KEY = _get_env_variable("JWT_HS256_SECRET_KEY")
+JWT_RS256_PUBLIC_KEY = _get_env_variable("JWT_RS256_PUBLIC_KEY")
+ALGORITHM = "RS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
@@ -29,13 +30,14 @@ class TokenData(BaseModel):
 
 
 def _create_token(user_id: str, role: Role, token_type: TokenType, duration: timedelta) -> str:
+    JWT_RS256_SECRET_KEY = _get_env_variable("JWT_RS256_SECRET_KEY")
     to_encode = TokenData(
         user_id=user_id,
         role=role,
         token_type=token_type,
         exp=datetime.utcnow() + duration,
     )
-    encoded_jwt = jwt.encode(to_encode.model_dump(), JWT_HS256_SECRET_KEY)
+    encoded_jwt = jwt.encode(to_encode.model_dump(), JWT_RS256_SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
@@ -60,5 +62,5 @@ def create_refresh_token(user_id: str, role: str) -> str:
 
 
 def decode_token(token: str) -> TokenData:
-    payload = jwt.decode(token, JWT_HS256_SECRET_KEY)
+    payload = jwt.decode(token, JWT_RS256_PUBLIC_KEY, algorithms=[ALGORITHM])
     return TokenData(**payload)

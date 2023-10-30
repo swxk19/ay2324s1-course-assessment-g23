@@ -1,2 +1,2 @@
 pydantic==2.3.0
-PyJWT==2.8.0
+pyjwt[crypto]==2.8.0
