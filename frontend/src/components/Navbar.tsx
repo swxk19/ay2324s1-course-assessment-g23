@@ -23,6 +23,7 @@ const Navbar: React.FC = () => {
     return (
         <>
             <nav className='nav'>
+                <img src='../../peerprep.png' width='40' height='40' alt='PeerPrep Logo' />
                 <Link to='/questions' className='site-title'>
                     PeerPrep
                 </Link>

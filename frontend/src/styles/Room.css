@@ -167,3 +167,13 @@
     border-radius: 5px;
     font-family: 'Roboto Mono', serif;
 }
+
+.problem-button {
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    padding: 5px 10px;
+}
