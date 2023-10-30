@@ -39,7 +39,7 @@ queues: dict[Complexity, UserWebSocketQueue] = {
 }
 
 
-@app.websocket("/ws/matching")
+@app.websocket("/matching")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:

@@ -10,6 +10,11 @@ import 'quill/dist/quill.snow.css'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
+/** URL for collaboration websocket API. */
+const COLLABORATION_API_URL =
+    `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}` +
+    '/api/collaboration'
+
 const myTheme = createTheme({
     theme: 'dark',
     settings: {
@@ -50,7 +55,7 @@ export const CodeEditor: React.FC = () => {
     const [quillValue, setQuillValue] = useState('')
 
     useEffect(() => {
-        const socket = new WebSocket(`ws://localhost:8000/ws/collab/${roomId}`)
+        const socket = new WebSocket(COLLABORATION_API_URL + `/collab/${roomId}`)
         setSocket(socket)
 
         return () => {

@@ -1,7 +1,7 @@
 import { ApiError } from './error'
 
 /** URL for users API. */
-const USERS_API_URL = 'http://localhost:8000/users'
+const USERS_API_URL = '/api/users'
 
 /** HTTP request headers for users API. */
 const USERS_API_HEADER = { 'Content-Type': 'application/json' }

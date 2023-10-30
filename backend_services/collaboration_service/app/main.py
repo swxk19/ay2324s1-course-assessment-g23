@@ -19,7 +19,7 @@ rooms: dict[str, Room] = {}
 """Dict where keys are the room-ID, values are the room's info."""
 
 
-@app.websocket("/ws/collab/{room_id}")
+@app.websocket("/collab/{room_id}")
 async def join_collab_editor(websocket: WebSocket, room_id: str):
     global rooms
 

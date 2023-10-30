@@ -1,12 +1,27 @@
 version: "3"
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx_params_handle_websockets:/etc/nginx/nginx_params_handle_websockets:ro
+    depends_on:
+      - frontend
+      - users_api
+      - questions_api
+      - matching_api
+      - collaboration_api
+      - communication_api
+    networks:
+      - client-side
+      - backend-apis
   frontend:
     container_name: frontend
     build:
       context: ./frontend
     image: peerprep_frontend
-    ports:
-      - 80:80
     networks:
       - client-side
   base_api:
@@ -17,30 +32,6 @@ services:
     container_name: base_api
     networks:
       - backend-apis
-    env_file:
-      - ./backend.conf
-  api_gateway:
-    build:
-      context: ./backend_services/api_gateway
-      dockerfile: ../API_Dockerfile
-    image: peerprep_api_gateway
-    container_name: api_gateway
-    networks:
-      - client-side
-      - backend-apis
-    ports:
-      - 8000:8000
-    environment:
-      - USERS_SERVICE_HOST=users_api
-      - QUESTIONS_SERVICE_HOST=questions_api
-      - MATCHING_SERVICE_HOST=matching_api
-      - COLLABORATION_SERVICE_HOST=collaboration_api
-      - COMMUNICATION_SERVICE_HOST=communication_api
-    depends_on:
-      - base_api
-      - users_api
-      - questions_api
-      - matching_api
     env_file:
       - ./backend.conf
   users_api:
