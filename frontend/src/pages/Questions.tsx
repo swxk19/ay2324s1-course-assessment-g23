@@ -4,18 +4,18 @@ import MatchBar from '../components/Matching/MatchBar.tsx'
 import Navbar from '../components/Navbar.tsx'
 import QuestionTable from '../components/QuestionTable/QuestionTable.tsx'
 import { TimerProvider } from '../components/TimerProvider.tsx'
-import { useSessionDetails } from '../stores/sessionStore.ts'
+import { useCurrentUser } from '../stores/userStore.ts'
 
 const Questions = () => {
-    const { data: sessionDetails, isFetching: isFetchingSession } = useSessionDetails()
+    const { data: user, isFetching: isFetchingCurrentUser } = useCurrentUser()
 
     const navigate = useNavigate()
 
     // Redirect if not logged in.
     useEffect(() => {
-        const isNotLoggedIn = sessionDetails === null
-        if (isNotLoggedIn && !isFetchingSession) navigate('/')
-    }, [sessionDetails, isFetchingSession, navigate])
+        const isNotLoggedIn = user === null
+        if (isNotLoggedIn && !isFetchingCurrentUser) navigate('/')
+    }, [user, isFetchingCurrentUser, navigate])
 
     return (
         <>

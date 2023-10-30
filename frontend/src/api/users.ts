@@ -30,6 +30,25 @@ export interface UpdatedUser {
 }
 
 /**
+ * Get currently logged-in user using JWT `access_token` cookie.
+ *
+ * @returns Resolves with the User object if found.
+ * @throws {ApiError} Throws an ApiError if the API response indicates an error.
+ */
+export async function getCurrentUser(): Promise<User> {
+    const response = await fetch(USERS_API_URL + '/user_me', {
+        method: 'GET',
+        headers: USERS_API_HEADER,
+        credentials: 'include',
+    })
+
+    if (!response.ok) throw await ApiError.parseResponse(response)
+
+    const data: User = await response.json()
+    return data
+}
+
+/**
  * Stores a new user.
  *
  * @param signupDetails - The signup details for creating a new user.

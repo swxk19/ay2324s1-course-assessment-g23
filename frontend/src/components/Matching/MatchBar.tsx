@@ -3,8 +3,7 @@ import { Tooltip } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import type { Complexity } from '../../api/questions.ts'
 import { useCancelQueue, useJoinQueue } from '../../stores/matchingStore.ts'
-import { useSessionDetails } from '../../stores/sessionStore.ts'
-import { useUser } from '../../stores/userStore.ts'
+import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/MatchBar.css'
 import AlertMessage from '../AlertMessage.tsx'
 import { useTimer } from '../TimerProvider.tsx'
@@ -17,8 +16,7 @@ const tooltipDescription =
     'Together, you both will collaboratively attempt a question of the chosen difficulty.'
 const MatchBar: React.FC = () => {
     const { resetTimer } = useTimer()
-    const { data: sessionDetails } = useSessionDetails()
-    const { data: user } = useUser(sessionDetails?.user_id)
+    const { data: user } = useCurrentUser()
     const joinQueueMutation = useJoinQueue()
     const cancelQueueMutation = useCancelQueue()
     const {

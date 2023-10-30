@@ -1,10 +1,12 @@
 import hashlib
-from shared_definitions.api_models.users import GetSessionResponse, UserLoginResponse, UserLogoutResponse
+from http import HTTPStatus
+from shared_definitions.api_models.users import UserLoginResponse
 from fastapi import HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from user_database import USER_DATABASE as db
 from utils import users_util, sessions_util
 from datetime import datetime
+from shared_definitions.auth.core import create_access_token, create_refresh_token, TokenData
 
 def user_login(username: str, password: str) -> JSONResponse:
     hashed_password = hashlib.md5(password.encode()).hexdigest()
@@ -13,55 +15,35 @@ def user_login(username: str, password: str) -> JSONResponse:
 
     if login_result:
         user_id, role = login_result
-        session_id = sessions_util.create_session(user_id, role)
+        access_token = create_access_token(user_id, role)
+        refresh_token = create_refresh_token(user_id, role)
+        sessions_util.store_refresh_token(refresh_token)
+
         response_payload = UserLoginResponse(message=f'User {username} successfully logged in')
         response = JSONResponse(content=response_payload.model_dump(mode="json"))
-        response.set_cookie(key='session_id', value=session_id)
+        response.set_cookie(key='refresh_token', value=refresh_token)
+        response.set_cookie(key='access_token', value=access_token)
         return response
     else:
         if users_util.username_exists(username):
             raise HTTPException(status_code=401, detail='Invalid password')
         raise HTTPException(status_code=401, detail='Account does not exist')
 
-def get_all_sessions() -> list[GetSessionResponse]:
-    FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
 
-    rows = db.execute_sql_read_fetchall(f"SELECT * FROM sessions")
-    sessions = [dict(zip(FIELD_NAMES, row)) for row in rows]
-    return [GetSessionResponse(**x) for x in sessions]
-
-def get_session(session_id: str | None) -> GetSessionResponse:
-    if session_id is None:
-        raise HTTPException(status_code=401, detail='Unauthorized session')
-
-    FIELD_NAMES = ['session_id', 'user_id', 'role', 'creation_time', 'expiration_time']
-
-    result = db.execute_sql_read_fetchone('SELECT * FROM sessions WHERE session_id = %s',
-                                 params=(session_id,))
-
-    if result is None:
-        raise HTTPException(status_code=401, detail='Unauthorized session')
-
-    expiration_time = result[4]
-    assert isinstance(expiration_time, datetime), \
-        f"Expected `expiration_time` to be type `datetime`, got {type(expiration_time)}."
-
-    if not sessions_util.is_expired_session(expiration_time):
-        # Convert `datetime` instances to string before returning.
-        converted = [x.isoformat() if isinstance(x, datetime) else x for x in result]
-        return GetSessionResponse(**dict(zip(FIELD_NAMES, converted)))
-
-    raise HTTPException(status_code=401, detail='Unauthorized session')
-
-def user_logout(session_id: str | None) -> JSONResponse:
-    if session_id is None:
-        raise HTTPException(status_code=400, detail='No session ID given')
+def user_logout(refresh_token: str | None) -> Response:
     try:
-        sessions_util.delete_session(session_id)
-        response_payload = UserLogoutResponse(message=f'Session {session_id} successfully deleted')
-        response = JSONResponse(content=response_payload.model_dump(mode="json"))
-        response.delete_cookie('session_id')
+        if refresh_token is not None:
+            sessions_util.delete_refresh_token(refresh_token)
+    finally:
+        # Return `401 No Content` regardless of deletion outcome.
+        response = Response(status_code=HTTPStatus.NO_CONTENT)
+        response.delete_cookie('refresh_token')
+        response.delete_cookie('access_token')
         return response
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f'Unable to logout user: {e}')
 
+
+def get_new_access_token(refresh_token_data: TokenData) -> Response:
+    access_token = create_access_token(refresh_token_data.user_id, refresh_token_data.role)
+    response = Response(status_code=HTTPStatus.NO_CONTENT)
+    response.set_cookie(key='access_token', value=access_token)
+    return response

@@ -1,6 +1,8 @@
 import hashlib
+from http import HTTPStatus
 from fastapi import HTTPException
 from shared_definitions.api_models.users import CreateUserResponse, DeleteUserResponse, GetUserResponse, UpdateUserResponse, UpdateUserRoleResponse
+from shared_definitions.auth.core import TokenData
 from user_database import USER_DATABASE as db
 from utils import users_util
 
@@ -23,6 +25,11 @@ def get_all_users() -> list[GetUserResponse]:
     rows = db.execute_sql_read_fetchall(f"SELECT {', '.join(FIELD_NAMES)} FROM users")
     users = [dict(zip(FIELD_NAMES, row)) for row in rows]
     return [GetUserResponse(**x) for x in users]  # type: ignore
+
+def get_current_user(access_token_data: TokenData) -> GetUserResponse:
+    if not users_util.uid_exists(access_token_data.user_id):
+        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED)
+    return get_user(access_token_data.user_id)
 
 def get_user(user_id: str) -> GetUserResponse:
     FIELD_NAMES = ['user_id', 'username', 'email', 'role']

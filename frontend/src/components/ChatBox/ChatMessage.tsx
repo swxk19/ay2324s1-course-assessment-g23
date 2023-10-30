@@ -1,6 +1,5 @@
 import React from 'react'
-import { useSessionDetails } from '../../stores/sessionStore.ts'
-import { useUser } from '../../stores/userStore.ts'
+import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/Room.css'
 
 interface ChatMessageProps {
@@ -9,8 +8,7 @@ interface ChatMessageProps {
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ text, sender }) => {
-    const { data: sessionDetails } = useSessionDetails()
-    const { data: user } = useUser(sessionDetails?.user_id)
+    const { data: user } = useCurrentUser()
     // Check if the message sender is the current user
     const isSentByCurrentUser = user && sender === user.username
 

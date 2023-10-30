@@ -49,15 +49,3 @@ class UpdateUserRoleRequest(BaseModel):
 
 class UpdateUserRoleResponse(BaseModel):
     message: str
-
-
-class GetSessionResponse(BaseModel):
-    session_id: str
-    user_id: str
-    role: str
-    creation_time: str
-    expiration_time: str
-
-
-class UserLogoutResponse(BaseModel):
-    message: str
