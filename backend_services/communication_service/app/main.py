@@ -18,7 +18,7 @@ rooms: dict[str, Room] = {}
 """Dict where keys are the room-ID, values are the room's info."""
 
 
-@app.websocket("/ws/communication/{room_id}/{user_id}")
+@app.websocket("/communication/{room_id}/{user_id}")
 async def join_communication_channel(websocket: WebSocket, room_id: str, user_id: str):
     global rooms
 
