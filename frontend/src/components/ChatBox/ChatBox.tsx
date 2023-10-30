@@ -6,6 +6,11 @@ import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/Room.css'
 import ChatMessage from './ChatMessage.tsx'
 
+/** URL for communication websocket API. */
+const COMMUNICATION_API_URL =
+    `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}` +
+    '/api/communication'
+
 type ChatMessage = {
     sender: string // The sender's name or identifier
     text: string // The message content
@@ -24,7 +29,7 @@ const ChatBox: React.FC = () => {
 
     useEffect(() => {
         const socket = new WebSocket(
-            `ws://localhost:8000/ws/communication/${roomId}/${user?.username}`
+            COMMUNICATION_API_URL + `/communication/${roomId}/${user?.username}`
         )
         setSocket(socket)
 
