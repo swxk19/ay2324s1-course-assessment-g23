@@ -2,7 +2,9 @@ import { ApiError } from './error'
 import type { Complexity } from './questions'
 
 /** URL for matching websocket API. */
-const MATCHING_API_URL = 'ws://localhost:8000/ws/matching'
+const MATCHING_API_URL =
+    `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}` +
+    '/api/matching'
 
 /** Details needed to join the matchmaking queue. */
 export interface MatchingRequest {
@@ -59,7 +61,7 @@ export async function getMatch(matchRequest: MatchingRequest): Promise<Match> {
                 new ApiError(ApiError.FRONTEND_ERROR_STATUS_CODE, 'A match is already ongoing.')
             )
 
-        ws = new WebSocket(MATCHING_API_URL)
+        ws = new WebSocket(MATCHING_API_URL + '/matching')
 
         ws.onopen = () => {
             const payload: MatchingRequestPayload = {
