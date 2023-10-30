@@ -1,7 +1,7 @@
 import uuid
 
 from controllers import questions_controller as qc
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from shared_definitions.api_models.questions import (
@@ -12,9 +12,13 @@ from shared_definitions.api_models.questions import (
     UpdateQuestionRequest,
     UpdateQuestionResponse,
 )
+from shared_definitions.auth.fastapi_dependencies import (
+    require_logged_in,
+    require_maintainer_role,
+)
 
 # create app
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(require_logged_in)])
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,7 +30,7 @@ app.add_middleware(
 )
 
 
-@app.post("/questions")
+@app.post("/questions", dependencies=[Depends(require_maintainer_role)])
 async def create_question(r: CreateQuestionRequest) -> CreateQuestionResponse:
     question_id = str(uuid.uuid4())
     return qc.create_question(question_id, r.title, r.description, r.category, r.complexity)
@@ -42,11 +46,11 @@ async def get_all_questions() -> list[GetQuestionResponse]:
     return qc.get_all_questions()
 
 
-@app.put("/questions")
+@app.put("/questions", dependencies=[Depends(require_maintainer_role)])
 async def update_question_info(r: UpdateQuestionRequest) -> UpdateQuestionResponse:
     return qc.update_question_info(r.question_id, r.title, r.description, r.category, r.complexity)
 
 
-@app.delete("/questions/{question_id}")
+@app.delete("/questions/{question_id}", dependencies=[Depends(require_maintainer_role)])
 async def delete_question(question_id: str) -> DeleteQuestionResponse:
     return qc.delete_question(question_id)
