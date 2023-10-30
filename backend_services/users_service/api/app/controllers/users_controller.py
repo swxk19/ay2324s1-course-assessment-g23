@@ -1,6 +1,6 @@
 import hashlib
 from fastapi import HTTPException
-from api_models.users import CreateUserResponse, DeleteUserResponse, GetUserResponse, UpdateUserResponse, UpdateUserRoleResponse
+from shared_definitions.api_models.users import CreateUserResponse, DeleteUserResponse, GetUserResponse, UpdateUserResponse, UpdateUserRoleResponse
 from user_database import USER_DATABASE as db
 from utils import users_util
 

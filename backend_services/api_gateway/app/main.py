@@ -9,7 +9,7 @@ from websockets.protocol import State
 import httpx
 import json
 from fastapi.middleware.cors import CORSMiddleware
-from api_models.users import UserLoginResponse
+from shared_definitions.api_models.users import UserLoginResponse
 from service_registry import service_registry
 import websockets.client
 from service_registry import MATCHING_SERVICE_HOST, COLLABORATION_SERVICE_HOST, COMMUNICATION_SERVICE_HOST

@@ -1,5 +1,5 @@
 import hashlib
-from api_models.users import GetSessionResponse, UserLoginResponse, UserLogoutResponse
+from shared_definitions.api_models.users import GetSessionResponse, UserLoginResponse, UserLogoutResponse
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from user_database import USER_DATABASE as db

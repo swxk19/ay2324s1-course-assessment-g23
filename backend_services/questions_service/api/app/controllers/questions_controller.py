@@ -1,4 +1,4 @@
-from api_models.questions import CreateQuestionResponse, DeleteQuestionResponse, GetQuestionResponse, UpdateQuestionResponse
+from shared_definitions.api_models.questions import CreateQuestionResponse, DeleteQuestionResponse, GetQuestionResponse, UpdateQuestionResponse
 from fastapi import HTTPException
 from questions_database import QUESTIONS_DATABASE as db
 from utils import questions_util

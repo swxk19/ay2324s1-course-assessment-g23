@@ -2,7 +2,7 @@ import uuid
 from fastapi import Cookie, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest, UserLogoutResponse
+from shared_definitions.api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest, UserLogoutResponse
 from fastapi.responses import JSONResponse, PlainTextResponse
 from controllers import users_controller as uc, sessions_controller as sc
 
