@@ -1,13 +1,11 @@
 import asyncio
-import json
 import re
-from typing import Any, cast
 
 import fastapi
 import httpx
 import websockets.client
 import websockets.exceptions
-from fastapi import Cookie, FastAPI, HTTPException, Request, WebSocket
+from fastapi import FastAPI, Request, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, StreamingResponse
 from fastapi.websockets import WebSocketState
@@ -18,8 +16,6 @@ from service_registry import (
     service_registry,
 )
 from websockets.protocol import State
-
-from shared_definitions.api_models.users import UserLoginResponse
 
 app = FastAPI()
 

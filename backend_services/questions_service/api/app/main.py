@@ -1,7 +1,7 @@
 import uuid
 
 from controllers import questions_controller as qc
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from shared_definitions.api_models.questions import (

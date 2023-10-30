@@ -2,7 +2,7 @@ import uuid
 
 from controllers import sessions_controller as sc
 from controllers import users_controller as uc
-from fastapi import Cookie, Depends, FastAPI, Request
+from fastapi import Cookie, Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 

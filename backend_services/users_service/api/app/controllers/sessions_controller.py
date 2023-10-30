@@ -1,10 +1,8 @@
 import hashlib
-from datetime import datetime
 from http import HTTPStatus
 
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse, Response
-from user_database import USER_DATABASE as db
 from utils import sessions_util, users_util
 
 from shared_definitions.api_models.users import UserLoginResponse
