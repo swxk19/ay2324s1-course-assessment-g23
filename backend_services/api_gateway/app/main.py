@@ -11,7 +11,6 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from api_models.users import UserLoginResponse
 from service_registry import service_registry
-from utils.api_permissions import Method
 import websockets.client
 from utils.addresses import MATCHING_SERVICE_HOST, COLLABORATION_SERVICE_HOST, COMMUNICATION_SERVICE_HOST
 import websockets.exceptions
