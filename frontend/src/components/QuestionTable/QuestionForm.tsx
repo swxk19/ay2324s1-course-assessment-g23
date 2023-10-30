@@ -53,13 +53,16 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
     }
 
     const handleCategoryClick = (category: string) => {
-        let newCategory = formData.category
+        const currentCategories = formData.category.split(', ').filter(Boolean) // filter(Boolean) ensures no empty strings in array
 
-        if (newCategory.includes(category)) {
-            newCategory = newCategory.replace(category, '').replace(',,', ',').trim() // Removing the clicked category
+        if (currentCategories.includes(category)) {
+            const index = currentCategories.indexOf(category)
+            currentCategories.splice(index, 1)
         } else {
-            newCategory = newCategory ? `${newCategory}, ${category}` : category
+            currentCategories.push(category)
         }
+
+        const newCategory = currentCategories.join(', ')
 
         const updatedData = {
             ...formData,
@@ -72,7 +75,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
     return (
         <div className='dark-overlay'>
             <div className='question-form-container'>
-                <h3>Add a question</h3>
+                <h2>Add a question</h2>
                 <form onSubmit={onSubmit}>
                     <p>Title</p>
                     <input

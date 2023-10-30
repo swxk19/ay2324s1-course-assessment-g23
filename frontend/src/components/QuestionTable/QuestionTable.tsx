@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import { type Question } from '../../api/questions.ts'
 import {
@@ -126,14 +127,24 @@ const QuestionTable: React.FC = () => {
             {isMaintainer && (
                 <>
                     <button onClick={() => setShowQuestionForm(true)}>Add a Question</button>
-                    {showQuestionForm && (
-                        <QuestionForm
-                            initialData={addFormData}
-                            onFormChange={handleFormChange}
-                            onSubmit={handleAddFormSubmit}
-                            onClose={() => setShowQuestionForm(false)}
-                        />
-                    )}
+                    <AnimatePresence>
+                        {showQuestionForm && (
+                            <motion.div
+                                key='token-menu'
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                            >
+                                <QuestionForm
+                                    initialData={addFormData}
+                                    onFormChange={handleFormChange}
+                                    onSubmit={handleAddFormSubmit}
+                                    onClose={() => setShowQuestionForm(false)}
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
                     {storeQuestionMutation.isError && (
                         <AlertMessage variant='error'>
                             <h4>Oops! {storeQuestionMutation.error.detail}</h4>
