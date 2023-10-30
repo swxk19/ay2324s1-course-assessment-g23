@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MatchBar from '../components/Matching/MatchBar.tsx'
 import Navbar from '../components/Navbar.tsx'
-import { QuestionTable } from '../components/QuestionTable/QuestionTable.tsx'
+import QuestionTable from '../components/QuestionTable/QuestionTable.tsx'
 import { TimerProvider } from '../components/TimerProvider.tsx'
 import { useSessionDetails } from '../stores/sessionStore.ts'
 
