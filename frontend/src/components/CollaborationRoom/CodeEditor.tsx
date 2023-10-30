@@ -1,3 +1,8 @@
+import { StreamLanguage } from '@codemirror/language'
+import { python } from '@codemirror/legacy-modes/mode/python'
+import { tags as t } from '@lezer/highlight'
+import { createTheme } from '@uiw/codemirror-themes'
+import CodeMirror from '@uiw/react-codemirror'
 import Quill from 'quill'
 import Delta from 'quill-delta'
 import 'quill/dist/quill.snow.css'
@@ -5,22 +10,44 @@ import 'quill/dist/quill.snow.css'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
-const TOOLBAR_OPTIONS = [
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    [{ font: [] }],
-    [{ list: 'ordered' }, { list: 'bullet' }],
-    ['bold', 'italic', 'underline'],
-    [{ color: [] }, { background: [] }],
-    [{ script: 'sub' }, { script: 'super' }],
-    [{ align: [] }],
-    ['image', 'blockquote', 'code-block'],
-    ['clean'],
-]
+const myTheme = createTheme({
+    theme: 'dark',
+    settings: {
+        background: '#000000',
+        backgroundImage: '',
+        foreground: '#75baff',
+        caret: '#5d00ff',
+        selection: '#036dd626',
+        selectionMatch: '#036dd626',
+        lineHighlight: '#8a91991a',
+        gutterBackground: '#000000',
+        gutterForeground: '#8a919966',
+    },
+    styles: [
+        { tag: t.comment, color: '#787b8099' },
+        { tag: t.variableName, color: '##E6E6FA' },
+        { tag: [t.string, t.special(t.brace)], color: '#5c6166' },
+        { tag: t.number, color: '#00FF00' },
+        { tag: t.bool, color: '#5c6166' },
+        { tag: t.null, color: '#5c6166' },
+        { tag: t.keyword, color: '#5c6166' },
+        { tag: t.operator, color: '#FFD700' },
+        { tag: t.className, color: '#5c6166' },
+        { tag: t.definition(t.typeName), color: '#5c6166' },
+        { tag: t.typeName, color: '#5c6166' },
+        { tag: t.angleBracket, color: '#5c6166' },
+        { tag: t.tagName, color: '#5c6166' },
+        { tag: t.attributeName, color: '#5c6166' },
+    ],
+})
 
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<WebSocket | null>(null)
     const [quill, setQuill] = useState<Quill | null>(null)
+    const [lock, setLock] = useState(0)
+    const [value, setValue] = useState('')
+    const [quillValue, setQuillValue] = useState('')
 
     useEffect(() => {
         const socket = new WebSocket(`ws://localhost:8000/ws/collab/${roomId}`)
@@ -33,10 +60,25 @@ export const CodeEditor: React.FC = () => {
 
     useEffect(() => {
         if (socket == null || quill == null) return
+        const userEdit = (eventName: string, ...args: any[]) => {
+            if (eventName == 'text-change') {
+                if (lock > 0) {
+                    quill?.off('editor-change', userEdit)
+                    setLock((prevLock) => prevLock - 1)
+                } else {
+                    editHandler(args[0])
+                }
+            }
+        }
+        if (lock <= 0) {
+            // mounts only init
+            quill?.on('editor-change', userEdit)
+        }
 
-        const editHandler = (delta: Delta, oldDelta: Delta, source: string) => {
-            if (source != 'user' || quill == null) return
-
+        const editHandler = (delta: Delta) => {
+            quill?.off('editor-change', userEdit)
+            if (socket == null || quill == null || lock > 0) return
+            quill?.on('editor-change', userEdit)
             const payload = {
                 event: 'send-changes',
                 data: {
@@ -44,7 +86,6 @@ export const CodeEditor: React.FC = () => {
                     fullDoc: quill.getText(),
                 },
             }
-
             socket.send(JSON.stringify(payload))
         }
 
@@ -56,20 +97,32 @@ export const CodeEditor: React.FC = () => {
             const data = JSON.parse(event.data)
 
             if (data.event == 'open') {
-                quill.setText(data.data)
+                quill?.off('editor-change', userEdit) // this is treated like a semaphore
+                quill?.setText(data.data)
+                setValue(quill.getText())
+                quill?.on('editor-change', userEdit)
             }
 
             if (data.event == 'receive-changes') {
-                quill.updateContents(data.data)
+                quill?.off('editor-change', userEdit) // this is treated like a semaphore
+                quill?.updateContents(data.data)
+                setValue(quill.getText())
+                quill?.on('editor-change', userEdit)
             }
         }
+    }, [lock, quill, socket])
 
-        quill.on('text-change', editHandler)
+    useEffect(() => {
+        if (quill == null || lock > 0 || quill.getText() == value) return
+        quill.setText(value)
+    }, [value, quill, lock])
 
-        return () => {
-            quill.off('text-change', editHandler)
-        }
-    }, [socket, quill])
+    const onChange = useCallback(
+        (val: string, viewUpdate: any) => {
+            setValue(val)
+        },
+        [lock]
+    )
 
     const wrapperRef = useCallback((wrapper: HTMLElement | null) => {
         if (wrapper == null) return
@@ -78,13 +131,32 @@ export const CodeEditor: React.FC = () => {
         const editor = document.createElement('div')
         wrapper.append(editor)
         const q = new Quill(editor, {
-            theme: 'snow',
-            modules: { toolbar: TOOLBAR_OPTIONS },
+            modules: {
+                toolbar: false,
+            },
         })
+
+        const quillElement = wrapper.querySelector('.ql-editor') as HTMLElement
+        if (quillElement) {
+            quillElement.style.cssText = 'display: none'
+        }
+
         setQuill(q)
     }, [])
 
-    return <div id='container' ref={wrapperRef}></div>
+    return (
+        <div>
+            {' '}
+            <CodeMirror
+                extensions={[StreamLanguage.define(python)]}
+                theme={myTheme}
+                value={value}
+                height='200px'
+                onChange={onChange}
+            />
+            <div id='container' ref={wrapperRef}></div>
+        </div>
+    )
 }
 
 export default CodeEditor
