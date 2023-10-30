@@ -1,19 +1,25 @@
 import asyncio
+import json
 import re
 from typing import Any, cast
-from fastapi import Cookie, FastAPI, HTTPException, Request, WebSocket
+
 import fastapi
+import httpx
+import websockets.client
+import websockets.exceptions
+from fastapi import Cookie, FastAPI, HTTPException, Request, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, StreamingResponse
 from fastapi.websockets import WebSocketState
+from service_registry import (
+    COLLABORATION_SERVICE_HOST,
+    COMMUNICATION_SERVICE_HOST,
+    MATCHING_SERVICE_HOST,
+    service_registry,
+)
 from websockets.protocol import State
-import httpx
-import json
-from fastapi.middleware.cors import CORSMiddleware
+
 from shared_definitions.api_models.users import UserLoginResponse
-from service_registry import service_registry
-import websockets.client
-from service_registry import MATCHING_SERVICE_HOST, COLLABORATION_SERVICE_HOST, COMMUNICATION_SERVICE_HOST
-import websockets.exceptions
 
 app = FastAPI()
 
@@ -23,7 +29,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"]
+    expose_headers=["*"],
 )
 
 
@@ -48,12 +54,12 @@ async def websocket_endpoint(ws_a: WebSocket, route: str):
     collaboration_api_url = f"ws://{COLLABORATION_SERVICE_HOST}:8000/ws/collab"
     communication_api_url = f"ws://{COMMUNICATION_SERVICE_HOST}:8000/ws/communication"
 
-    match route.split('/'):
-        case["matching"]:
+    match route.split("/"):
+        case ["matching"]:
             requested_service = matching_api_url
-        case["collab", room_id]:
+        case ["collab", room_id]:
             requested_service = collaboration_api_url + f"/{room_id}"
-        case["communication", room_id, user_id]:
+        case ["communication", room_id, user_id]:
             requested_service = communication_api_url + f"/{room_id}" + f"/{user_id}"
         case _:
             # If route doesn't match any service above, exit.
@@ -62,10 +68,8 @@ async def websocket_endpoint(ws_a: WebSocket, route: str):
     await ws_a.accept()
     async with websockets.client.connect(requested_service) as ws_b_client:
         try:
-            fwd_task = asyncio.create_task(
-                forward_communication(ws_a, ws_b_client))
-            rev_task = asyncio.create_task(
-                reverse_communication(ws_a, ws_b_client))
+            fwd_task = asyncio.create_task(forward_communication(ws_a, ws_b_client))
+            rev_task = asyncio.create_task(reverse_communication(ws_a, ws_b_client))
             await asyncio.gather(fwd_task, rev_task)
 
         # Ignore any "connection closed" errors. They're expected because any
@@ -94,7 +98,7 @@ async def route_to_service(service_prefix: str, path: str, request: Request):
         return PlainTextResponse(content="Endpoint not found", status_code=404)
 
     # Forward the request to the microservice
-    async with httpx.AsyncClient() as client:        
+    async with httpx.AsyncClient() as client:
         res = await client.request(
             method=request.method,
             url=f"http://{service_address}/{path}",
