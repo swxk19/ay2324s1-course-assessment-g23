@@ -32,7 +32,7 @@ export function useLoginUser() {
 
     return useMutation(userLogin, {
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['current_user'] })
+            queryClient.invalidateQueries({ queryKey: ['user', 'me'] })
         },
         onError: (error: ApiError) => {},
     })
@@ -62,7 +62,7 @@ export function useLogoutUser() {
 
     return useMutation(userLogout, {
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['current_user'] })
+            queryClient.invalidateQueries({ queryKey: ['user', 'me'] })
         },
         onError: (error: ApiError) => {},
     })

@@ -32,7 +32,7 @@ import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from './sessionSt
  */
 export function useCurrentUser() {
     return useQuery<User | null, ApiError>({
-        queryKey: ['current_user'],
+        queryKey: ['user', 'me'],
         queryFn: async () => {
             const hasRefreshToken = Cookies.get(REFRESH_TOKEN_COOKIE_NAME) !== undefined
             if (!hasRefreshToken) {
