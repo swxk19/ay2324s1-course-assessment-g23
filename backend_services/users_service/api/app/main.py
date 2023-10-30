@@ -2,7 +2,7 @@ import uuid
 from fastapi import Cookie, Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from shared_definitions.api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetSessionResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest
+from shared_definitions.api_models.users import CreateUserRequest, CreateUserResponse, DeleteUserResponse, GetUserResponse, UpdateUserRequest, UpdateUserResponse, UpdateUserRoleRequest, UpdateUserRoleResponse, UserLoginRequest
 from shared_definitions.auth.core import TokenData
 from shared_definitions.auth.fastapi_dependencies import decode_access_token_data, decode_refresh_token_data
 from fastapi.responses import JSONResponse, Response

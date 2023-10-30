@@ -1,6 +1,6 @@
 import hashlib
 from http import HTTPStatus
-from shared_definitions.api_models.users import GetSessionResponse, UserLoginResponse
+from shared_definitions.api_models.users import UserLoginResponse
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse, Response
 from user_database import USER_DATABASE as db
