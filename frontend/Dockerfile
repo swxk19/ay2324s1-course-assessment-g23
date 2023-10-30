@@ -8,8 +8,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
-# Legacy imports are installed separately
-RUN npm install @codemirror/legacy-modes
 
 # Copy all files
 COPY . .
