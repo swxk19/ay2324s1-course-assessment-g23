@@ -1,7 +1,7 @@
 import { ApiError } from './error'
 
 /** URL for authentication API. */
-const AUTH_API_URL = 'http://localhost:8000/sessions'
+const AUTH_API_URL = 'http://localhost:8000/users'
 
 /** HTTP request headers for authentication API. */
 const AUTH_API_HEADER = { 'Content-Type': 'application/json' }
@@ -28,7 +28,7 @@ export interface UserLoginDetails {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function getSession(): Promise<SessionDetails | null> {
-    const response = await fetch(AUTH_API_URL, {
+    const response = await fetch(AUTH_API_URL + '/sessions', {
         method: 'GET',
         headers: AUTH_API_HEADER,
         credentials: 'include',
@@ -52,7 +52,7 @@ export async function getSession(): Promise<SessionDetails | null> {
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function userLogin(loginDetails: UserLoginDetails): Promise<string> {
-    const response = await fetch(AUTH_API_URL, {
+    const response = await fetch(AUTH_API_URL + '/sessions', {
         method: 'POST',
         headers: AUTH_API_HEADER,
         body: JSON.stringify(loginDetails),
@@ -72,7 +72,7 @@ export async function userLogin(loginDetails: UserLoginDetails): Promise<string>
  * @throws {ApiError} Throws an ApiError if the API response indicates an error.
  */
 export async function userLogout(): Promise<string> {
-    const response = await fetch(`${AUTH_API_URL}`, {
+    const response = await fetch(AUTH_API_URL + '/sessions', {
         method: 'DELETE',
         headers: AUTH_API_HEADER,
         credentials: 'include',

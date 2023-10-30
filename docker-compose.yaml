@@ -27,7 +27,6 @@ services:
       - 8000:8000
     environment:
       - USERS_SERVICE_HOST=users_api
-      - SESSIONS_SERVICE_HOST=users_api
       - QUESTIONS_SERVICE_HOST=questions_api
       - MATCHING_SERVICE_HOST=matching_api
       - COLLABORATION_SERVICE_HOST=collaboration_api
