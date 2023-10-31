@@ -1,6 +1,7 @@
 version: "3"
 services:
-  nginx:
+  api_gateway:
+    container_name: api_gateway
     image: nginx:latest
     ports:
       - "80:80"
