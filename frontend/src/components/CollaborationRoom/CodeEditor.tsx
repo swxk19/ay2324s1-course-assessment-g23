@@ -1,5 +1,4 @@
-import { StreamLanguage } from '@codemirror/language'
-import { python } from '@codemirror/legacy-modes/mode/python'
+import { langs } from '@uiw/codemirror-extensions-langs'
 import CodeMirror from '@uiw/react-codemirror'
 import Quill from 'quill'
 import Delta from 'quill-delta'
@@ -22,6 +21,7 @@ export const CodeEditor: React.FC = () => {
     const [lock, setLock] = useState(0)
     const [value, setValue] = useState('')
     const [quillValue, setQuillValue] = useState('')
+    const [selectedLanguage, setSelectedLanguage] = useState('Javascript') // default to Javascript
 
     useEffect(() => {
         const socket = new WebSocket(COLLABORATION_API_URL + `/collab/${roomId}`)
@@ -118,13 +118,26 @@ export const CodeEditor: React.FC = () => {
         setQuill(q)
     }, [])
 
+    const getLangExtension = (language: string) => {
+        switch (language) {
+            case 'Javascript':
+                return langs.javascript()
+            case 'Java':
+                return langs.java()
+            case 'Python':
+                return langs.python()
+            default:
+                return langs.javascript()
+        }
+    }
+
     return (
         <div>
             <div className='editor-header'>
-                <LanguageSelect />
+                <LanguageSelect onLanguageChange={setSelectedLanguage} />
             </div>
             <CodeMirror
-                extensions={[StreamLanguage.define(python)]}
+                extensions={[getLangExtension(selectedLanguage)]}
                 theme={vscodeDarkInit({
                     settings: {
                         background: '#242424',

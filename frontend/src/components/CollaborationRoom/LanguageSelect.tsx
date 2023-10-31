@@ -1,10 +1,14 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import '../../styles/Room.css'
 
 const options = ['Javascript', 'Java', 'Python']
 
-const LanguageSelect = () => {
+interface LanguageSelectProps {
+    onLanguageChange: (language: string) => void
+}
+
+const LanguageSelect: React.FC<LanguageSelectProps> = ({ onLanguageChange }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [selection, setSelection] = useState('')
 
@@ -21,6 +25,7 @@ const LanguageSelect = () => {
                         onClick={() => {
                             setSelection(option)
                             setIsOpen(false)
+                            onLanguageChange(option) // <- use the prop here
                         }}
                         key={option}
                         className={'list-option'}
