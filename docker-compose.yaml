@@ -22,6 +22,8 @@ services:
     build:
       context: ./frontend
     image: peerprep_frontend
+    ports:
+      - 8006:8006
     networks:
       - client-side
   base_api:

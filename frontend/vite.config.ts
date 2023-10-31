@@ -6,6 +6,6 @@ export default defineConfig({
     plugins: [react()],
     server: {
         host: '0.0.0.0',
-        port: 80, // Specify a fixed port to avoid random port selection
+        port: 8006, // Specify a fixed port to avoid random port selection
     },
 })
