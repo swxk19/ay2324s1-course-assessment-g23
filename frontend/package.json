@@ -20,6 +20,7 @@
         "@mui/material": "^5.14.7",
         "@tanstack/react-query": "^4.35.0",
         "@types/js-cookie": "^3.0.4",
+        "@uiw/codemirror-theme-vscode": "^4.21.20",
         "@uiw/codemirror-themes": "^4.21.20",
         "@uiw/react-codemirror": "^4.21.20",
         "framer-motion": "^10.16.4",

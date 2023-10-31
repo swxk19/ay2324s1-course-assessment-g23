@@ -1,50 +1,19 @@
 import { StreamLanguage } from '@codemirror/language'
 import { python } from '@codemirror/legacy-modes/mode/python'
-import { tags as t } from '@lezer/highlight'
-import { createTheme } from '@uiw/codemirror-themes'
 import CodeMirror from '@uiw/react-codemirror'
 import Quill from 'quill'
 import Delta from 'quill-delta'
 import 'quill/dist/quill.snow.css'
 
+import { vscodeDarkInit } from '@uiw/codemirror-theme-vscode'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
+import LanguageSelect from './LanguageSelect.tsx'
 
 /** URL for collaboration websocket API. */
 const COLLABORATION_API_URL =
     `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}` +
     '/api/collaboration'
-
-const myTheme = createTheme({
-    theme: 'dark',
-    settings: {
-        background: '#000000',
-        backgroundImage: '',
-        foreground: '#75baff',
-        caret: '#5d00ff',
-        selection: '#036dd626',
-        selectionMatch: '#036dd626',
-        lineHighlight: '#8a91991a',
-        gutterBackground: '#000000',
-        gutterForeground: '#8a919966',
-    },
-    styles: [
-        { tag: t.comment, color: '#787b8099' },
-        { tag: t.variableName, color: '##E6E6FA' },
-        { tag: [t.string, t.special(t.brace)], color: '#5c6166' },
-        { tag: t.number, color: '#00FF00' },
-        { tag: t.bool, color: '#5c6166' },
-        { tag: t.null, color: '#5c6166' },
-        { tag: t.keyword, color: '#5c6166' },
-        { tag: t.operator, color: '#FFD700' },
-        { tag: t.className, color: '#5c6166' },
-        { tag: t.definition(t.typeName), color: '#5c6166' },
-        { tag: t.typeName, color: '#5c6166' },
-        { tag: t.angleBracket, color: '#5c6166' },
-        { tag: t.tagName, color: '#5c6166' },
-        { tag: t.attributeName, color: '#5c6166' },
-    ],
-})
 
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
@@ -151,12 +120,20 @@ export const CodeEditor: React.FC = () => {
 
     return (
         <div>
-            {' '}
+            <div className='editor-header'>
+                <LanguageSelect />
+            </div>
             <CodeMirror
                 extensions={[StreamLanguage.define(python)]}
-                theme={myTheme}
+                theme={vscodeDarkInit({
+                    settings: {
+                        background: '#242424',
+                        gutterBackground: '#242424',
+                        lineHighlight: 'transparent',
+                    },
+                })}
                 value={value}
-                height='200px'
+                height='auto'
                 onChange={onChange}
             />
             <div id='container' ref={wrapperRef}></div>
