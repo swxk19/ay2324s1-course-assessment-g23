@@ -195,6 +195,15 @@
     z-index: 1;
 }
 
+.dropdown-wrapper-question {
+    z-index: 1;
+    margin: 10px 0;
+    background-color: #3d3d3d;
+    min-width: auto;
+    width: 125px;
+    border-radius: 5px;
+}
+
 .toggle-button {
     position: relative;
     display: flex;

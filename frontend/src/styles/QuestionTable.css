@@ -96,3 +96,56 @@ Dialog {
     border-collapse: collapse;
     width: 100%;
 }
+
+.question-table th:hover {
+    cursor: default;
+}
+
+.header {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.sort-icon {
+    margin: 0 2px;
+    border-radius: 15px;
+    padding: 3px;
+}
+
+.sort-icon:hover {
+    background-color: #3d3d3d;
+    cursor: pointer;
+}
+
+.reset-button {
+    background-color: #303030;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3px 0;
+    border-radius: 20px;
+    margin: 15px 10px;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.reset-button:hover {
+    background-color: #3d3d3d;
+    cursor: pointer;
+}
+
+#Easy.reset-button {
+    color: #00b8a2;
+    width: 90px;
+}
+
+#Medium.reset-button {
+    color: #febf1d;
+    width: 120px;
+}
+
+#Hard.reset-button {
+    color: #fe375f;
+    width: 90px;
+}
