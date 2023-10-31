@@ -1,6 +1,7 @@
 version: "3"
 services:
-  nginx:
+  api_gateway:
+    container_name: api_gateway
     image: nginx:latest
     ports:
       - "80:80"
@@ -8,7 +9,6 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx_params_handle_websockets:/etc/nginx/nginx_params_handle_websockets:ro
     depends_on:
-      - frontend
       - users_api
       - questions_api
       - matching_api
@@ -22,6 +22,8 @@ services:
     build:
       context: ./frontend
     image: peerprep_frontend
+    ports:
+      - 8006:8006
     networks:
       - client-side
   base_api:
