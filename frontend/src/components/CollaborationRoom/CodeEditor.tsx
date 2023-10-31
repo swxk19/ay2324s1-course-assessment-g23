@@ -133,7 +133,7 @@ export const CodeEditor: React.FC = () => {
                     },
                 })}
                 value={value}
-                height='200px'
+                height='auto'
                 onChange={onChange}
             />
             <div id='container' ref={wrapperRef}></div>
