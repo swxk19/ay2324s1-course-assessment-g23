@@ -1,3 +1,4 @@
+import { Cancel, UnfoldMoreOutlined } from '@mui/icons-material'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import { type Question } from '../../api/questions.ts'
@@ -11,6 +12,7 @@ import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/AlertMessage.css'
 import '../../styles/QuestionTable.css'
 import AlertMessage from '../AlertMessage.tsx'
+import DropdownSelect from './DropdownSelect.tsx'
 import QuestionEditableRow from './QuestionEditableRow.tsx'
 import { QuestionForm } from './QuestionForm.tsx'
 import QuestionReadOnlyRow from './QuestionReadOnlyRow.tsx'
@@ -29,6 +31,64 @@ const QuestionTable: React.FC = () => {
     })
     const [editFormData, setEditFormData] = useState<Question | null>(null)
     const [showQuestionForm, setShowQuestionForm] = useState(false)
+    const [sortConfig, setSortConfig] = useState<{
+        key: keyof Question
+        direction: 'ascending' | 'descending'
+    } | null>(null)
+    const [complexityFilter, setComplexityFilter] = useState<null | 'Easy' | 'Medium' | 'Hard'>(
+        null
+    )
+
+    const sortedQuestions = React.useMemo(() => {
+        const complexityOrder = ['Easy', 'Medium', 'Hard']
+        let filteredItems = [...questions]
+        if (complexityFilter) {
+            filteredItems = filteredItems.filter(
+                (item: Question) => item.complexity === complexityFilter
+            )
+        }
+
+        if (sortConfig !== null) {
+            filteredItems.sort((a, b) => {
+                if (sortConfig.key === 'complexity') {
+                    const orderA = complexityOrder.indexOf(a.complexity)
+                    const orderB = complexityOrder.indexOf(b.complexity)
+                    return sortConfig.direction === 'ascending' ? orderA - orderB : orderB - orderA
+                }
+
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1
+                }
+                return 0
+            })
+        }
+        return filteredItems
+    }, [questions, sortConfig])
+
+    const requestSort = (key: keyof Question) => {
+        let direction: 'ascending' | 'descending' = 'ascending'
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending'
+        }
+        setSortConfig({ key, direction })
+    }
+
+    const handleComplexityFilterChange = (selectedComplexity: string) => {
+        if (selectedComplexity === 'All') {
+            setComplexityFilter(null)
+        } else {
+            setComplexityFilter(selectedComplexity as 'Easy' | 'Medium' | 'Hard')
+        }
+        requestSort('complexity')
+    }
+
+    const resetComplexityFilter = () => {
+        setComplexityFilter(null)
+        requestSort('complexity')
+    }
 
     const handleEditFormChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
@@ -75,22 +135,73 @@ const QuestionTable: React.FC = () => {
     const handleDeleteClick = (questionId: string) => deleteQuestionMutation.mutate(questionId)
 
     const isMaintainer = user?.role === 'maintainer'
+
     return (
         <div className='question-container'>
             <h2>Questions</h2>
             <form onSubmit={handleEditFormSubmit}>
+                <div>
+                    <DropdownSelect
+                        options={['Easy', 'Medium', 'Hard']}
+                        onOptionChange={handleComplexityFilterChange}
+                        defaultOption={'Complexity'}
+                    />
+                </div>
+                {complexityFilter && (
+                    <div
+                        className='reset-button'
+                        id={complexityFilter}
+                        onClick={resetComplexityFilter}
+                    >
+                        {complexityFilter}
+                        <Cancel fontSize={'small'} sx={{ color: '#c2c2c2' }} />
+                    </div>
+                )}
+
                 <table className='question-table'>
                     <thead>
                         <tr>
-                            <th id='id-header'>ID</th>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Complexity</th>
+                            <th id='id-header'>
+                                <div className='header'>
+                                    ID
+                                    <UnfoldMoreOutlined
+                                        className='sort-icon'
+                                        onClick={() => requestSort('question_id')}
+                                    />
+                                </div>
+                            </th>
+                            <th>
+                                <div className='header'>
+                                    Title
+                                    <UnfoldMoreOutlined
+                                        className='sort-icon'
+                                        onClick={() => requestSort('title')}
+                                    />
+                                </div>
+                            </th>
+                            <th>
+                                <div className='header'>
+                                    Category
+                                    <UnfoldMoreOutlined
+                                        className='sort-icon'
+                                        onClick={() => requestSort('category')}
+                                    />
+                                </div>
+                            </th>
+                            <th>
+                                <div className='header'>
+                                    Complexity
+                                    <UnfoldMoreOutlined
+                                        className='sort-icon'
+                                        onClick={() => requestSort('complexity')}
+                                    />
+                                </div>
+                            </th>
                             {isMaintainer && <th>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
-                        {questions.map((question) => (
+                        {sortedQuestions.map((question) => (
                             <Fragment key={question.question_id}>
                                 {editFormData &&
                                 editFormData.question_id === question.question_id ? (
