@@ -9,7 +9,6 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx_params_handle_websockets:/etc/nginx/nginx_params_handle_websockets:ro
     depends_on:
-      - frontend
       - users_api
       - questions_api
       - matching_api
