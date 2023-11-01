@@ -9,12 +9,14 @@
 
 .welcome {
     background-color: #303030;
-    padding: 3rem 1rem 1rem 3rem;
+    padding: 30px;
     margin-right: 1rem;
     border-radius: 0.5rem;
     text-align: left;
     height: 13rem;
     width: 20rem;
+    display: flex;
+    align-items: center;
 }
 
 .match {

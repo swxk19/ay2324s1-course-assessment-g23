@@ -5,7 +5,7 @@ import '../../styles/Room.css'
 interface ChatMessageProps {
     text: string
     sender: string
-    type: string
+    msg_type: string
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ text, sender, msg_type }) => {
