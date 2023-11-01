@@ -20,13 +20,15 @@ type ChatMessage = {
 const ChatBox: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<WebSocket | null>(null)
-    const { data: user, isFetching: isFetchingCurrentUser } = useCurrentUser()
+    const { data: user } = useCurrentUser()
     const constraintsRef = useRef(null)
     const [formValue, setFormValue] = useState('')
     const [isMinimized, setIsMinimized] = useState(false)
     const chatHeaderControls = useAnimation()
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
     const messagesEndRef = useRef<HTMLDivElement | null>(null)
+    const [hasLeft, setHasLeft] = useState(false)
+    const [showMessageAlert, setShowMessageAlert] = useState(false)
 
     useEffect(() => {
         // Check if user is not null and not fetching
@@ -47,7 +49,7 @@ const ChatBox: React.FC = () => {
 
         socket.onopen = () => {
             console.log('WebSocket connection is open')
-            const user_id = user?.username
+            const user_id = user?.username ?? ''
             const userJoinMessage = JSON.stringify({
                 event: 'join-room',
                 sender: user_id,
@@ -65,6 +67,7 @@ const ChatBox: React.FC = () => {
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data)
+            checkHiddenMessages()
 
             if (data.event == 'receive-message') {
                 const text = data.message
@@ -75,17 +78,19 @@ const ChatBox: React.FC = () => {
                 const sender_id = data.sender
                 const newMessage = { sender: sender_id, text: '', msg_type: 'join' }
                 setChatMessages((prevChatMessages) => [...prevChatMessages, newMessage])
+                setHasLeft(false)
             } else if (data.event == 'leave-room') {
                 const sender_id = data.sender
                 const newMessage = { sender: sender_id, text: '', msg_type: 'leave' }
                 setChatMessages((prevChatMessages) => [...prevChatMessages, newMessage])
+                setHasLeft(true)
             } else if (data.event == 'full-room') {
                 console.log('Room is full')
                 socket.close()
             }
         }
 
-        socket.onclose = (event) => {
+        socket.onclose = () => {
             const userLeaveMessage = JSON.stringify({
                 event: 'leave-room',
                 sender: user?.username,
@@ -93,7 +98,7 @@ const ChatBox: React.FC = () => {
             socket.send(userLeaveMessage)
 
             const newMessage = {
-                sender: user_id,
+                sender: user?.username ?? '',
                 text: '',
                 msg_type: 'leave',
             }
@@ -111,6 +116,12 @@ const ChatBox: React.FC = () => {
     const chatBoxVariants = {
         minimized: { height: '50px' },
         expanded: { height: '500px' },
+    }
+
+    const checkHiddenMessages = () => {
+        if (isMinimized) {
+            setShowMessageAlert(true)
+        }
     }
 
     const sendMessage = (event: React.FormEvent) => {
@@ -186,8 +197,15 @@ const ChatBox: React.FC = () => {
                                 onClick={toggleMinimize}
                             />
                         )}
-                        <Circle sx={{ alignSelf: 'right', color: '#00b8a2', fontSize: '10px' }} />
+                        <Circle
+                            sx={{
+                                alignSelf: 'right',
+                                color: hasLeft ? '#fe375f' : '#00b8a2',
+                                fontSize: '10px',
+                            }}
+                        />
                         <h3 style={{ color: 'white', margin: '12px' }}>Chat Room</h3>
+                        {showMessageAlert && <div>Hello</div>}
                     </div>
                     <div className='chat-background'>
                         {chatMessages.map((message, index) => (
