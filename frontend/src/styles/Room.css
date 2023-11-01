@@ -200,7 +200,6 @@
     margin: 10px 0;
     background-color: #3d3d3d;
     min-width: auto;
-    width: 125px;
     border-radius: 5px;
 }
 
@@ -239,7 +238,9 @@ ul.listbox {
     box-sizing: border-box;
     background-color: #303030;
     border: 1px solid #3d3d3d;
-    width: 150px;
+    width: auto;
+    max-height: 300px;
+    overflow: scroll;
     font-size: 15px;
     font-weight: bold;
     text-align: left;

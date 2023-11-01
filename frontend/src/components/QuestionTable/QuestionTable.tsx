@@ -38,13 +38,40 @@ const QuestionTable: React.FC = () => {
     const [complexityFilter, setComplexityFilter] = useState<null | 'Easy' | 'Medium' | 'Hard'>(
         null
     )
+    const [categoryFilter, setCategoryFilter] = useState<null | string>(null)
+    const categoriesList: string[] = [
+        'Algorithms',
+        'Arrays',
+        'Bit Manipulation',
+        'Brainteaser',
+        'Databases',
+        'Data Structures',
+        'Recursion',
+        'Strings',
+    ]
+    const [searchTerm, setSearchTerm] = useState<string>('')
 
-    const sortedQuestions = React.useMemo(() => {
+    const filteredAndSortedQuestions = React.useMemo(() => {
         const complexityOrder = ['Easy', 'Medium', 'Hard']
         let filteredItems = [...questions]
         if (complexityFilter) {
             filteredItems = filteredItems.filter(
                 (item: Question) => item.complexity === complexityFilter
+            )
+        }
+
+        if (categoryFilter) {
+            filteredItems = filteredItems.filter((item: Question) =>
+                item.category
+                    .split(',')
+                    .map((cat) => cat.trim())
+                    .includes(categoryFilter)
+            )
+        }
+
+        if (searchTerm) {
+            filteredItems = filteredItems.filter((item) =>
+                item.title.toLowerCase().includes(searchTerm.toLowerCase())
             )
         }
 
@@ -77,17 +104,27 @@ const QuestionTable: React.FC = () => {
     }
 
     const handleComplexityFilterChange = (selectedComplexity: string) => {
-        if (selectedComplexity === 'All') {
-            setComplexityFilter(null)
-        } else {
-            setComplexityFilter(selectedComplexity as 'Easy' | 'Medium' | 'Hard')
-        }
+        setComplexityFilter(selectedComplexity as 'Easy' | 'Medium' | 'Hard')
         requestSort('complexity')
+    }
+
+    const handleCategoryFilterChange = (selectedCategory: string) => {
+        setCategoryFilter(selectedCategory)
+        requestSort('category')
     }
 
     const resetComplexityFilter = () => {
         setComplexityFilter(null)
         requestSort('complexity')
+    }
+
+    const resetCategoryFilter = () => {
+        setCategoryFilter(null)
+        requestSort('category')
+    }
+    const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value)
+        requestSort('title')
     }
 
     const handleEditFormChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -140,23 +177,47 @@ const QuestionTable: React.FC = () => {
         <div className='question-container'>
             <h2>Questions</h2>
             <form onSubmit={handleEditFormSubmit}>
-                <div>
+                <div className='dropdown-row'>
                     <DropdownSelect
                         options={['Easy', 'Medium', 'Hard']}
                         onOptionChange={handleComplexityFilterChange}
                         defaultOption={'Complexity'}
                     />
+                    <DropdownSelect
+                        options={categoriesList}
+                        onOptionChange={handleCategoryFilterChange}
+                        defaultOption={'Category'}
+                    />
+                    <input
+                        type='text'
+                        placeholder='Search questions'
+                        value={searchTerm}
+                        onChange={handleSearchInputChange}
+                    />
                 </div>
-                {complexityFilter && (
-                    <div
-                        className='reset-button'
-                        id={complexityFilter}
-                        onClick={resetComplexityFilter}
-                    >
-                        {complexityFilter}
-                        <Cancel fontSize={'small'} sx={{ color: '#c2c2c2' }} />
-                    </div>
-                )}
+                <div className='reset-row'>
+                    {complexityFilter && (
+                        <div
+                            className='reset-button'
+                            id={complexityFilter}
+                            onClick={resetComplexityFilter}
+                        >
+                            {complexityFilter}
+                            <Cancel fontSize={'small'} sx={{ color: '#c2c2c2' }} />
+                        </div>
+                    )}
+
+                    {categoryFilter && (
+                        <div
+                            className='reset-button'
+                            id={categoryFilter}
+                            onClick={resetCategoryFilter}
+                        >
+                            {categoryFilter}
+                            <Cancel fontSize={'small'} sx={{ color: '#c2c2c2' }} />
+                        </div>
+                    )}
+                </div>
 
                 <table className='question-table'>
                     <thead>
@@ -201,7 +262,7 @@ const QuestionTable: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sortedQuestions.map((question) => (
+                        {filteredAndSortedQuestions.map((question) => (
                             <Fragment key={question.question_id}>
                                 {editFormData &&
                                 editFormData.question_id === question.question_id ? (
