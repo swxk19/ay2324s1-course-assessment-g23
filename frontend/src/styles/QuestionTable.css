@@ -118,16 +118,36 @@ Dialog {
     cursor: pointer;
 }
 
+.dropdown-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dropdown-row input {
+    height: 31px;
+    width: 300px;
+    border-style: none;
+    border-radius: 5px;
+}
+
+.reset-row {
+    display: flex;
+    gap:10px;
+    margin: 10px 0;
+}
+
 .reset-button {
     background-color: #303030;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding: 3px 0;
-    border-radius: 20px;
-    margin: 15px 10px;
+    padding: 3px 10px 3px 12px;
+    border-radius: 5px;
     gap: 10px;
     font-weight: bold;
+    width: auto;
 }
 
 .reset-button:hover {
@@ -137,15 +157,12 @@ Dialog {
 
 #Easy.reset-button {
     color: #00b8a2;
-    width: 90px;
 }
 
 #Medium.reset-button {
     color: #febf1d;
-    width: 120px;
 }
 
 #Hard.reset-button {
     color: #fe375f;
-    width: 90px;
 }
