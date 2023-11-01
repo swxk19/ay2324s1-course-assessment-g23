@@ -14,8 +14,8 @@ class ChatRoom:
     def __init__(self):
         self.chat_messages = []
 
-    def add_message(self, sender_id, message):
-        message_entry = (sender_id, message)
+    def add_message(self, sender_id, message, msg_type):
+        message_entry = (sender_id, message, msg_type)
         self.chat_messages.append(message_entry)
 
     def get_messages(self):
@@ -29,6 +29,9 @@ class Room:
     # clients: list[UserWebSocket] = field(default_factory=list)
     clients: dict[str, UserWebSocket] = field(default_factory=dict)
     chat_room: ChatRoom = field(default_factory=ChatRoom)
+    
+    def is_full(self) -> bool:
+        return len(self.clients) > 2
 
 
 class MessagePayload(TypedDict):
