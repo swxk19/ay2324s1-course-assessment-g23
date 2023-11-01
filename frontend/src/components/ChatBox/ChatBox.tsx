@@ -23,7 +23,7 @@ const ChatBox: React.FC = () => {
     const { data: user } = useCurrentUser()
     const constraintsRef = useRef(null)
     const [formValue, setFormValue] = useState('')
-    const [isMinimized, setIsMinimized] = useState(false)
+    const [isMinimized, setIsMinimized] = useState(true)
     const chatHeaderControls = useAnimation()
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
     const messagesEndRef = useRef<HTMLDivElement | null>(null)
