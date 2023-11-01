@@ -114,23 +114,37 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                         width: '700px',
                     }}
                 >
-                    {hasActions ? 'Edit Description' : 'Description'}
+                    {hasActions ? 'Edit Description' : question.title}
                 </DialogTitle>
                 <DialogContent style={{ backgroundColor: '#242424' }}>
                     {hasActions ? (
                         <TextField
-                            style={{ width: '100%' }}
+                            style={{ fontFamily: 'courier', width: '100%' }}
                             fullWidth
                             multiline
                             rows={10}
                             value={editedDescription}
                             onChange={(e) => setEditedDescription(e.target.value)}
                             InputProps={{
-                                style: { color: 'white', borderColor: 'white' },
+                                style: {
+                                    fontFamily: 'courier',
+                                    color: 'white',
+                                    borderColor: 'white',
+                                },
                             }}
                         />
                     ) : (
-                        <DialogContentText id='alert-dialog-description' style={{ color: 'white' }}>
+                        <DialogContentText
+                            id='alert-dialog-description'
+                            style={{
+                                fontFamily: 'courier',
+                                color: 'white',
+                                whiteSpace: 'pre',
+                            }}
+                            fullWidth
+                            multiline
+                            rows={10}
+                        >
                             {editedDescription}
                         </DialogContentText>
                     )}
