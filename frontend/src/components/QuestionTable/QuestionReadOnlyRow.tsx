@@ -15,6 +15,7 @@ import {
 import React, { useState } from 'react'
 import { type Question } from '../../api/questions.ts'
 import { useUpdateQuestion } from '../../stores/questionStore.ts'
+import '../../styles/QuestionTable.css'
 import AlertMessage from '../AlertMessage.tsx'
 
 interface ReadOnlyRowProps {
@@ -52,12 +53,12 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     return (
         <>
             <tr>
-                <td>
+                <td className='id-column'>
                     <Tooltip title={<p>{question.question_id}</p>} arrow>
                         <Typography
                             style={{
                                 cursor: 'pointer',
-                                maxWidth: '10ch', // Adjust the maximum width as needed
+                                maxWidth: '6ch', // Adjust the maximum width as needed
                                 overflow: 'hidden',
                                 whiteSpace: 'nowrap',
                                 textOverflow: 'ellipsis',
@@ -67,20 +68,13 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                         </Typography>
                     </Tooltip>
                 </td>
-                <td
-                    onClick={openModal}
-                    style={{
-                        cursor: 'pointer',
-                        textDecoration: 'underline',
-                        fontWeight: 'bold',
-                    }}
-                >
-                    {question.title}
+                <td onClick={openModal} className='title-column'>
+                    <p>{question.title}</p>
                 </td>
                 <td>{question.category}</td>
                 <td className={`complexity-color-${question.complexity}`}>{question.complexity}</td>
                 {hasActions && (
-                    <td>
+                    <td className='action-column'>
                         <IconButton
                             sx={{ color: '#c2c2c2', paddingLeft: '0' }}
                             onClick={(event) => handleEditClick(event, question)}
