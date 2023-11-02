@@ -33,7 +33,9 @@ const MatchingStatusBar: React.FC<MatchingScreenProps> = ({
                 <button className='exit-button' onClick={handleMatchExit}>
                     Exit Matchmaking
                 </button>
-                <button onClick={onMaximise}>Show Matchmaking Screen</button>
+                <button className='maximise-button' onClick={onMaximise}>
+                    Show Matchmaking Screen
+                </button>
             </div>
 
             <div className='timer-circle'>

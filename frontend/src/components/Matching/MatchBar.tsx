@@ -81,16 +81,18 @@ const MatchBar: React.FC = () => {
                                 >
                                     <div className='icon-text-wrapper'>
                                         <Star />
-                                        Easy
                                     </div>
+                                    Easy
                                 </button>
                                 <button
                                     className='match-button'
                                     id='medium'
                                     onClick={() => startFindMatch('Medium')}
                                 >
-                                    <Star />
-                                    <Star />
+                                    <div className='icon-text-wrapper'>
+                                        <Star />
+                                        <Star />
+                                    </div>
                                     Medium
                                 </button>
                                 <button
@@ -98,9 +100,11 @@ const MatchBar: React.FC = () => {
                                     id='hard'
                                     onClick={() => startFindMatch('Hard')}
                                 >
-                                    <Star />
-                                    <Star />
-                                    <Star />
+                                    <div className='icon-text-wrapper'>
+                                        <Star />
+                                        <Star />
+                                        <Star />
+                                    </div>
                                     Hard
                                 </button>
                             </div>

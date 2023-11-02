@@ -1,24 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 .question-page-container {
     margin-left: auto;
     margin-right: auto;
     max-width: 60rem;
     padding: 0 1rem;
-    margin-bottom: 5%;
+    margin-bottom: 100px;
+    font-weight: 550;
+    font-size: 15px;
 }
 
 .question-container td {
-    padding: 0.75rem 1rem;
+    padding: 12px 1rem;
+    width: auto;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
 }
 
 .question-container th {
-    padding: 0 2rem 0.5rem 1rem;
+    padding: 0 0 0.5rem 1rem;
     text-align: left;
     min-width: 100%;
     border-bottom: 2px solid #303030;
 }
 
 #id-header {
-    width: 7rem;
+    width: auto;
 }
 
 .question-container input {
@@ -35,6 +41,28 @@
     padding: 10px;
     min-width: 525px;
     min-height: 200px;
+}
+
+.id-column {
+    width: 10px;
+}
+
+.title-column {
+    cursor: pointer;
+    width: auto;
+}
+
+.title-column p {
+    margin: 0;
+    width: fit-content;
+}
+
+.title-column p:hover {
+    color: #646cff;
+}
+
+.action-column {
+    display: flex;
 }
 
 .questionForm input {
@@ -90,7 +118,7 @@ Dialog {
 
 /* Apply styles to odd rows */
 .question-table tbody tr:nth-child(odd) {
-    background-color: #242424;
+    background-color: transparent;
 }
 
 .question-table {
