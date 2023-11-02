@@ -1,4 +1,4 @@
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
+import { MenuOpenOutlined } from '@mui/icons-material'
 import { AnimatePresence } from 'framer-motion'
 import React, { useState } from 'react'
 import QuestionList from './QuestionList.tsx'
@@ -14,7 +14,7 @@ const RoomNavBar: React.FC<Props> = ({ onExitClick }) => {
             <nav className='nav' style={{ padding: '8px 20px' }}>
                 <img src='../../peerprep.png' width='40' height='40' alt='PeerPrep Logo' />
                 <button className='problem-button' onClick={() => setShowQuestionList(true)}>
-                    <FormatListBulletedIcon sx={{ fontSize: '20px' }} />
+                    <MenuOpenOutlined sx={{ fontSize: '22px', padding: 0 }} />
                     <h2
                         style={{
                             margin: '0',
@@ -23,7 +23,7 @@ const RoomNavBar: React.FC<Props> = ({ onExitClick }) => {
                             fontSize: '1rem',
                         }}
                     >
-                        Problem List
+                        Question List
                     </h2>
                 </button>
 

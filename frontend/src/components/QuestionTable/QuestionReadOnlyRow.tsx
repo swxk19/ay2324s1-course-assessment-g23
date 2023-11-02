@@ -1,7 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import {
-    Button,
     Dialog,
     DialogActions,
     DialogContent,
@@ -54,7 +53,20 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
         <>
             <tr>
                 <td className='id-column'>
-                    <Tooltip title={<p>{question.question_id}</p>} arrow>
+                    <Tooltip
+                        title={<p>{question.question_id}</p>}
+                        placement='bottom-start'
+                        componentsProps={{
+                            tooltip: {
+                                sx: {
+                                    backgroundColor: '#c2c2c2',
+                                    color: '#242424',
+                                    fontSize: '15px',
+                                    maxWidth: '100%',
+                                },
+                            },
+                        }}
+                    >
                         <Typography
                             style={{
                                 cursor: 'pointer',
@@ -82,7 +94,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                             <EditIcon />
                         </IconButton>
                         <IconButton
-                            sx={{ color: '#c2c2c2' }}
+                            sx={{ color: '#c2c2c2', padding: '0 0 0 10px' }}
                             onClick={() => handleDeleteClick(question.question_id)}
                         >
                             <DeleteIcon />
@@ -93,30 +105,20 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
             <Dialog
                 open={isModalOpen}
                 onClose={handleClose}
-                aria-labelledby='alert-dialog-title'
-                aria-describedby='alert-dialog-description'
                 maxWidth='md'
                 PaperProps={{
                     sx: { borderRadius: '1rem', backgroundColor: '#242424', padding: '1rem' },
                 }}
             >
-                <DialogTitle
-                    style={{
-                        fontWeight: 'bold',
-                        backgroundColor: '#242424',
-                        color: 'white',
-                        width: '700px',
-                    }}
-                >
+                <DialogTitle style={{ color: 'white' }}>
                     {hasActions ? 'Edit Description' : question.title}
                 </DialogTitle>
                 <DialogContent style={{ backgroundColor: '#242424' }}>
                     {hasActions ? (
                         <TextField
-                            style={{ fontFamily: 'courier', width: '100%' }}
-                            fullWidth
+                            style={{ fontFamily: 'courier', width: '800px' }}
                             multiline
-                            rows={10}
+                            rows={20}
                             value={editedDescription}
                             onChange={(e) => setEditedDescription(e.target.value)}
                             InputProps={{
@@ -135,9 +137,6 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                                 color: 'white',
                                 whiteSpace: 'pre',
                             }}
-                            fullWidth
-                            multiline
-                            rows={10}
                         >
                             {editedDescription}
                         </DialogContentText>
@@ -145,58 +144,16 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 </DialogContent>
                 {hasActions && (
                     <DialogActions style={{ backgroundColor: '#242424' }}>
-                        <Button
-                            disableFocusRipple
-                            disableRipple
-                            size='medium'
-                            onClick={handleClose}
-                            style={{
-                                color: 'white',
-                                paddingLeft: '25px',
-                                paddingRight: '25px',
-                                marginRight: '15px',
-                                textTransform: 'none',
-                                width: '5rem',
-                                maxWidth: '700px',
-                                backgroundColor: '#303030',
-                            }}
-                            sx={{
-                                ml: 1,
-                                '&.MuiButtonBase-root:hover': {
-                                    bgcolor: 'transparent',
-                                },
-                            }}
-                        >
+                        <button className='cancel-button' onClick={handleClose}>
                             <Typography variant='subtitle1' sx={{ fontWeight: 'bold' }}>
                                 Cancel
                             </Typography>
-                        </Button>
-                        <Button
-                            disableFocusRipple
-                            disableRipple
-                            size='medium'
-                            onClick={handleEditDescription}
-                            style={{
-                                color: 'white',
-                                paddingLeft: '25px',
-                                paddingRight: '25px',
-                                marginRight: '15px',
-                                textTransform: 'none',
-                                width: '5rem',
-                                maxWidth: '700px',
-                                backgroundColor: '#238636',
-                            }}
-                            sx={{
-                                ml: 1,
-                                '&.MuiButtonBase-root:hover': {
-                                    bgcolor: 'transparent',
-                                },
-                            }}
-                        >
+                        </button>
+                        <button className='save-button' onClick={handleEditDescription}>
                             <Typography variant='subtitle1' sx={{ fontWeight: 'bold' }}>
                                 Save
                             </Typography>
-                        </Button>
+                        </button>
                     </DialogActions>
                 )}
 

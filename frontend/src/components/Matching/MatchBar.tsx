@@ -112,7 +112,6 @@ const MatchBar: React.FC = () => {
                     )}
                     {isMatchingStatusBarVisible && (
                         <MatchingStatusBar
-                            difficulty={difficulty}
                             onMatchExit={() => stopFindMatch()}
                             onMaximise={handleMaximise}
                         />

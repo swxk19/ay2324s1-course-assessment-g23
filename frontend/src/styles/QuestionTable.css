@@ -10,8 +10,7 @@
 .question-container td {
     padding: 12px 1rem;
     width: auto;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: bold;
+    font-weight: 500;
 }
 
 .question-container th {
@@ -32,6 +31,26 @@
 
 .question-container select {
     padding: 0.55rem;
+}
+
+.cancel-button {
+    padding: 5px 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    border-radius: 5px;
+    background-color: #303030;
+}
+
+.save-button {
+    padding: 5px 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    border-radius: 5px;
+    background-color: #00b8a2;
 }
 
 .custom-desc-input {
@@ -174,7 +193,7 @@ Dialog {
     border-radius: 5px;
     padding: 5px 10px;
     gap: 3px;
-    height:100%
+    height: 100%
 }
 
 .reset-row {

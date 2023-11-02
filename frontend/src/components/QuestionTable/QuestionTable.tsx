@@ -12,6 +12,7 @@ import '../../styles/AlertMessage.css'
 import '../../styles/QuestionTable.css'
 import AlertMessage from '../AlertMessage.tsx'
 import DropdownSelect from './DropdownSelect.tsx'
+import DropdownTabs from './DropdownTabs.tsx'
 import QuestionEditableRow from './QuestionEditableRow.tsx'
 import { QuestionForm } from './QuestionForm.tsx'
 import QuestionReadOnlyRow from './QuestionReadOnlyRow.tsx'
@@ -197,15 +198,17 @@ const QuestionTable: React.FC = () => {
                         </>
                     )}
                     <DropdownSelect
+                        type='complexity'
                         options={['Easy', 'Medium', 'Hard']}
                         onOptionChange={handleComplexityFilterChange}
                         defaultOption={'Complexity'}
                     />
-                    <DropdownSelect
+                    <DropdownTabs
                         options={categoriesList}
                         onOptionChange={handleCategoryFilterChange}
                         defaultOption={'Category'}
                     />
+
                     <input
                         className='search-box'
                         type='text'
