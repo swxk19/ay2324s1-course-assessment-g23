@@ -52,8 +52,8 @@ const QuestionEditableRow: React.FC<EditableRowProps> = ({
                     <option value='Hard'>Hard</option>
                 </select>
             </td>
-            <td>
-                <IconButton type='submit' sx={{ color: '#c2c2c2', paddingLeft: '0' }}>
+            <td className='action-column'>
+                <IconButton type='submit' sx={{ color: '#c2c2c2', padding: '0' }}>
                     <SaveIcon />
                 </IconButton>
                 <IconButton type='button' onClick={handleCancelClick} sx={{ color: '#c2c2c2' }}>

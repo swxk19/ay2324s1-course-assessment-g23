@@ -1,17 +1,16 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { useState } from 'react'
-import '../../styles/Room.css'
+import '../../styles/Dropdown.css'
+import CategoryTab from './CategoryTab.tsx'
 
-interface DropdownSelectProps {
-    type: string
+interface DropdownTabsProps {
     options: string[]
     onOptionChange: (selectedOption: string) => void
     defaultOption?: string
     label?: string
 }
 
-const DropdownSelect: React.FC<DropdownSelectProps> = ({
-    type,
+const DropdownTabs: React.FC<DropdownTabsProps> = ({
     options,
     onOptionChange,
     defaultOption,
@@ -26,24 +25,19 @@ const DropdownSelect: React.FC<DropdownSelectProps> = ({
                 {defaultOption}
                 <KeyboardArrowDownIcon />
             </button>
-            <ul id='custom-listbox' className={`listbox ${isOpen ? 'isOpen' : ''}`}>
+            <div id='custom-tab-box' className={`tab-box ${isOpen ? 'isOpen' : ''}`}>
                 {options.map((option) => (
-                    <li
-                        id={`${type}-${option}`}
-                        role='option'
+                    <CategoryTab
+                        name={option}
                         onClick={() => {
                             setIsOpen(false)
                             onOptionChange(option)
                         }}
-                        key={option}
-                        className='list-option'
-                    >
-                        {option}
-                    </li>
+                    />
                 ))}
-            </ul>
+            </div>
         </div>
     )
 }
 
-export default DropdownSelect
+export default DropdownTabs

@@ -1,15 +1,13 @@
 import React from 'react'
-import type { Complexity } from '../../api/questions.ts'
 import '../../styles/Match.css'
+import TimerCircle from '../LoadingAnimation/TimerCircle.tsx'
 import { useTimer } from '../TimerProvider.tsx'
 
 type MatchingScreenProps = {
-    difficulty: Complexity
     onMatchExit: () => void
     onMaximise: () => void
 }
 const MatchingStatusBar: React.FC<MatchingScreenProps> = ({
-    difficulty,
     onMatchExit: onMatchExit,
     onMaximise: onMaximise,
 }) => {
@@ -38,9 +36,7 @@ const MatchingStatusBar: React.FC<MatchingScreenProps> = ({
                 </button>
             </div>
 
-            <div className='timer-circle'>
-                <span>{formatTime(seconds)}</span>
-            </div>
+            <TimerCircle time={formatTime(seconds)} />
         </div>
     )
 }
