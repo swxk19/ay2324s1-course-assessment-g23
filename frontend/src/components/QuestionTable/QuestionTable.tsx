@@ -1,5 +1,4 @@
-import { Cancel, UnfoldMoreOutlined } from '@mui/icons-material'
-import { AnimatePresence, motion } from 'framer-motion'
+import { Add, Cancel, UnfoldMoreOutlined } from '@mui/icons-material'
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 import { type Question } from '../../api/questions.ts'
 import {
@@ -178,6 +177,25 @@ const QuestionTable: React.FC = () => {
             <h2>Questions</h2>
             <form onSubmit={handleEditFormSubmit}>
                 <div className='dropdown-row'>
+                    {isMaintainer && (
+                        <>
+                            <button
+                                className='add-question-button'
+                                onClick={() => setShowQuestionForm(true)}
+                            >
+                                Add a Question
+                                <Add fontSize={'small'} />
+                            </button>
+                            {showQuestionForm && (
+                                <QuestionForm
+                                    initialData={addFormData}
+                                    onFormChange={handleFormChange}
+                                    onSubmit={handleAddFormSubmit}
+                                    onClose={() => setShowQuestionForm(false)}
+                                />
+                            )}
+                        </>
+                    )}
                     <DropdownSelect
                         options={['Easy', 'Medium', 'Hard']}
                         onOptionChange={handleComplexityFilterChange}
@@ -189,6 +207,7 @@ const QuestionTable: React.FC = () => {
                         defaultOption={'Category'}
                     />
                     <input
+                        className='search-box'
                         type='text'
                         placeholder='Search questions'
                         value={searchTerm}
@@ -284,45 +303,20 @@ const QuestionTable: React.FC = () => {
                     </tbody>
                 </table>
             </form>
-
             {updateQuestionMutation.isError && (
                 <AlertMessage variant='error'>
                     <h4>Oops! {updateQuestionMutation.error.detail}</h4>
                 </AlertMessage>
             )}
-
             {deleteQuestionMutation.isError && (
                 <AlertMessage variant='error'>
                     <h4>Oops! {deleteQuestionMutation.error.detail}</h4>
                 </AlertMessage>
             )}
-            {isMaintainer && (
-                <>
-                    <button onClick={() => setShowQuestionForm(true)}>Add a Question</button>
-                    <AnimatePresence>
-                        {showQuestionForm && (
-                            <motion.div
-                                key='token-menu'
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
-                                <QuestionForm
-                                    initialData={addFormData}
-                                    onFormChange={handleFormChange}
-                                    onSubmit={handleAddFormSubmit}
-                                    onClose={() => setShowQuestionForm(false)}
-                                />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {storeQuestionMutation.isError && (
-                        <AlertMessage variant='error'>
-                            <h4>Oops! {storeQuestionMutation.error.detail}</h4>
-                        </AlertMessage>
-                    )}
-                </>
+            {storeQuestionMutation.isError && (
+                <AlertMessage variant='error'>
+                    <h4>Oops! {storeQuestionMutation.error.detail}</h4>
+                </AlertMessage>
             )}
         </div>
     )

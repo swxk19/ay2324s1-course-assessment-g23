@@ -58,7 +58,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                         <Typography
                             style={{
                                 cursor: 'pointer',
-                                maxWidth: '6ch', // Adjust the maximum width as needed
+                                maxWidth: '8ch', // Adjust the maximum width as needed
                                 overflow: 'hidden',
                                 whiteSpace: 'nowrap',
                                 textOverflow: 'ellipsis',
@@ -76,7 +76,7 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                 {hasActions && (
                     <td className='action-column'>
                         <IconButton
-                            sx={{ color: '#c2c2c2', paddingLeft: '0' }}
+                            sx={{ color: '#c2c2c2', padding: '0' }}
                             onClick={(event) => handleEditClick(event, question)}
                         >
                             <EditIcon />

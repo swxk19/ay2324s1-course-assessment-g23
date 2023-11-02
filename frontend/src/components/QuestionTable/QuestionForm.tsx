@@ -73,7 +73,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
     }
 
     return (
-        <div className='dark-overlay'>
+        <div className='dark-overlay' style={{ zIndex: 2 }}>
             <div className='question-form-container'>
                 <h2>Add a question</h2>
                 <form onSubmit={onSubmit}>
@@ -142,7 +142,11 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                         >
                             Add
                         </button>
-                        <button style={{ backgroundColor: 'transparent' }} onClick={onClose}>
+                        <button
+                            style={{ backgroundColor: 'transparent' }}
+                            type='button'
+                            onClick={onClose}
+                        >
                             Cancel
                         </button>
                     </span>

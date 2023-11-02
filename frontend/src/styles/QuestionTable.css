@@ -1,25 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 .question-page-container {
     margin-left: auto;
     margin-right: auto;
     max-width: 60rem;
     padding: 0 1rem;
     margin-bottom: 100px;
-    font-weight: 550;
     font-size: 15px;
 }
 
 .question-container td {
     padding: 12px 1rem;
     width: auto;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Segoe UI", sans-serif;
     font-weight: bold;
 }
 
 .question-container th {
     padding: 0 0 0.5rem 1rem;
     text-align: left;
-    min-width: 100%;
+    width: auto;
     border-bottom: 2px solid #303030;
 }
 
@@ -133,6 +131,7 @@ Dialog {
 .header {
     display: flex;
     gap: 5px;
+    width: auto;
     align-items: center;
 }
 
@@ -155,14 +154,32 @@ Dialog {
 
 .dropdown-row input {
     height: 31px;
-    width: 300px;
+    width: 100%;
     border-style: none;
     border-radius: 5px;
 }
 
+.add-question-button:hover {
+    background-color: white;
+}
+
+.add-question-button {
+    background-color: #c2c2c2;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    min-width: max-content;
+    border-radius: 5px;
+    padding: 5px 10px;
+    gap: 3px;
+    height:100%
+}
+
 .reset-row {
     display: flex;
-    gap:10px;
+    gap: 10px;
     margin: 10px 0;
 }
 
@@ -194,4 +211,15 @@ Dialog {
 
 #Hard.reset-button {
     color: #fe375f;
+}
+
+@media only screen and (max-width: 600px) {
+    .id-column, #id-header {
+        display: none;
+    }
+
+    .action-column {
+        flex-direction: column;
+        justify-content: left;
+    }
 }
