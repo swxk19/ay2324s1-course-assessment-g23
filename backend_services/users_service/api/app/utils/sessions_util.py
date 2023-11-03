@@ -1,15 +1,15 @@
-from typing import Literal
-
 from user_database import USER_DATABASE as db
 
 
-def is_valid_login(username: str, hashed_password: str) -> tuple[str, str] | Literal[False]:
+def get_user_id_and_role(
+    username: str, hashed_password: str
+) -> tuple[str, str] | tuple[None, None]:
     result = db.execute_sql_read_fetchone(
         "SELECT user_id, role FROM users where username = %s AND password = %s",
         params=(username, hashed_password),
     )
     if result is None:
-        return False
+        return None, None
     user_id, role = result
     return user_id, role
 
