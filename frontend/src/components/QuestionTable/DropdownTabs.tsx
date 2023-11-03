@@ -28,6 +28,7 @@ const DropdownTabs: React.FC<DropdownTabsProps> = ({
             <div id='custom-tab-box' className={`tab-box ${isOpen ? 'isOpen' : ''}`}>
                 {options.map((option) => (
                     <CategoryTab
+                        key={option}
                         name={option}
                         onClick={() => {
                             setIsOpen(false)

@@ -149,6 +149,7 @@ const QuestionTable: React.FC = () => {
     }
 
     const handleEditFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        console.log('hello')
         event.preventDefault()
 
         if (!editFormData) return
@@ -176,71 +177,66 @@ const QuestionTable: React.FC = () => {
     return (
         <div className='question-container'>
             <h2>Questions</h2>
+            <div className='dropdown-row'>
+                {isMaintainer && (
+                    <>
+                        <button
+                            className='add-question-button'
+                            onClick={() => setShowQuestionForm(true)}
+                        >
+                            Add a Question
+                            <Add fontSize={'small'} />
+                        </button>
+                        {showQuestionForm && (
+                            <QuestionForm
+                                initialData={addFormData}
+                                onFormChange={handleFormChange}
+                                onSubmit={handleAddFormSubmit}
+                                onClose={() => setShowQuestionForm(false)}
+                            />
+                        )}
+                    </>
+                )}
+                <DropdownSelect
+                    type='complexity'
+                    options={['Easy', 'Medium', 'Hard']}
+                    onOptionChange={handleComplexityFilterChange}
+                    defaultOption={'Complexity'}
+                />
+                <DropdownTabs
+                    options={categoriesList}
+                    onOptionChange={handleCategoryFilterChange}
+                    defaultOption={'Category'}
+                />
+
+                <input
+                    className='search-box'
+                    type='text'
+                    placeholder='Search questions'
+                    value={searchTerm}
+                    onChange={handleSearchInputChange}
+                />
+            </div>
+            <div className='reset-row'>
+                {complexityFilter && (
+                    <div
+                        className='reset-button'
+                        id={complexityFilter}
+                        onClick={resetComplexityFilter}
+                    >
+                        {complexityFilter}
+                        <Cancel fontSize={'small'} sx={{ color: '#c2c2c2' }} />
+                    </div>
+                )}
+
+                {categoryFilter && (
+                    <div className='reset-button' id={categoryFilter} onClick={resetCategoryFilter}>
+                        {categoryFilter}
+                        <Cancel fontSize={'small'} sx={{ color: '#c2c2c2' }} />
+                    </div>
+                )}
+            </div>
             <form onSubmit={handleEditFormSubmit}>
-                <div className='dropdown-row'>
-                    {isMaintainer && (
-                        <>
-                            <button
-                                className='add-question-button'
-                                onClick={() => setShowQuestionForm(true)}
-                            >
-                                Add a Question
-                                <Add fontSize={'small'} />
-                            </button>
-                            {showQuestionForm && (
-                                <QuestionForm
-                                    initialData={addFormData}
-                                    onFormChange={handleFormChange}
-                                    onSubmit={handleAddFormSubmit}
-                                    onClose={() => setShowQuestionForm(false)}
-                                />
-                            )}
-                        </>
-                    )}
-                    <DropdownSelect
-                        type='complexity'
-                        options={['Easy', 'Medium', 'Hard']}
-                        onOptionChange={handleComplexityFilterChange}
-                        defaultOption={'Complexity'}
-                    />
-                    <DropdownTabs
-                        options={categoriesList}
-                        onOptionChange={handleCategoryFilterChange}
-                        defaultOption={'Category'}
-                    />
-
-                    <input
-                        className='search-box'
-                        type='text'
-                        placeholder='Search questions'
-                        value={searchTerm}
-                        onChange={handleSearchInputChange}
-                    />
-                </div>
-                <div className='reset-row'>
-                    {complexityFilter && (
-                        <div
-                            className='reset-button'
-                            id={complexityFilter}
-                            onClick={resetComplexityFilter}
-                        >
-                            {complexityFilter}
-                            <Cancel fontSize={'small'} sx={{ color: '#c2c2c2' }} />
-                        </div>
-                    )}
-
-                    {categoryFilter && (
-                        <div
-                            className='reset-button'
-                            id={categoryFilter}
-                            onClick={resetCategoryFilter}
-                        >
-                            {categoryFilter}
-                            <Cancel fontSize={'small'} sx={{ color: '#c2c2c2' }} />
-                        </div>
-                    )}
-                </div>
-
                 <table className='question-table'>
                     <thead>
                         <tr>

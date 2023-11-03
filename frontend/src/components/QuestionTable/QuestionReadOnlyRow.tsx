@@ -4,7 +4,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     IconButton,
     TextField,
@@ -12,6 +11,8 @@ import {
     Typography,
 } from '@mui/material'
 import React, { useState } from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { type Question } from '../../api/questions.ts'
 import { useUpdateQuestion } from '../../stores/questionStore.ts'
 import '../../styles/QuestionTable.css'
@@ -130,16 +131,9 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                             }}
                         />
                     ) : (
-                        <DialogContentText
-                            id='alert-dialog-description'
-                            style={{
-                                fontFamily: 'courier',
-                                color: 'white',
-                                whiteSpace: 'pre',
-                            }}
-                        >
+                        <Markdown className='markdown' remarkPlugins={[remarkGfm]}>
                             {editedDescription}
-                        </DialogContentText>
+                        </Markdown>
                     )}
                 </DialogContent>
                 {hasActions && (
