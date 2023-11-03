@@ -1,5 +1,3 @@
-import uuid
-
 from controllers import sessions_controller as sc
 from controllers import users_controller as uc
 from fastapi import Cookie, Depends, FastAPI
@@ -40,8 +38,7 @@ app.add_middleware(
 
 @app.post("/users")
 async def create_user(r: CreateUserRequest) -> CreateUserResponse:
-    user_id = str(uuid.uuid4())
-    return uc.create_user(user_id, r.username, r.email, r.password)
+    return uc.create_user(r.username, r.email, r.password)
 
 
 @app.get("/user_me", dependencies=[Depends(require_logged_in)])
