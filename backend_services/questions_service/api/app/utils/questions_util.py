@@ -1,11 +1,6 @@
 from questions_database import QUESTIONS_DATABASE as db
 
 
-def is_valid_complexity(complexity: str) -> bool:
-    valid_complexities = ["Easy", "Medium", "Hard"]
-    return complexity in valid_complexities
-
-
 def qid_exists(qid: str) -> bool:
     cur = db.execute_sql_read_fetchone(
         "SELECT EXISTS (SELECT 1 FROM questions WHERE question_id = %s)", params=(qid,)

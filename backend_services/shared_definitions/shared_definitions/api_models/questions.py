@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -5,7 +7,7 @@ class CreateQuestionRequest(BaseModel):
     title: str
     description: str
     category: str
-    complexity: str
+    complexity: Literal["Easy", "Medium", "Hard"]
 
 
 class CreateQuestionResponse(BaseModel):
