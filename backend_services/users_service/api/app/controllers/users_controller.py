@@ -108,7 +108,8 @@ def delete_user(user_id: str, access_token_data: TokenData) -> DeleteUserRespons
 
     if users_util.is_maintainer(user_id) and users_util.get_num_maintainers() == 1:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Cannot delete last maintainer"
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cannot delete last maintainer",
         )
 
     db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))

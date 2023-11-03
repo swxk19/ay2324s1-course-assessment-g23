@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationInfo, field_validator
 
 
 class CreateQuestionRequest(BaseModel):
@@ -8,6 +8,13 @@ class CreateQuestionRequest(BaseModel):
     description: str
     category: str
     complexity: Literal["Easy", "Medium", "Hard"]
+
+    @field_validator("title", "description", "category")
+    @classmethod
+    def check_title_not_empty_or_whitespace(cls, v: str, info: ValidationInfo) -> str:
+        is_not_empty_or_whitespace = v.strip() != ""
+        assert is_not_empty_or_whitespace, f"Input cannot be empty or only whitespaces"
+        return v
 
 
 class CreateQuestionResponse(BaseModel):
@@ -18,12 +25,8 @@ class GetQuestionResponse(CreateQuestionRequest):
     question_id: str
 
 
-class UpdateQuestionRequest(BaseModel):
+class UpdateQuestionRequest(CreateQuestionRequest):
     question_id: str
-    title: str
-    description: str
-    category: str
-    complexity: str
 
 
 class UpdateQuestionResponse(BaseModel):
