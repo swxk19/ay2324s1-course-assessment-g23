@@ -59,18 +59,29 @@ async def get_all_users() -> list[GetUserResponse]:
 
 
 @app.delete("/users/{user_id}", dependencies=[Depends(require_same_user_or_maintainer_role)])
-async def delete_user(user_id: str) -> DeleteUserResponse:
-    return uc.delete_user(user_id)
+async def delete_user(
+    user_id: str,
+    access_token_data: TokenData = Depends(decode_access_token_data),
+) -> DeleteUserResponse:
+    return uc.delete_user(user_id, access_token_data)
 
 
 @app.put("/users/{user_id}", dependencies=[Depends(require_same_user_or_maintainer_role)])
-async def update_user_info(user_id: str, r: UpdateUserRequest) -> UpdateUserResponse:
-    return uc.update_user_info(user_id, r.username, r.password, r.email)
+async def update_user_info(
+    user_id: str,
+    r: UpdateUserRequest,
+    access_token_data: TokenData = Depends(decode_access_token_data),
+) -> UpdateUserResponse:
+    return uc.update_user_info(user_id, r.username, r.password, r.email, access_token_data)
 
 
 @app.put("/users_role/{user_id}", dependencies=[Depends(require_maintainer_role)])
-async def update_user_role(user_id: str, r: UpdateUserRoleRequest) -> UpdateUserRoleResponse:
-    return uc.update_user_role(user_id, r.role)
+async def update_user_role(
+    user_id: str,
+    r: UpdateUserRoleRequest,
+    access_token_data: TokenData = Depends(decode_access_token_data),
+) -> UpdateUserRoleResponse:
+    return uc.update_user_role(user_id, r.role, access_token_data)
 
 
 @app.post("/token")
