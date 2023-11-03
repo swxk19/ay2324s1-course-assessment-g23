@@ -125,7 +125,11 @@ def update_user_role(
     if users_util.is_maintainer(access_token_data.user_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
-    if role == "normal" and users_util.get_num_maintainers() <= 1:
+    if (
+        # Attempting to downgrade perms of a maintainer.
+        users_util.is_maintainer(user_id)
+        and role == "normal"
+    ) and users_util.get_num_maintainers() <= 1:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Only one maintainer left")
 
     db.execute_sql_write("UPDATE users SET role = %s WHERE user_id = %s", params=(role, user_id))
