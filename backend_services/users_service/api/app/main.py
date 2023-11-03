@@ -1,6 +1,6 @@
 from controllers import sessions_controller as sc
 from controllers import users_controller as uc
-from fastapi import Cookie, Depends, FastAPI
+from fastapi import Cookie, Depends, FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from shared_definitions.api_models.users import (
@@ -36,7 +36,7 @@ app.add_middleware(
 )
 
 
-@app.post("/users")
+@app.post("/users", status_code=status.HTTP_201_CREATED)
 async def create_user(r: CreateUserRequest) -> CreateUserResponse:
     return uc.create_user(r.username, r.email, r.password)
 
