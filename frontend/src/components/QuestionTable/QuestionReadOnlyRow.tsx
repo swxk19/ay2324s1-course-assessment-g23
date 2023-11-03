@@ -6,7 +6,6 @@ import {
     DialogContent,
     DialogTitle,
     IconButton,
-    TextField,
     Tooltip,
     Typography,
 } from '@mui/material'
@@ -34,10 +33,12 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editedDescription, setEditedDescription] = useState(question.description)
     const updateQuestionMutation = useUpdateQuestion()
+    const [isWrite, setIsWrite] = useState(true)
 
     const openModal = () => {
         setEditedDescription(question.description)
         setIsModalOpen(true)
+        setIsWrite(true)
     }
 
     const handleClose = () => {
@@ -111,25 +112,44 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                     sx: { borderRadius: '1rem', backgroundColor: '#242424', padding: '1rem' },
                 }}
             >
-                <DialogTitle style={{ color: 'white' }}>
-                    {hasActions ? 'Edit Description' : question.title}
+                <DialogTitle style={{ color: 'white', paddingLeft: '32px' }}>
+                    {question.title}
                 </DialogTitle>
                 <DialogContent style={{ backgroundColor: '#242424' }}>
                     {hasActions ? (
-                        <TextField
-                            style={{ fontFamily: 'courier', width: '800px' }}
-                            multiline
-                            rows={20}
-                            value={editedDescription}
-                            onChange={(e) => setEditedDescription(e.target.value)}
-                            InputProps={{
-                                style: {
-                                    fontFamily: 'courier',
-                                    color: 'white',
-                                    borderColor: 'white',
-                                },
-                            }}
-                        />
+                        <>
+                            <div className='description-header'>
+                                <p>Description</p>
+                                <button
+                                    onClick={() => setIsWrite(true)}
+                                    className={`write-button${isWrite ? '-active' : ''}`}
+                                    style={{ marginLeft: 'auto' }}
+                                    type='button'
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => setIsWrite(false)}
+                                    className={`preview-button${!isWrite ? '-active' : ''}`}
+                                    type='button'
+                                >
+                                    Preview
+                                </button>
+                            </div>
+                            {isWrite ? (
+                                <textarea
+                                    className='edit-description-text'
+                                    value={editedDescription}
+                                    onChange={(e) => setEditedDescription(e.target.value)}
+                                />
+                            ) : (
+                                <div className='markdown-container' style={{ padding: ' 0 10px' }}>
+                                    <Markdown className='markdown' remarkPlugins={[remarkGfm]}>
+                                        {editedDescription}
+                                    </Markdown>
+                                </div>
+                            )}
+                        </>
                     ) : (
                         <Markdown className='markdown' remarkPlugins={[remarkGfm]}>
                             {editedDescription}
