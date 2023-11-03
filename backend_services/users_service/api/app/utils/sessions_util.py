@@ -20,3 +20,11 @@ def store_refresh_token(refresh_token: str) -> None:
 
 def delete_refresh_token(refresh_token: str) -> None:
     db.execute_sql_write("DELETE FROM refresh_tokens WHERE token = %s", params=(refresh_token,))
+
+
+def is_valid_refresh_token(refresh_token: str) -> bool:
+    result = db.execute_sql_read_fetchone(
+        "SELECT COUNT(*) FROM refresh_tokens WHERE token = %s",
+        params=(refresh_token,),
+    )
+    return result[0] > 0 if result else False
