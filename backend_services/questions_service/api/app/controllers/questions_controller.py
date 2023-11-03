@@ -1,13 +1,12 @@
 from fastapi import HTTPException, status
 from questions_database import QUESTIONS_DATABASE as db
-from utils import questions_util
-
 from shared_definitions.api_models.questions import (
     CreateQuestionResponse,
     DeleteQuestionResponse,
     GetQuestionResponse,
     UpdateQuestionResponse,
 )
+from utils import questions_util
 
 
 def create_question(
@@ -19,7 +18,10 @@ def create_question(
             detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard",
         )
     if questions_util.qid_exists(question_id):
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error (qid already exists)")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error (qid already exists)",
+        )
     if questions_util.title_exists(title):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Title already exists")
 
@@ -40,7 +42,9 @@ def get_all_questions() -> list[GetQuestionResponse]:
 
 def get_question(question_id: str) -> GetQuestionResponse:
     if not questions_util.qid_exists(question_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question id does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Question id does not exist"
+        )
 
     FIELD_NAMES = ["question_id", "title", "description", "category", "complexity"]
 

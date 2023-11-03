@@ -9,3 +9,14 @@ dynamic = ["dependencies"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+
+[tool.autoflake]
+recursive = true
+in-place = true
+remove-all-unused-imports = true

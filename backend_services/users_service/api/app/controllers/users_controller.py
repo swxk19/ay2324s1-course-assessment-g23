@@ -1,9 +1,6 @@
 import hashlib
 
 from fastapi import HTTPException, status
-from user_database import USER_DATABASE as db
-from utils import users_util
-
 from shared_definitions.api_models.users import (
     CreateUserResponse,
     DeleteUserResponse,
@@ -12,11 +9,16 @@ from shared_definitions.api_models.users import (
     UpdateUserRoleResponse,
 )
 from shared_definitions.auth.core import TokenData
+from user_database import USER_DATABASE as db
+from utils import users_util
 
 
 def create_user(user_id: str, username: str, email: str, password: str) -> CreateUserResponse:
     if users_util.uid_exists(user_id):
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error (uid already exists)")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error (uid already exists)",
+        )
     if users_util.username_exists(username):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
     if users_util.email_exists(email):
@@ -91,7 +93,9 @@ def delete_user(user_id: str) -> DeleteUserResponse:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist")
 
     if users_util.is_maintainer(user_id) and users_util.get_num_maintainers() == 1:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot delete last maintainer")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Cannot delete last maintainer"
+        )
 
     db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))
     return DeleteUserResponse(message=f"User id {user_id} deleted")

@@ -3,7 +3,6 @@ import uuid
 from controllers import questions_controller as qc
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from shared_definitions.api_models.questions import (
     CreateQuestionRequest,
     CreateQuestionResponse,
