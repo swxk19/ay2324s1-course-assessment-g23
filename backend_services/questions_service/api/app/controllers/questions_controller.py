@@ -12,11 +12,6 @@ from utils import questions_util
 def create_question(
     question_id: str, title: str, description: str, category: str, complexity: str
 ) -> CreateQuestionResponse:
-    if not questions_util.is_valid_complexity(complexity):
-        raise HTTPException(
-            status_code=422,
-            detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard",
-        )
     if questions_util.qid_exists(question_id):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -64,11 +59,6 @@ def update_question_info(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question does not exist")
     if questions_util.check_duplicate_title(question_id, title):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Title already exists")
-    if not questions_util.is_valid_complexity(complexity):
-        raise HTTPException(
-            status_code=422,
-            detail="Invalid value for complexity. Complexity must only be Easy, Medium, or Hard",
-        )
 
     db.execute_sql_write(
         """UPDATE questions
