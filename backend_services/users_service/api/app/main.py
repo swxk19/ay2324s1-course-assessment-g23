@@ -5,7 +5,6 @@ from controllers import users_controller as uc
 from fastapi import Cookie, Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
-
 from shared_definitions.api_models.users import (
     CreateUserRequest,
     CreateUserResponse,

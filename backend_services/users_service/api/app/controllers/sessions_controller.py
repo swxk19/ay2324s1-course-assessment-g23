@@ -2,14 +2,13 @@ import hashlib
 
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse, Response
-from utils import sessions_util, users_util
-
 from shared_definitions.api_models.users import UserLoginResponse
 from shared_definitions.auth.core import (
     TokenData,
     create_access_token,
     create_refresh_token,
 )
+from utils import sessions_util, users_util
 
 
 def user_login(username: str, password: str) -> JSONResponse:
@@ -33,7 +32,9 @@ def user_login(username: str, password: str) -> JSONResponse:
     else:
         if users_util.username_exists(username):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Account does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Account does not exist"
+        )
 
 
 def user_logout(refresh_token: str | None) -> Response:
