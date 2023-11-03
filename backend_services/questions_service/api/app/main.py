@@ -31,8 +31,7 @@ app.add_middleware(
 
 @app.post("/questions", dependencies=[Depends(require_maintainer_role)])
 async def create_question(r: CreateQuestionRequest) -> CreateQuestionResponse:
-    question_id = str(uuid.uuid4())
-    return qc.create_question(question_id, r.title, r.description, r.category, r.complexity)
+    return qc.create_question(r.title, r.description, r.category, r.complexity)
 
 
 @app.get("/questions/{question_id}")
