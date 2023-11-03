@@ -1,8 +1,10 @@
 from controllers import sessions_controller as sc
 from controllers import users_controller as uc
 from fastapi import Cookie, Depends, FastAPI, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
+from shared_definitions.api_models.error import stringify_exception_handler
 from shared_definitions.api_models.users import (
     CreateUserRequest,
     CreateUserResponse,
@@ -34,6 +36,11 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(*args):
+    return await stringify_exception_handler(*args)
 
 
 @app.post("/users", status_code=status.HTTP_201_CREATED)

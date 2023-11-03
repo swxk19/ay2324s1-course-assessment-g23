@@ -1,6 +1,8 @@
 from controllers import questions_controller as qc
 from fastapi import Depends, FastAPI, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from shared_definitions.api_models.error import stringify_exception_handler
 from shared_definitions.api_models.questions import (
     CreateQuestionRequest,
     CreateQuestionResponse,
@@ -25,6 +27,11 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(*args):
+    return await stringify_exception_handler(*args)
 
 
 @app.post(
