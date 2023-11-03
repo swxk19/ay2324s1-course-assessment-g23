@@ -1,7 +1,5 @@
-import uuid
-
 from controllers import questions_controller as qc
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from shared_definitions.api_models.questions import (
     CreateQuestionRequest,
@@ -29,7 +27,11 @@ app.add_middleware(
 )
 
 
-@app.post("/questions", dependencies=[Depends(require_maintainer_role)])
+@app.post(
+    "/questions",
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_maintainer_role)],
+)
 async def create_question(r: CreateQuestionRequest) -> CreateQuestionResponse:
     return qc.create_question(r.title, r.description, r.category, r.complexity)
 
