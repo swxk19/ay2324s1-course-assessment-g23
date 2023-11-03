@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import '../../styles/QuestionForm.css'
 import CategoryButton from './CategoryButton.tsx'
 
@@ -21,7 +23,9 @@ const categoriesList: string[] = [
     'Brainteaser',
     'Databases',
     'Data Structures',
+    'Dynamic Programming',
     'Recursion',
+    'Sorting',
     'Strings',
 ]
 
@@ -39,6 +43,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
     onClose,
 }) => {
     const [formData, setFormData] = useState<FormData>(initialData)
+    const [isWrite, setIswrite] = useState(true)
 
     const handleInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -77,65 +82,96 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
             <div className='question-form-container'>
                 <h2>Add a question</h2>
                 <form onSubmit={onSubmit}>
-                    <p>Title</p>
-                    <input
-                        name='title'
-                        required
-                        placeholder='Title'
-                        value={formData.title}
-                        onChange={handleInputChange}
-                    />
+                    <div className='split-container'>
+                        <div className='form-pane'>
+                            <p>Title</p>
+                            <input
+                                name='title'
+                                required
+                                placeholder='Title'
+                                value={formData.title}
+                                onChange={handleInputChange}
+                            />
 
-                    <div>
-                        <p>Category</p>
-                        <input
-                            name='category'
-                            required
-                            placeholder='Category'
-                            value={formData.category}
-                            onChange={handleInputChange}
-                        />
-                        <div style={{ margin: '10px 0' }}>
-                            {categoriesList.map((category) => (
-                                <CategoryButton
-                                    key={category}
-                                    category={category}
-                                    isSelected={formData.category.split(', ').includes(category)}
-                                    onSelect={(selectedCategory) =>
-                                        handleCategoryClick(selectedCategory)
-                                    }
+                            <p>Complexity</p>
+                            <select
+                                name='complexity'
+                                value={formData.complexity}
+                                onChange={handleInputChange}
+                            >
+                                <option value='Easy'>Easy</option>
+                                <option value='Medium'>Medium</option>
+                                <option value='Hard'>Hard</option>
+                            </select>
+                        </div>
+                        <div className='form-pane'>
+                            <div>
+                                <p>Category</p>
+                                <input
+                                    style={{ display: 'none' }}
+                                    name='category'
+                                    required
+                                    placeholder='Category'
+                                    value={formData.category}
+                                    onChange={handleInputChange}
                                 />
-                            ))}
+                                <div
+                                    style={{
+                                        height: '100%',
+                                        maxHeight: '130px',
+                                        overflow: 'scroll',
+                                    }}
+                                >
+                                    {categoriesList.map((category) => (
+                                        <CategoryButton
+                                            key={category}
+                                            category={category}
+                                            isSelected={formData.category
+                                                .split(', ')
+                                                .includes(category)}
+                                            onSelect={(selectedCategory) =>
+                                                handleCategoryClick(selectedCategory)
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <p>Complexity</p>
-                    <select
-                        name='complexity'
-                        value={formData.complexity}
-                        onChange={handleInputChange}
-                    >
-                        <option value='Easy'>Easy</option>
-                        <option value='Medium'>Medium</option>
-                        <option value='Hard'>Hard</option>
-                    </select>
-                    <p>Description</p>
-                    <textarea
-                        name='description'
-                        required
-                        placeholder='Description'
-                        value={formData.description}
-                        onChange={handleInputChange}
-                    />
-
-                    <p />
-                    <span
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            marginTop: '25px',
-                        }}
-                    >
+                    <div className='description-header'>
+                        <p>Description</p>
+                        <button
+                            onClick={() => setIswrite(true)}
+                            className={`write-button${isWrite ? '-active' : ''}`}
+                            style={{ marginLeft: 'auto' }}
+                            type='button'
+                        >
+                            Write
+                        </button>
+                        <button
+                            onClick={() => setIswrite(false)}
+                            className={`preview-button${!isWrite ? '-active' : ''}`}
+                            type='button'
+                        >
+                            Preview
+                        </button>
+                    </div>
+                    {isWrite ? (
+                        <textarea
+                            name='description'
+                            required
+                            placeholder='Description'
+                            value={formData.description}
+                            onChange={handleInputChange}
+                        />
+                    ) : (
+                        <div className='markdown-container'>
+                            <Markdown className='markdown' remarkPlugins={[remarkGfm]}>
+                                {formData.description}
+                            </Markdown>
+                        </div>
+                    )}
+                    <span className='submit-button-container'>
                         <button
                             style={{ backgroundColor: '#00b8a2', marginRight: '5px' }}
                             type='submit'

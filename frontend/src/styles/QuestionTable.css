@@ -215,6 +215,25 @@ Dialog {
     width: auto;
 }
 
+.markdown {
+    color: white;
+}
+
+.markdown table {
+    border-collapse: collapse;
+}
+
+.markdown th, .markdown td {
+    padding: 6px 13px;
+    border: 1px solid white;
+    height: 100%;
+    overflow: scroll;
+}
+
+.markdown p {
+    line-height: 1.5;
+}
+
 .reset-button:hover {
     background-color: #3d3d3d;
     cursor: pointer;
