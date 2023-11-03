@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel
 
@@ -44,7 +44,7 @@ class UserLoginResponse(BaseModel):
 
 
 class UpdateUserRoleRequest(BaseModel):
-    role: str
+    role: Literal['normal', 'maintainer']
 
 
 class UpdateUserRoleResponse(BaseModel):
