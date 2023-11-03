@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import HTTPException, status
 from questions_database import QUESTIONS_DATABASE as db
 from shared_definitions.api_models.questions import (
@@ -10,13 +12,15 @@ from utils import questions_util
 
 
 def create_question(
-    question_id: str, title: str, description: str, category: str, complexity: str
+    title: str,
+    description: str,
+    category: str,
+    complexity: str,
 ) -> CreateQuestionResponse:
-    if questions_util.qid_exists(question_id):
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error (qid already exists)",
-        )
+    question_id = str(uuid.uuid4())
+    while questions_util.qid_exists(question_id):
+        question_id = str(uuid.uuid4())  # Regenerate UUID if there's conflict.
+
     if questions_util.title_exists(title):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Title already exists")
 
