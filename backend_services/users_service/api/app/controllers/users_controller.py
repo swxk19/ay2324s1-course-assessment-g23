@@ -58,8 +58,17 @@ def get_user(user_id: str) -> GetUserResponse:
 
 
 def update_user_info(
-    user_id: str, username: str | None, password: str | None, email: str | None
+    user_id: str,
+    username: str | None,
+    password: str | None,
+    email: str | None,
+    access_token_data: TokenData,
 ) -> UpdateUserResponse:
+    # Check again if user has perms to delete,
+    # incase access token is stale.
+    if access_token_data.user_id != user_id and users_util.is_maintainer(access_token_data.user_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
     if not users_util.uid_exists(user_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist")
     if username and users_util.check_duplicate_username(user_id, username):
@@ -88,7 +97,12 @@ def update_user_info(
     return UpdateUserResponse(message="Successfully updated")
 
 
-def delete_user(user_id: str) -> DeleteUserResponse:
+def delete_user(user_id: str, access_token_data: TokenData) -> DeleteUserResponse:
+    # Check again if user has perms to delete,
+    # incase access token is stale.
+    if access_token_data.user_id != user_id and users_util.is_maintainer(access_token_data.user_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
     if not users_util.uid_exists(user_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist")
 
@@ -101,7 +115,16 @@ def delete_user(user_id: str) -> DeleteUserResponse:
     return DeleteUserResponse(message=f"User id {user_id} deleted")
 
 
-def update_user_role(user_id: str, role: str) -> UpdateUserRoleResponse:
+def update_user_role(
+    user_id: str,
+    role: str,
+    access_token_data: TokenData,
+) -> UpdateUserRoleResponse:
+    # Check again if user has perms to delete,
+    # incase access token is stale.
+    if users_util.is_maintainer(access_token_data.user_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
     if role == "normal" and users_util.get_num_maintainers() <= 1:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Only one maintainer left")
 
