@@ -1,4 +1,5 @@
 import hashlib
+import uuid
 
 from fastapi import HTTPException, status
 from shared_definitions.api_models.users import (
@@ -13,12 +14,11 @@ from user_database import USER_DATABASE as db
 from utils import users_util
 
 
-def create_user(user_id: str, username: str, email: str, password: str) -> CreateUserResponse:
-    if users_util.uid_exists(user_id):
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error (uid already exists)",
-        )
+def create_user(username: str, email: str, password: str) -> CreateUserResponse:
+    user_id = str(uuid.uuid4())
+    while users_util.uid_exists(user_id):
+        user_id = str(uuid.uuid4())  # Regenerate UUID if there's conflict.
+
     if users_util.username_exists(username):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
     if users_util.email_exists(email):
