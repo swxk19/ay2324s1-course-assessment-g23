@@ -62,11 +62,6 @@ async def get_all_users() -> list[GetUserResponse]:
     return uc.get_all_users()
 
 
-@app.delete("/users_all", dependencies=[Depends(require_maintainer_role)])
-async def delete_all_users() -> DeleteUserResponse:
-    return uc.delete_all_users()
-
-
 @app.delete("/users/{user_id}", dependencies=[Depends(require_same_user_or_maintainer_role)])
 async def delete_user(user_id: str) -> DeleteUserResponse:
     return uc.delete_user(user_id)

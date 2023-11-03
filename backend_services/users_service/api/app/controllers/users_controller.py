@@ -86,11 +86,6 @@ def update_user_info(
     return UpdateUserResponse(message="Successfully updated")
 
 
-def delete_all_users() -> DeleteUserResponse:
-    db.execute_sql_write("DELETE FROM users")
-    return DeleteUserResponse(message="All users deleted")
-
-
 def delete_user(user_id: str) -> DeleteUserResponse:
     if not users_util.uid_exists(user_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist")
