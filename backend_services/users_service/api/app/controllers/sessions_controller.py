@@ -1,7 +1,6 @@
 import hashlib
-from http import HTTPStatus
 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse, Response
 from utils import sessions_util, users_util
 
@@ -33,8 +32,8 @@ def user_login(username: str, password: str) -> JSONResponse:
         return response
     else:
         if users_util.username_exists(username):
-            raise HTTPException(status_code=401, detail="Invalid password")
-        raise HTTPException(status_code=401, detail="Account does not exist")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Account does not exist")
 
 
 def user_logout(refresh_token: str | None) -> Response:
@@ -43,7 +42,7 @@ def user_logout(refresh_token: str | None) -> Response:
             sessions_util.delete_refresh_token(refresh_token)
     finally:
         # Return `401 No Content` regardless of deletion outcome.
-        response = Response(status_code=HTTPStatus.NO_CONTENT)
+        response = Response(status_code=status.HTTP_204_NO_CONTENT)
         response.delete_cookie("refresh_token")
         response.delete_cookie("access_token")
         return response
@@ -51,6 +50,6 @@ def user_logout(refresh_token: str | None) -> Response:
 
 def get_new_access_token(refresh_token_data: TokenData) -> Response:
     access_token = create_access_token(refresh_token_data.user_id, refresh_token_data.role)
-    response = Response(status_code=HTTPStatus.NO_CONTENT)
+    response = Response(status_code=status.HTTP_204_NO_CONTENT)
     response.set_cookie(key="access_token", value=access_token)
     return response

@@ -1,5 +1,3 @@
-from fastapi import HTTPException
-
 from user_database import USER_DATABASE as db
 
 def username_exists(username: str) -> bool:

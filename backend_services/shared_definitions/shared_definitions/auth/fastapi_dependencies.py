@@ -1,7 +1,5 @@
-from http import HTTPStatus
-
 import jwt
-from fastapi import Cookie, HTTPException
+from fastapi import Cookie, HTTPException, status
 
 from .core import TokenData, decode_token
 
@@ -9,7 +7,7 @@ from .core import TokenData, decode_token
 def decode_access_token_data(access_token: str | None = Cookie(None)) -> TokenData:
     """FastAPI dependency for decoding the JWT `access_token` cookie send by user requests.
 
-    Raises `HTTPException(status_code=HTTPStatus.UNAUTHORIZED)` on:
+    Raises `HTTPException(status_code=401)` on:
     - missing `access_token` cookie
     - expired `access_token`
     - unable to decoded `access_token`
@@ -19,7 +17,7 @@ def decode_access_token_data(access_token: str | None = Cookie(None)) -> TokenDa
             Defaults to `Cookie(None)`.
 
     Raises:
-        HTTPException: With `status_code=HTTPStatus.UNAUTHORIZED` if \
+        HTTPException: With `status_code=401` if \
             `access_token` cookie is missing, expired, or unable to be decoded.
 
     Returns:
@@ -35,17 +33,17 @@ def decode_access_token_data(access_token: str | None = Cookie(None)) -> TokenDa
         ```
     """
     if access_token is None:
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     try:
         token_data = decode_token(access_token)
     except jwt.PyJWTError:
         # Return 401 if there's any decoding errors,
         # INCLUDING if token has expired.
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     if token_data.token_type != "access_token":
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     return token_data
 
@@ -53,7 +51,7 @@ def decode_access_token_data(access_token: str | None = Cookie(None)) -> TokenDa
 def decode_refresh_token_data(refresh_token: str | None = Cookie(None)) -> TokenData:
     """FastAPI dependency for decoding the JWT `refresh_token` cookie send by user requests.
 
-    Raises `HTTPException(status_code=HTTPStatus.UNAUTHORIZED)` on:
+    Raises `HTTPException(status_code=401)` on:
     - missing `refresh_token` cookie
     - expired `refresh_token`
     - unable to decoded `refresh_token`
@@ -63,7 +61,7 @@ def decode_refresh_token_data(refresh_token: str | None = Cookie(None)) -> Token
             Defaults to `Cookie(None)`.
 
     Raises:
-        HTTPException: With `status_code=HTTPStatus.UNAUTHORIZED` if \
+        HTTPException: With `status_code=401` if \
             `refresh_token` cookie is missing, expired, or unable to be decoded.
 
     Returns:
@@ -79,17 +77,17 @@ def decode_refresh_token_data(refresh_token: str | None = Cookie(None)) -> Token
         ```
     """
     if refresh_token is None:
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     try:
         token_data = decode_token(refresh_token)
     except jwt.PyJWTError:
         # Return 401 if there's any decoding errors,
         # INCLUDING if token has expired.
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     if token_data.token_type != "refresh_token":
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     return token_data
 
@@ -97,12 +95,12 @@ def decode_refresh_token_data(refresh_token: str | None = Cookie(None)) -> Token
 def require_maintainer_role(access_token: str | None = Cookie(None)) -> None:
     """FastAPI dependency for requiring `"maintainer"` role to access API endpoint.
 
-    Raises `HTTPException(status_code=HTTPStatus.UNAUTHORIZED)` on:
+    Raises `HTTPException(status_code=401)` on:
     - missing `access_token` cookie
     - expired `access_token`
     - unable to decoded `access_token`
 
-    Raises `HTTPException(status_code=HTTPStatus.FORBIDDEN)` on:
+    Raises `HTTPException(status_code=403)` on:
     - `role` in `access_token` cookie is not `"maintainer"`
 
     Args:
@@ -110,9 +108,9 @@ def require_maintainer_role(access_token: str | None = Cookie(None)) -> None:
             Defaults to `Cookie(None)`.
 
     Raises:
-        HTTPException: With `status_code=HTTPStatus.UNAUTHORIZED` if \
+        HTTPException: With `status_code=401` if \
             `access_token` cookie is missing, expired, or unable to be decoded. \
-            With `status_code=HTTPStatus.FORBIDDEN` if `role != "maintainer"`.
+            With `status_code=403` if `role != "maintainer"`.
 
     Examples:
         ```py
@@ -129,13 +127,13 @@ def require_maintainer_role(access_token: str | None = Cookie(None)) -> None:
     token_data = decode_access_token_data(access_token)
 
     if token_data.role != "maintainer":
-        raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 
 def require_logged_in(access_token: str | None = Cookie(None)) -> None:
     """FastAPI dependency for requiring user to be logged in to access API endpoint.
 
-    Raises `HTTPException(status_code=HTTPStatus.UNAUTHORIZED)` if `access_token` cookie is:
+    Raises `HTTPException(status_code=401)` if `access_token` cookie is:
     - missing
     - expired
     - unable to be decoded
@@ -145,7 +143,7 @@ def require_logged_in(access_token: str | None = Cookie(None)) -> None:
             Defaults to `Cookie(None)`.
 
     Raises:
-        HTTPException: With `status_code=HTTPStatus.UNAUTHORIZED` if \
+        HTTPException: With `status_code=401` if \
             `access_token` cookie is missing, expired, or unable to be decoded.
 
     Examples:
@@ -163,18 +161,21 @@ def require_logged_in(access_token: str | None = Cookie(None)) -> None:
     decode_access_token_data(access_token)
 
 
-def require_same_user_or_maintainer_role(user_id: str, access_token: str | None = Cookie(None)) -> None:
+def require_same_user_or_maintainer_role(
+    user_id: str,
+    access_token: str | None = Cookie(None),
+) -> None:
     """FastAPI dependency for requiring same `user_id` as in the API's path or `"maintainer"` role
     to access API endpoint.
 
     API-endpoint MUST have `{user_id}` in their URL path (eg. "/users/{user_id}").
 
-    Raises `HTTPException(status_code=HTTPStatus.UNAUTHORIZED)` on:
+    Raises `HTTPException(status_code=401)` on:
     - missing `access_token` cookie
     - expired `access_token`
     - unable to decoded `access_token`
 
-    Raises `HTTPException(status_code=HTTPStatus.FORBIDDEN)` on:
+    Raises `HTTPException(status_code=403)` on:
     - (`user_id` in `access_token` cookie) is not (`user_id` in API's path.)
     - AND (`role` in `access_token` cookie is not `"maintainer"`)
 
@@ -183,9 +184,9 @@ def require_same_user_or_maintainer_role(user_id: str, access_token: str | None 
             Defaults to `Cookie(None)`.
 
     Raises:
-        HTTPException: With `status_code=HTTPStatus.UNAUTHORIZED` if \
+        HTTPException: With `status_code=401` if \
             `access_token` cookie is missing, expired, or unable to be decoded. \
-            With `status_code=HTTPStatus.FORBIDDEN` if `user_id` doesn't match.
+            With `status_code=403` if `user_id` doesn't match.
 
     Examples:
         ```py
@@ -203,4 +204,4 @@ def require_same_user_or_maintainer_role(user_id: str, access_token: str | None 
     token_data = decode_access_token_data(access_token)
 
     if token_data.user_id != user_id and token_data.role != "maintainer":
-        raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)

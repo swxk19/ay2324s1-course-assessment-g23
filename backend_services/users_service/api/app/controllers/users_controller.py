@@ -1,7 +1,6 @@
 import hashlib
-from http import HTTPStatus
 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from user_database import USER_DATABASE as db
 from utils import users_util
 
@@ -17,11 +16,11 @@ from shared_definitions.auth.core import TokenData
 
 def create_user(user_id: str, username: str, email: str, password: str) -> CreateUserResponse:
     if users_util.uid_exists(user_id):
-        raise HTTPException(status_code=500, detail="Internal server error (uid already exists)")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error (uid already exists)")
     if users_util.username_exists(username):
-        raise HTTPException(status_code=409, detail="Username already exists")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
     if users_util.email_exists(email):
-        raise HTTPException(status_code=409, detail="Email already exists")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
 
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
@@ -41,7 +40,7 @@ def get_all_users() -> list[GetUserResponse]:
 
 def get_current_user(access_token_data: TokenData) -> GetUserResponse:
     if not users_util.uid_exists(access_token_data.user_id):
-        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     return get_user(access_token_data.user_id)
 
 
@@ -51,7 +50,7 @@ def get_user(user_id: str) -> GetUserResponse:
         f"SELECT {', '.join(FIELD_NAMES)} FROM users WHERE user_id = %s", params=(user_id,)
     )
     if row is None:
-        raise HTTPException(status_code=404)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     user = dict(zip(FIELD_NAMES, row))
     return GetUserResponse(**user)  # type: ignore
 
@@ -60,11 +59,11 @@ def update_user_info(
     user_id: str, username: str | None, password: str | None, email: str | None
 ) -> UpdateUserResponse:
     if not users_util.uid_exists(user_id):
-        raise HTTPException(status_code=404, detail="User does not exist")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist")
     if username and users_util.check_duplicate_username(user_id, username):
-        raise HTTPException(status_code=409, detail="Username already exists")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
     if email and users_util.check_duplicate_email(user_id, email):
-        raise HTTPException(status_code=409, detail="Email already exists")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
 
     columns_values = {
         "username": username,
@@ -94,10 +93,10 @@ def delete_all_users() -> DeleteUserResponse:
 
 def delete_user(user_id: str) -> DeleteUserResponse:
     if not users_util.uid_exists(user_id):
-        raise HTTPException(status_code=404, detail="User does not exist")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist")
 
     if users_util.is_maintainer(user_id) and users_util.get_num_maintainers() == 1:
-        raise HTTPException(status_code=403, detail="Cannot delete last maintainer")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot delete last maintainer")
 
     db.execute_sql_write("DELETE FROM users WHERE user_id = %s", params=(user_id,))
     return DeleteUserResponse(message=f"User id {user_id} deleted")
@@ -105,7 +104,7 @@ def delete_user(user_id: str) -> DeleteUserResponse:
 
 def update_user_role(user_id: str, role: str) -> UpdateUserRoleResponse:
     if role == "normal" and users_util.get_num_maintainers() <= 1:
-        raise HTTPException(status_code=409, detail="Only one maintainer left")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Only one maintainer left")
 
     db.execute_sql_write("UPDATE users SET role = %s WHERE user_id = %s", params=(role, user_id))
 
