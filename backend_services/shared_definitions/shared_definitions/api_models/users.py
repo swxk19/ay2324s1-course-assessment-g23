@@ -44,7 +44,7 @@ class UserLoginResponse(BaseModel):
 
 
 class UpdateUserRoleRequest(BaseModel):
-    role: Literal['normal', 'maintainer']
+    role: Literal["normal", "maintainer"]
 
 
 class UpdateUserRoleResponse(BaseModel):
