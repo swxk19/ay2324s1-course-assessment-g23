@@ -13,7 +13,7 @@ class CreateQuestionRequest(BaseModel):
     @classmethod
     def check_title_not_empty_or_whitespace(cls, v: str, info: ValidationInfo) -> str:
         is_not_empty_or_whitespace = v.strip() != ""
-        assert is_not_empty_or_whitespace, f"Input cannot be empty or only whitespaces"
+        assert is_not_empty_or_whitespace, f"Input cannot be empty nor whitespaces-only"
         return v
 
 
