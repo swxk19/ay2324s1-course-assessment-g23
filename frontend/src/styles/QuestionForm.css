@@ -35,7 +35,19 @@
     margin: 0;
 }
 
-.question-form-container textarea {
+.edit-description-text {
+    background-color: transparent;
+    padding: 10px;
+    border-radius: 5px;
+    resize: none;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    width: 800px;
+    height: 440px;
+    margin: 0 10px;
+}
+
+.description-text {
     background-color: transparent;
     padding: 5px;
     border-radius: 5px;
@@ -136,6 +148,7 @@
 }
 
 .description-header {
+    color: white;
     display: flex;
     justify-content: space-between;
     width: 100%;

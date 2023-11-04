@@ -43,7 +43,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
     onClose,
 }) => {
     const [formData, setFormData] = useState<FormData>(initialData)
-    const [isWrite, setIswrite] = useState(true)
+    const [isWrite, setIsWrite] = useState(true)
 
     const handleInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -141,7 +141,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                     <div className='description-header'>
                         <p>Description</p>
                         <button
-                            onClick={() => setIswrite(true)}
+                            onClick={() => setIsWrite(true)}
                             className={`write-button${isWrite ? '-active' : ''}`}
                             style={{ marginLeft: 'auto' }}
                             type='button'
@@ -149,7 +149,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                             Write
                         </button>
                         <button
-                            onClick={() => setIswrite(false)}
+                            onClick={() => setIsWrite(false)}
                             className={`preview-button${!isWrite ? '-active' : ''}`}
                             type='button'
                         >
@@ -158,6 +158,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                     </div>
                     {isWrite ? (
                         <textarea
+                            className='description-text'
                             name='description'
                             required
                             placeholder='Description'
