@@ -1,12 +1,19 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationInfo, field_validator
 
 
 class CreateUserRequest(BaseModel):
     username: str
     password: str
     email: str
+
+    @field_validator("username", "password", "email")
+    @classmethod
+    def check_title_not_empty_or_whitespace(cls, v: str, info: ValidationInfo) -> str:
+        is_not_empty_or_whitespace = v.strip() != ""
+        assert is_not_empty_or_whitespace, f"Input cannot be empty nor whitespaces-only"
+        return v
 
 
 class CreateUserResponse(BaseModel):
@@ -29,6 +36,13 @@ class UpdateUserRequest(BaseModel):
     password: Optional[str] = None
     email: Optional[str] = None
 
+    @field_validator("username", "password", "email")
+    @classmethod
+    def check_title_not_empty_or_whitespace(cls, v: str, info: ValidationInfo) -> str:
+        is_not_empty_or_whitespace = v.strip() != ""
+        assert is_not_empty_or_whitespace, f"Input cannot be empty nor whitespaces-only"
+        return v
+
 
 class UpdateUserResponse(BaseModel):
     message: str
@@ -37,6 +51,13 @@ class UpdateUserResponse(BaseModel):
 class UserLoginRequest(BaseModel):
     username: str
     password: str
+
+    @field_validator("username", "password")
+    @classmethod
+    def check_title_not_empty_or_whitespace(cls, v: str, info: ValidationInfo) -> str:
+        is_not_empty_or_whitespace = v.strip() != ""
+        assert is_not_empty_or_whitespace, f"Input cannot be empty nor whitespaces-only"
+        return v
 
 
 class UserLoginResponse(BaseModel):
