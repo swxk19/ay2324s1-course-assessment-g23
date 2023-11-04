@@ -14,7 +14,7 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-rooms: dict[str, Room] = {}
+rooms: dict[str, VideoRoom] = {}
 """Dict where keys are the room-ID, values are the room's info."""
 
 
@@ -70,6 +70,7 @@ async def join_communication_channel(websocket: WebSocket, room_id: str, user_id
         while True:
             data: MessagePayload = await websocket.receive_json()
             event = data.get("event")
+            print('chatbox', event)
             if event == "send-message":
                 message = data.get("message")
                 sender = data.get("sender")
