@@ -85,6 +85,7 @@ const VideoChat: React.FC<VideoChatProps> = ({
         }
     }, [socket])
 
+
     useEffect(() => {
         if (peerId == '' || socket == null) return
         socket.send(
