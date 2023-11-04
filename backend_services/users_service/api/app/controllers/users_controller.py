@@ -66,7 +66,9 @@ def update_user_info(
 ) -> UpdateUserResponse:
     # Check again if user has perms to delete,
     # incase access token is stale.
-    if access_token_data.user_id != user_id and users_util.is_maintainer(access_token_data.user_id):
+    if access_token_data.user_id != user_id and not users_util.is_maintainer(
+        access_token_data.user_id
+    ):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     if not users_util.uid_exists(user_id):
@@ -100,7 +102,9 @@ def update_user_info(
 def delete_user(user_id: str, access_token_data: TokenData) -> DeleteUserResponse:
     # Check again if user has perms to delete,
     # incase access token is stale.
-    if access_token_data.user_id != user_id and users_util.is_maintainer(access_token_data.user_id):
+    if access_token_data.user_id != user_id and not users_util.is_maintainer(
+        access_token_data.user_id
+    ):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     if not users_util.uid_exists(user_id):
@@ -123,7 +127,7 @@ def update_user_role(
 ) -> UpdateUserRoleResponse:
     # Check again if user has perms to delete,
     # incase access token is stale.
-    if users_util.is_maintainer(access_token_data.user_id):
+    if not users_util.is_maintainer(access_token_data.user_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     if (
