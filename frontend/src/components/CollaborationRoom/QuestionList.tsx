@@ -2,7 +2,7 @@ import { Close } from '@mui/icons-material'
 import { motion } from 'framer-motion'
 import React from 'react'
 import { Question } from '../../api/questions.ts'
-import { useAllQuestions } from '../../stores/questionStore.ts'
+import useGlobalState, { useAllQuestions } from '../../stores/questionStore.ts'
 import '../../styles/QuestionList.css'
 
 interface QuestionListProps {
@@ -11,6 +11,11 @@ interface QuestionListProps {
 
 const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
     const { data: questions } = useAllQuestions()
+    const { questionId, setQuestionId } = useGlobalState()
+
+    const handleQuestionClick = (questionId: string) => {
+        setQuestionId(questionId)
+    }
 
     return (
         <div className='dark-overlay' style={{ zIndex: '2' }}>
@@ -29,8 +34,13 @@ const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <ul className='question-list'>
-                    {questions.map((question) => (
-                        <QuestionRow key={question.question_id} question={question} />
+                    {questions?.map((question) => (
+                        // <QuestionRow key={question.question_id} question={question} />
+                        <li key={question?.question_id}>
+                            <button onClick={() => handleQuestionClick(question?.question_id)}>
+                                {question?.title}
+                            </button>
+                        </li>
                     ))}
                 </ul>
             </motion.div>

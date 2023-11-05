@@ -2,6 +2,7 @@ import { Add, Circle, Remove } from '@mui/icons-material'
 import { motion, useAnimation } from 'framer-motion'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
+import useGlobalState from '../../stores/questionStore.ts'
 import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/Room.css'
 import ChatMessage from './ChatMessage.tsx'
@@ -29,6 +30,11 @@ const ChatBox: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement | null>(null)
     const [hasLeft, setHasLeft] = useState(false)
     const [showMessageAlert, setShowMessageAlert] = useState(false)
+    const { questionId, setQuestionId } = useGlobalState()
+
+    const handleChangeQuestionId = (questionId: string) => {
+        setQuestionId(questionId)
+    }
 
     useEffect(() => {
         // Check if user is not null and not fetching
@@ -87,6 +93,8 @@ const ChatBox: React.FC = () => {
             } else if (data.event == 'full-room') {
                 console.log('Room is full')
                 socket.close()
+            } else if (data.event == 'update-question') {
+                handleChangeQuestionId(data.question_id)
             }
         }
 
@@ -112,6 +120,17 @@ const ChatBox: React.FC = () => {
     useEffect(() => {
         scrollToBottom()
     }, [chatMessages]) // Assuming `chatMessages` is the list/array containing your chat messages
+
+    useEffect(() => {
+        if (!socket) return
+
+        const payload = JSON.stringify({
+            event: 'update-question',
+            question_id: questionId,
+        })
+
+        socket.send(payload)
+    }, [questionId])
 
     const chatBoxVariants = {
         minimized: { height: '50px' },
