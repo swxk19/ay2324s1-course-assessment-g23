@@ -1,10 +1,11 @@
-import { Add, Circle, Remove } from '@mui/icons-material'
+import { Add, Circle, Remove, VideocamOutlined } from '@mui/icons-material'
 import { motion, useAnimation } from 'framer-motion'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import useGlobalState from '../../stores/questionStore.ts'
 import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/Room.css'
+import VideoChat from '../VideoChat.tsx'
 import ChatMessage from './ChatMessage.tsx'
 
 /** URL for communication websocket API. */
@@ -35,6 +36,8 @@ const ChatBox: React.FC = () => {
     const handleChangeQuestionId = (questionId: string) => {
         setQuestionId(questionId)
     }
+    const [showVideoChat, setShowVideoChat] = useState(false)
+    const [showMessageChat, setShowMessageChat] = useState(true)
 
     useEffect(() => {
         // Check if user is not null and not fetching
@@ -134,7 +137,7 @@ const ChatBox: React.FC = () => {
 
     const chatBoxVariants = {
         minimized: { height: '50px' },
-        expanded: { height: '500px' },
+        expanded: { height: 'auto' },
     }
 
     const checkHiddenMessages = () => {
@@ -172,6 +175,10 @@ const ChatBox: React.FC = () => {
     const toggleMinimize = (e: React.MouseEvent) => {
         e.stopPropagation()
         setIsMinimized(!isMinimized)
+    }
+
+    const toggleMessages = () => {
+        setShowMessageChat(!showMessageChat)
     }
 
     const handleHeaderClick = () => {
@@ -225,29 +232,56 @@ const ChatBox: React.FC = () => {
                         />
                         <h3 style={{ color: 'white', margin: '12px' }}>Chat Room</h3>
                     </div>
-                    <div className='chat-background'>
-                        {chatMessages.map((message, index) => (
-                            <ChatMessage
-                                key={index}
-                                text={message.text}
-                                sender={message.sender}
-                                msg_type={message.msg_type}
-                            />
-                        ))}
-                        <div ref={messagesEndRef} />
-                    </div>
-                    <div style={{ backgroundColor: 'white', padding: '10px' }}>
-                        <form onSubmit={sendMessage}>
-                            <input
-                                value={formValue}
-                                onChange={(e) => setFormValue(e.target.value)}
-                                placeholder='Send a message'
-                            />
 
-                            <button type='submit' disabled={!formValue}>
-                                Send
-                            </button>
-                        </form>
+                    <div style={{ display: 'flex', width: 'auto' }}>
+                        {showVideoChat && (
+                            <div
+                                style={{
+                                    backgroundColor: '#1d1d1d',
+                                    padding: '10px',
+                                    width: 'auto',
+                                }}
+                            >
+                                <VideoChat
+                                    toggleMessages={toggleMessages}
+                                    messageIconStatus={showMessageChat}
+                                    closeVideoChat={() => setShowVideoChat(false)}
+                                />
+                            </div>
+                        )}
+                        {showMessageChat && (
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div className='chat-background'>
+                                    {chatMessages.map((message, index) => (
+                                        <ChatMessage
+                                            key={index}
+                                            text={message.text}
+                                            sender={message.sender}
+                                            msg_type={message.msg_type}
+                                        />
+                                    ))}
+                                    <div ref={messagesEndRef} />
+                                </div>
+                                <div style={{ backgroundColor: 'white', padding: '10px' }}>
+                                    <form onSubmit={sendMessage}>
+                                        <input
+                                            value={formValue}
+                                            onChange={(e) => setFormValue(e.target.value)}
+                                            placeholder='Send a message'
+                                        />
+                                        <div
+                                            className='call-icon'
+                                            onClick={() => setShowVideoChat(true)}
+                                        >
+                                            <VideocamOutlined />
+                                        </div>
+                                        <button type='submit' disabled={!formValue}>
+                                            Send
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </motion.div>
             </motion.div>
