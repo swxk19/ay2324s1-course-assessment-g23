@@ -15,6 +15,7 @@ export interface MatchingRequest {
 export interface Match {
     user_id: string
     room_id: string
+    question_id: string
 }
 
 interface QueuePayload {
@@ -36,6 +37,7 @@ interface MatchingResponsePayload {
     detail: string
     user_id: string | null
     room_id: string | null
+    question_id: string | null
 }
 
 /** The websocket used for matchmaking. */
@@ -78,6 +80,7 @@ export async function getMatch(matchRequest: MatchingRequest): Promise<Match> {
                 resolve({
                     user_id: responsePayload.user_id!,
                     room_id: responsePayload.room_id!,
+                    question_id: responsePayload.question_id!,
                 })
             else reject(new ApiError(ApiError.WEBSOCKET_ERROR_STATUS_CODE, responsePayload.detail))
             ws!.close()

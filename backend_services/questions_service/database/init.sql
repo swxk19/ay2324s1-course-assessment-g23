@@ -98,7 +98,11 @@ Follow up: Can you solve it using O(1) (i.e. constant) memory?',
  - 12 is written as `XII`, which is simply `X + II`.
  - The number 27 is written as `XXVII`, which is `XX + V + II`.
 
- Roman numerals are usually written largest to smallest from left to right. However, there are exceptions such as the numeral for four, which is not `IIII`. Instead, the number four is written as `IV`. This is because the one is before the five, and so we subtract it, making four. This same principle applies to the number nine, which is written as `IX`.
+ Roman numerals are usually written largest to smallest from left to right. However, 
+ there are exceptions such as the numeral for four, which is not `IIII`. Instead, 
+ the number four is written as `IV`. This is because the one is before the five, and 
+ so we subtract it, making four. This same principle applies to the number nine, 
+ which is written as `IX`.
 
  ### Subtraction Instances
  There are six instances where subtraction is used:

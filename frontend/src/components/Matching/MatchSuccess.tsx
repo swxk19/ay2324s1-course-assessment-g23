@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useMatch } from '../../stores/matchingStore.ts'
+import useGlobalState from '../../stores/questionStore.ts'
 import { useUser } from '../../stores/userStore.ts'
 import Loader from '../LoadingAnimation/Loader.tsx'
 import Spinner from '../LoadingAnimation/Spinner.tsx'
@@ -9,9 +10,14 @@ import Spinner from '../LoadingAnimation/Spinner.tsx'
 const MatchingScreen = () => {
     const { data: match } = useMatch()
     const { data: matchedUser } = useUser(match?.user_id)
+    const { questionId, setQuestionId } = useGlobalState()
     const [showMatchFound, setShowMatchFound] = useState(true)
     const [showMatchedUser, setShowMatchedUser] = useState(false)
     const navigate = useNavigate()
+
+    const handleChangeQuestionId = (questionId: string) => {
+        setQuestionId(questionId)
+    }
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -25,7 +31,10 @@ const MatchingScreen = () => {
     useEffect(() => {
         // Navigate to room after showing "Match Found" and "Redirecting" messages
         const timer = setTimeout(() => {
-            if (match) navigate(`/room/${match.room_id}`)
+            if (match) {
+                navigate(`/room/${match.room_id}`)
+                handleChangeQuestionId(match?.question_id)
+            }
         }, 4000)
 
         return () => clearTimeout(timer)
