@@ -205,7 +205,6 @@ const ChatBox: React.FC = () => {
                             }}
                         />
                         <h3 style={{ color: 'white', margin: '12px' }}>Chat Room</h3>
-                        {showMessageAlert && <div>Hello</div>}
                     </div>
                     <div className='chat-background'>
                         {chatMessages.map((message, index) => (

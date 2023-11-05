@@ -93,7 +93,7 @@ async def handle_queue(complexity: Complexity, user_1: UserWebSocket) -> None:
     question_url = "http://api_gateway/api/questions/questions_all"
     response = session.get(question_url)
     all_questions = response.json()
-    filtered_questions = [question for question in all_questions if question['complexity'] == complexity]
+    filtered_questions = [question for question in all_questions if question['complexity'].lower() == complexity]
     random_question = random.choice(filtered_questions)
     rand_question_id = random_question['question_id']
     
