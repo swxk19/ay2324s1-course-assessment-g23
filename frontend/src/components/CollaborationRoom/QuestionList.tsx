@@ -15,6 +15,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
 
     const handleQuestionClick = (questionId: string) => {
         setQuestionId(questionId)
+        onClose()
     }
 
     return (
@@ -35,12 +36,12 @@ const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
                 </div>
                 <ul className='question-list'>
                     {questions?.map((question) => (
-                        // <QuestionRow key={question.question_id} question={question} />
-                        <li key={question?.question_id}>
-                            <button onClick={() => handleQuestionClick(question?.question_id)}>
-                                {question?.title}
-                            </button>
-                        </li>
+                        <QuestionRow
+                            key={question.question_id}
+                            question={question}
+                            selectedQuestionId={questionId}
+                            onClick={() => handleQuestionClick(question?.question_id)}
+                        />
                     ))}
                 </ul>
             </motion.div>
@@ -50,11 +51,16 @@ const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
 
 interface QuestionRowProps {
     question: Question
+    selectedQuestionId: string
+    onClick: () => void
 }
 
-const QuestionRow: React.FC<QuestionRowProps> = ({ question }) => {
+const QuestionRow: React.FC<QuestionRowProps> = ({ question, selectedQuestionId, onClick }) => {
     return (
-        <li className='question-row'>
+        <li
+            className={question.question_id === selectedQuestionId ? 'question-row-selected' : ''}
+            onClick={onClick}
+        >
             <p>{question.title}</p>
             <p className={`complexity-color-${question.complexity}`}>{question.complexity}</p>
         </li>

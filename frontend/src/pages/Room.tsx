@@ -26,7 +26,10 @@ export const Room = () => {
             )}
             <RoomNavBar onExitClick={() => setShowConfirmation(true)} />
             <div className='horizontal-split-container'>
-                <div className='pane' style={{ flex: '1', marginRight: '10px' }}>
+                <div
+                    className='pane'
+                    style={{ flex: '1', marginRight: '10px', width: '50%', paddingBottom: '50px' }}
+                >
                     <QuestionDescription />
                 </div>
                 <div className='vertical-split-container'>
