@@ -1,4 +1,6 @@
 import React from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import useGlobalState, { useQuestion } from '../../stores/questionStore'
 
 const QuestionDescription: React.FC = () => {
@@ -8,7 +10,14 @@ const QuestionDescription: React.FC = () => {
     // const randomQuestion = easyQuestions[Math.floor(Math.random() * easyQuestions.length)]
 
     return (
-        <div style={{ padding: '10px 20px' }}>
+        <div
+            style={{
+                padding: '10px 20px',
+                width: '100%',
+                height: '100%',
+                overflow: 'scroll',
+            }}
+        >
             <h2 style={{ margin: '0', fontWeight: 'normal', fontSize: '1.5rem' }}>
                 {question?.title}
             </h2>
@@ -18,16 +27,9 @@ const QuestionDescription: React.FC = () => {
             >
                 {question?.complexity}
             </h2>
-            <pre
-                id='alert-dialog-description'
-                style={{
-                    fontFamily: 'courier',
-                    color: 'white',
-                    whiteSpace: 'pre',
-                }}
-            >
+            <Markdown className='markdown' remarkPlugins={[remarkGfm]}>
                 {question?.description}
-            </pre>
+            </Markdown>
         </div>
     )
 }
