@@ -14,7 +14,7 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-rooms: dict[str, VideoRoom] = {}
+rooms: dict[str, Room] = {}
 """Dict where keys are the room-ID, values are the room's info."""
 
 
