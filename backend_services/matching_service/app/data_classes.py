@@ -1,4 +1,5 @@
 import asyncio
+import pprint
 from dataclasses import dataclass
 from typing import Any, Literal, Optional, TypeAlias
 
@@ -45,6 +46,12 @@ class UserWebSocket:
     access_token: str
     timeout_task: asyncio.Task = CANCELLED_TASK
 
+    def __str__(self) -> str:
+        return f'UserWebSocket(user_id="{self.user_id}")'
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
 
 class UserWebSocketQueue:
     """Queue for `UserWebSocket`."""
@@ -79,4 +86,7 @@ class UserWebSocketQueue:
         return len(self._queue)
 
     def __str__(self) -> str:
-        return str(self._queue)
+        return pprint.pformat(self._queue, width=-1)
+
+    def __repr__(self) -> str:
+        return self.__str__()

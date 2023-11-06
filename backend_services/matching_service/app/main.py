@@ -1,4 +1,5 @@
 import asyncio
+import pprint
 
 from fastapi import Cookie, Depends, FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +9,7 @@ import requests
 from shared_definitions.auth.fastapi_dependencies import decode_access_token_data
 from shared_definitions.auth.core import TokenData
 import random
+import logging
 
 from data_classes import (
     Complexity,
@@ -25,6 +27,7 @@ SUCCESS_MESSAGE = "Match found!"
 QUEUE_TIMEOUT_SECONDS: int = 30
 """Seconds before a queued user times out and gets removed from the queue."""
 
+logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
 app.add_middleware(
@@ -57,11 +60,14 @@ async def websocket_endpoint(websocket: WebSocket, access_token: str | None = Co
                 case "queue":
                     assert payload.complexity is not None, "Missing `complexity` in queue payload."
                     await handle_queue(payload.complexity, user)
+                    logging.info('[queued] Queues:\n%s', pprint.pformat(queues, width=-1))
                 case "cancel":
                     await handle_cancel(user)
+                    logging.info('[cancelled] Queues:\n%s', pprint.pformat(queues, width=-1))
 
     # Ignore exceptions related to websocket disconnecting.
     except WebSocketDisconnect:
+        logging.info('[disconnected] Queues:\n%s', pprint.pformat(queues, width=-1))
         pass
     except RuntimeError as e:
         if "WebSocket is not connected" in str(e):
