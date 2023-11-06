@@ -6,15 +6,20 @@ import { Update } from "@codemirror/collab";
 
 const server = http.createServer();
 
-// The updates received so far (updates.length gives the current
-// version)
-let updates: Update[] = [];
-// The current document
-let doc = Text.of(["Start document"]);
-let pending: ((value: any) => void)[] = [];
+class Room {
+    updates: Update[] = [];
+    doc: Text = Text.of([""]);
+    pending: ((value: any) => void)[] = [];
+}
+
+interface RoomsDict {
+    [roomId: string]: Room;
+}
+
+const rooms: RoomsDict = {};
 
 let io = new Server(server, {
-    path: "/api",
+    path: "/room",
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
@@ -23,14 +28,26 @@ let io = new Server(server, {
 
 // listening for connections from clients
 io.on("connection", (socket: Socket) => {
+    let room: Room | null = null;
+    socket.on("join-room", (roomId) => {
+        if (typeof roomId != "string") return;
+
+        room = rooms[roomId];
+        if (!room) {
+            room = new Room();
+            rooms[roomId] = room;
+        }
+    });
+
     socket.on("pullUpdates", (version: number) => {
-        if (version < updates.length) {
+        if (room == null) return;
+        if (version < room.updates.length) {
             socket.emit(
                 "pullUpdateResponse",
-                JSON.stringify(updates.slice(version))
+                JSON.stringify(room.updates.slice(version))
             );
         } else {
-            pending.push((updates) => {
+            room.pending.push((updates) => {
                 socket.emit(
                     "pullUpdateResponse",
                     JSON.stringify(updates.slice(version))
@@ -40,22 +57,23 @@ io.on("connection", (socket: Socket) => {
     });
 
     socket.on("pushUpdates", (version, docUpdates) => {
+        if (room == null) return;
         docUpdates = JSON.parse(docUpdates);
 
         try {
-            if (version != updates.length) {
+            if (version != room.updates.length) {
                 socket.emit("pushUpdateResponse", false);
             } else {
                 for (let update of docUpdates) {
                     // Convert the JSON representation to an actual ChangeSet
                     // instance
                     let changes = ChangeSet.fromJSON(update.changes);
-                    updates.push({ changes, clientID: update.clientID });
-                    doc = changes.apply(doc);
+                    room.updates.push({ changes, clientID: update.clientID });
+                    room.doc = changes.apply(room.doc);
                 }
                 socket.emit("pushUpdateResponse", true);
 
-                while (pending.length) pending.pop()!(updates);
+                while (room.pending.length) room.pending.pop()!(room.updates);
             }
         } catch (error) {
             console.error(error);
@@ -63,7 +81,12 @@ io.on("connection", (socket: Socket) => {
     });
 
     socket.on("getDocument", () => {
-        socket.emit("getDocumentResponse", updates.length, doc.toString());
+        if (room == null) return;
+        socket.emit(
+            "getDocumentResponse",
+            room.updates.length,
+            room.doc.toString()
+        );
     });
 });
 

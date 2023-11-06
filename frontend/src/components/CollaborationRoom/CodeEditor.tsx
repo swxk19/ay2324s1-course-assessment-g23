@@ -1,7 +1,5 @@
 
 import CodeMirror from '@uiw/react-codemirror'
-import Quill from 'quill'
-import Delta from 'quill-delta'
 import 'quill/dist/quill.snow.css'
 
 import { Error, Fullscreen, Restore, ZoomIn, ZoomOut } from '@mui/icons-material'
@@ -14,11 +12,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import LanguageSelect from './LanguageSelect.tsx'
 
-/** URL for collaboration websocket API. */
-const COLLABORATION_API_URL =
-    `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}` +
-    '/api/collaboration'
-
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<Socket | null>(null)
@@ -30,7 +23,7 @@ export const CodeEditor: React.FC = () => {
 
     useEffect(() => {
         const socket = io("http://localhost:8007", {
-            path: "/api"
+            path: `/room`
             });
         setSocket(socket)
 
@@ -53,15 +46,20 @@ export const CodeEditor: React.FC = () => {
         }
 
         socket.on("connect", () => {
-            console.log("Connected to server!");
+            console.log("Collab editor connected")
+            socket.emit('join-room', roomId)
             fetchDoc()
           });
+
+        socket.on("disconnect", () => {
+            console.log("Collab editor connection closed")
+        })
 
     }, [socket])
 
     const resetCode = () => {
         setShowResetConfirmation(false)
-        setValue('')
+        setDoc('')
     }
 
     const zoomIn = () => {
