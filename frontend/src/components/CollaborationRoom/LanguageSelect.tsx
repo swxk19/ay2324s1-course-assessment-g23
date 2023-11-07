@@ -1,36 +1,32 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import React, { useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { AVAILABLE_LANGUAGES } from '../../api/codeExecution'
+import { useLanguage } from '../../stores/codeStore'
 import '../../styles/Room.css'
 
-const options = ['Javascript', 'Java', 'Python']
-
-interface LanguageSelectProps {
-    onLanguageChange: (language: string) => void
-}
-
-const LanguageSelect: React.FC<LanguageSelectProps> = ({ onLanguageChange }) => {
+const LanguageSelect: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const [selection, setSelection] = useState('')
+    const { language, setLanguage } = useLanguage(useShallow((state) => ({ ...state })))
 
     return (
         <div className='dropdown-wrapper'>
             <button className={`toggle-button`} onClick={() => setIsOpen(!isOpen)}>
-                {!selection ? 'Javascript' : selection}
+                {language.name}
                 <KeyboardArrowDownIcon />
             </button>
             <ul id='custom-listbox' className={`listbox ${isOpen ? 'isOpen' : ''}`}>
-                {options.map((option) => (
+                {AVAILABLE_LANGUAGES.map((lang) => (
                     <li
                         role='option'
                         onClick={() => {
-                            setSelection(option)
+                            setLanguage(lang)
                             setIsOpen(false)
-                            onLanguageChange(option) // <- use the prop here
                         }}
-                        key={option}
+                        key={lang.id}
                         className={'list-option'}
                     >
-                        {option}
+                        {lang.name}
                     </li>
                 ))}
             </ul>
