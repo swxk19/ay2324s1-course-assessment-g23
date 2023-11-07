@@ -19,7 +19,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
     }
 
     return (
-        <div className='dark-overlay' style={{ zIndex: '2' }}>
+        <div className='dark-overlay' style={{ zIndex: '2' }} onClick={onClose}>
             <motion.div
                 className='question-list-container'
                 key='question-list'

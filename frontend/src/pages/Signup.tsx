@@ -1,3 +1,4 @@
+import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { motion } from 'framer-motion'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -13,12 +14,24 @@ const Signup = () => {
         password: '',
         email: '',
     })
+    const [showPassword, setShowPassword] = useState(false)
+    const [emailError, setEmailError] = useState('')
     const navigate = useNavigate()
+    const validEmailRegex =
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
     const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        if (!validateEmail(addNewUser.email)) {
+            setEmailError('Please enter a valid email address.')
+            return
+        }
         await signupUserMutation.mutateAsync(addNewUser)
         navigate('/')
+    }
+
+    const validateEmail = (email: string) => {
+        return String(email).toLowerCase().match(validEmailRegex)
     }
 
     const handleAddUserChange = (
@@ -29,6 +42,11 @@ const Signup = () => {
             ...addNewUser,
             [name]: value,
         })
+        if (event.target.name === 'email') setEmailError('')
+    }
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword)
     }
 
     return (
@@ -60,13 +78,24 @@ const Signup = () => {
                             onChange={handleAddUserChange}
                             value={addNewUser.username}
                         />
-                        <input
-                            name='password'
-                            required
-                            placeholder='Password'
-                            onChange={handleAddUserChange}
-                            value={addNewUser.password}
-                        />
+                        <div className='password-container'>
+                            <input
+                                name='password'
+                                type={showPassword ? 'text' : 'password'}
+                                required
+                                placeholder='Password'
+                                onChange={handleAddUserChange}
+                                value={addNewUser.password}
+                            />
+                            <button type='button' onClick={toggleShowPassword}>
+                                {showPassword ? (
+                                    <Visibility fontSize={'small'} />
+                                ) : (
+                                    <VisibilityOff fontSize={'small'} />
+                                )}
+                            </button>
+                        </div>
+
                         <input
                             name='email'
                             required
@@ -80,6 +109,11 @@ const Signup = () => {
                         </h4>
                         <Link to='/'>Log in</Link>
                     </form>
+                    {emailError && (
+                        <AlertMessage variant='error'>
+                            <h4>{emailError}</h4>
+                        </AlertMessage>
+                    )}
                 </div>
                 {signupUserMutation.isError && (
                     <AlertMessage variant='error'>
