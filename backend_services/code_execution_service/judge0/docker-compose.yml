@@ -28,6 +28,8 @@ services:
         condition: service_healthy
     <<: *default-logging
     restart: always
+    networks:
+      - judge0
 
   judge0_workers:
     container_name: judge0_workers
@@ -43,6 +45,8 @@ services:
         condition: service_healthy
     <<: *default-logging
     restart: always
+    networks:
+      - judge0
 
   judge0_db:
     container_name: judge0_db
@@ -57,6 +61,8 @@ services:
       retries: 10
     <<: *default-logging
     restart: always
+    networks:
+      - judge0
 
   judge0_redis:
     container_name: judge0_redis
@@ -75,7 +81,12 @@ services:
       retries: 10
     <<: *default-logging
     restart: always
+    networks:
+      - judge0
 
 volumes:
   postgres-data:
   redis-data:
+
+networks:
+  judge0:
