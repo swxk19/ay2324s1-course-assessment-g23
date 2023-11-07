@@ -10,6 +10,7 @@ import '../styles/Room.css'
 
 export const Room = () => {
     const [showConfirmation, setShowConfirmation] = useState(false)
+
     const navigate = useNavigate()
 
     const handleExit = () => {
