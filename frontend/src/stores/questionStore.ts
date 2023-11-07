@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { create } from 'zustand'
 import { ApiError } from '../api/error'
 import {
     Question,
@@ -9,22 +10,21 @@ import {
     storeQuestion,
     updateQuestion,
 } from '../api/questions'
-import {create} from 'zustand';
 
 type GlobalState = {
-    questionId: string;
-    setQuestionId: (questionId: string) => void;
-};
+    questionId: string
+    setQuestionId: (questionId: string) => void
+}
 
 const useGlobalState = create<GlobalState>((set) => ({
     questionId: '',
 
     setQuestionId: (questionId: string) => {
-        set({ questionId: questionId });
+        set({ questionId: questionId })
     },
-}));
+}))
 
-export default useGlobalState;
+export default useGlobalState
 
 /**
  * Hook for getting questions state from backend.
@@ -186,4 +186,3 @@ export function useDeleteAllQuestions() {
         onError: (error: ApiError) => {},
     })
 }
-
