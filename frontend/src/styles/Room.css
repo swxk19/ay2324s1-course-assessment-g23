@@ -217,6 +217,66 @@
     font-weight: bolder;
 }
 
+.editor-header-controls {
+    display: flex;
+    margin-left: auto;
+    color: #c2c2c2;
+}
+
+.fullscreen-icon,
+.reset-icon,
+.zoom-in-icon,
+.zoom-out-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.fullscreen-icon:hover,
+.reset-icon:hover,
+.zoom-in-icon:hover,
+.zoom-out-icon:hover {
+    color: white;
+}
+
+.box-shadow {
+    box-shadow: rgba(0, 0, 0, 0.2) 0 2px 2px,
+    rgba(0, 0, 0, 0.1) 0 8px 12px,
+    rgba(0, 0, 0, 0.1) 0 8px 16px;
+}
+
+.reset-confirmation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #303030;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 2px 2px,
+    rgba(0, 0, 0, 0.1) 0 8px 12px,
+    rgba(0, 0, 0, 0.1) 0 8px 16px;
+}
+
+.reset-title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 50px;
+    padding: 0 10px;
+}
+
+.reset-buttons {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 25px;
+}
+
 .dropdown-wrapper {
     position: relative;
     z-index: 1;
