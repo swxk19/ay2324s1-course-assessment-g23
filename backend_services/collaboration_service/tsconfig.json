@@ -20,5 +20,5 @@
       "noUnusedParameters": true,
       "noFallthroughCasesInSwitch": true
   },
-  "include": ["/app/collab_editor_server.ts"]
+  "include": ["/app/collaboration_server.ts"]
 }
