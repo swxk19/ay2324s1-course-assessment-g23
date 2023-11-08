@@ -101,7 +101,7 @@ async def user_logout(refresh_token: str | None = Cookie(None)) -> Response:
     return sc.user_logout(refresh_token)
 
 
-@app.get("/refresh", dependencies=[Depends(require_logged_in)])
+@app.get("/refresh")
 async def refresh_access_token(
     refresh_token: str = Cookie(),
     refresh_token_data: TokenData = Depends(decode_refresh_token_data),
