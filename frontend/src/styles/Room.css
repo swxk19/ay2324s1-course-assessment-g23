@@ -171,7 +171,42 @@
     background-color: #303030;
     border-radius: 5px;
     margin-top: 10px;
+}
+
+.ce-header {
+    display: flex;
+    font-size: 13px;
+    justify-content: right;
+    gap: 10px;
+    background-color: #303030;
+    width: 100%;
+    border-radius: 5px 5px 0 0;
     padding: 5px 10px;
+    color: #c2c2c2;
+}
+
+.skeleton-container {
+    padding: 15px;
+}
+
+.ce-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: #242424;
+}
+
+.result-header-success {
+    font-size: 20px;
+    margin: 15px 15px 0 15px;
+    color: #00b8a2;
+}
+
+.result-header-error {
+    font-size: 20px;
+    margin: 15px 15px 0 15px;
+    color: #fe375f;
 }
 
 .error-output {
@@ -186,9 +221,9 @@
 }
 
 .code-output {
-    background-color: #242424;
+    background-color: #353535;
     height: 100%;
-    margin: 5px 0;
+    margin: 15px;
     padding: 10px;
     border-radius: 5px;
     font-family: 'Roboto Mono', serif;
