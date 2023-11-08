@@ -133,8 +133,8 @@ body {
 }
 
 .dropdownItem a {
-    max-width: 100px;
     margin-left: 10px;
+    width: 100%;
     transition: var(--speed);
 }
 
