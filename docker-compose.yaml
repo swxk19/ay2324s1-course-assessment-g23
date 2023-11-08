@@ -119,8 +119,6 @@ services:
       dockerfile: ../../DB_Dockerfile
     image: peerprep_users_database
     container_name: users_database
-    ports:
-      - 5432:5432
     networks:
       - users
     volumes:
@@ -135,8 +133,6 @@ services:
       dockerfile: ../../DB_Dockerfile
     image: peerprep_questions_database
     container_name: questions_database
-    ports:
-      - 5433:5432
     networks:
       - questions
     volumes:
