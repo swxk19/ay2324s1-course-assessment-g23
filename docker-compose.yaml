@@ -114,7 +114,7 @@ services:
     image: peerprep_matching_api
     container_name: matching_api
     ports:
-      - 8003:8003
+      - 8003:8000
     networks:
       - backend-apis
       - matching-queue
