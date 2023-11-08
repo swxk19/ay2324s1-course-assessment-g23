@@ -9,6 +9,7 @@ import { ChangeSet, Text } from '@codemirror/state'
 import { EditorView, ViewPlugin, ViewUpdate } from '@codemirror/view'
 import { langs } from '@uiw/codemirror-extensions-langs'
 import { Socket } from 'socket.io-client'
+import { Language } from '../api/codeExecution'
 
 function pushUpdates(
     socket: Socket,
@@ -102,15 +103,14 @@ export const peerExtension = (socket: Socket, startVersion: number) => {
     return [collab({ startVersion }), plugin]
 }
 
-export const getLangExtension = (language: string) => {
-    switch (language) {
-        case 'Javascript':
+export const getLangExtension = (language: Language) => {
+    switch (language.name) {
+        case 'JavaScript':
             return langs.javascript()
         case 'Java':
             return langs.java()
         case 'Python':
             return langs.python()
-        default:
-            return langs.javascript()
     }
+    throw new TypeError(`Unknown language: ${language.name}`)
 }
