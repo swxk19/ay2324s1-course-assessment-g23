@@ -42,8 +42,6 @@ services:
       dockerfile: ../../API_Dockerfile
     container_name: users_api
     image: peerprep_users_api
-    ports:
-      - 8001:8000
     networks:
       - backend-apis
       - users
@@ -63,8 +61,6 @@ services:
       dockerfile: ../../API_Dockerfile
     image: peerprep_questions_api
     container_name: questions_api
-    ports:
-      - 8002:8000
     networks:
       - backend-apis
       - questions
@@ -83,8 +79,6 @@ services:
       dockerfile: Dockerfile
     image: peerprep_collaboration_api
     container_name: collaboration_api
-    ports:
-      - 8004:8000
     networks:
       - backend-apis
       - collaboration
@@ -98,8 +92,6 @@ services:
       dockerfile: Dockerfile
     image: peerprep_communication_api
     container_name: communication_api
-    ports:
-      - 8005:8000
     networks:
       - backend-apis
       - communication
@@ -113,8 +105,6 @@ services:
       dockerfile: Dockerfile
     image: peerprep_matching_api
     container_name: matching_api
-    ports:
-      - 8003:8000
     networks:
       - backend-apis
       - matching-queue
