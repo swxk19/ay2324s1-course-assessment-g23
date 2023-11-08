@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { Socket, io } from 'socket.io-client'
-import { getDocument, getLangExtension, peerExtension } from '../../stores/codeEditorStore.ts'
+import { getDocument, getLangExtension, peerExtension } from '../../api/codeEditor.ts'
 import LanguageSelect from './LanguageSelect.tsx'
 
 export const CodeEditor: React.FC = () => {
