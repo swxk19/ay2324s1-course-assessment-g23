@@ -11,5 +11,5 @@ RUN npm install
 COPY . .
 RUN npm install -g ts-node
 
-EXPOSE 8007
+EXPOSE 8000
 CMD [ "ts-node-esm", "collab_editor_server.ts" ]
