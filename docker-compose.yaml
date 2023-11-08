@@ -76,9 +76,10 @@ services:
   collaboration_api:
     build:
       context: ./backend_services/collaboration_service
-      dockerfile: Dockerfile
     image: peerprep_collaboration_api
     container_name: collaboration_api
+    ports:
+          - 8004:8000
     networks:
       - backend-apis
       - collaboration

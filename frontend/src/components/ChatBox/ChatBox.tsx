@@ -57,7 +57,7 @@ const ChatBox: React.FC = () => {
         if (socket == null) return
 
         socket.onopen = () => {
-            console.log('WebSocket connection is open')
+            console.log('Chat connection is open')
             const user_id = user?.username ?? ''
             const userJoinMessage = JSON.stringify({
                 event: 'join-room',

@@ -1,11 +1,15 @@
-FROM peerprep_base_api:latest
+# Base image
+FROM node:16.13.1
 
-WORKDIR /
-
-COPY ./app /app
-
+# Create app directory
 WORKDIR /app
 
-# MUST run with 1 worker only, else there'll be
-# duplicate rooms
-CMD uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1
+COPY package.json package-lock.json ./
+
+RUN npm install
+# Bundle app source
+COPY . .
+RUN npm install -g ts-node
+
+EXPOSE 8000
+CMD [ "ts-node-esm", "collaboration_server.ts" ]
