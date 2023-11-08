@@ -1,18 +1,20 @@
 import { motion } from 'framer-motion'
 import React, { useState } from 'react'
+import { useCodeExecutionOutput, useExecuteCode } from '../../stores/codeStore'
 
 const CodeExecutor: React.FC = () => {
-    const [isExecuting, setIsExecuting] = useState(false)
-    const [isError, setIsError] = useState(false)
+    const { data: codeExecutionOutput } = useCodeExecutionOutput()
+    const executeCodeMutation = useExecuteCode()
+    const [isOutputOpen, setIsOutputOpen] = useState(false)
+    const { isLoading: isExecuting } = executeCodeMutation
 
-    const handleExecute = () => {
-        setIsExecuting(true)
-        // insert code execution logic here
-        // if executed code has error setIsError(true)
+    const handleExecute = async () => {
+        await executeCodeMutation.mutateAsync()
+        setIsOutputOpen(true)
     }
 
     const handleMinimise = () => {
-        setIsExecuting(false)
+        setIsOutputOpen(false)
     }
 
     const heightVariants = {
@@ -24,10 +26,10 @@ const CodeExecutor: React.FC = () => {
         <motion.div
             className='ce-container'
             style={{ display: 'flex' }}
-            animate={isExecuting ? 'expanded' : 'minimized'}
+            animate={isOutputOpen ? 'expanded' : 'minimized'}
             variants={heightVariants}
         >
-            {isExecuting && (
+            {isOutputOpen && (
                 <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                     <div
                         className='ce-container'
@@ -43,10 +45,9 @@ const CodeExecutor: React.FC = () => {
                             Close
                         </button>
                     </div>
-                    {isError ? (
-                        <div className='error-output'>Error</div>
-                    ) : (
-                        <div className='code-output'>Output</div>
+                    <div className='code-output'>{codeExecutionOutput?.stdout}</div>
+                    {codeExecutionOutput?.stderr && (
+                        <div className='error-output'>{codeExecutionOutput.stderr}</div>
                     )}
                 </div>
             )}

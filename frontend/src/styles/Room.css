@@ -182,6 +182,7 @@
     padding: 10px;
     border-radius: 5px;
     font-family: 'Roboto Mono', serif;
+    white-space: pre-wrap;
 }
 
 .code-output {
@@ -191,6 +192,7 @@
     padding: 10px;
     border-radius: 5px;
     font-family: 'Roboto Mono', serif;
+    white-space: pre-wrap;
 }
 
 .problem-button {
