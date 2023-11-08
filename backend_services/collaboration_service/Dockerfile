@@ -4,7 +4,7 @@ FROM node:16.13.1
 # Create app directory
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json ./
 
 RUN npm install
 # Bundle app source
