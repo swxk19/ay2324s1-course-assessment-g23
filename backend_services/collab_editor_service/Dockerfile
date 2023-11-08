@@ -1,0 +1,15 @@
+# Base image
+FROM node:16.13.1
+
+# Create app directory
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm install
+# Bundle app source
+COPY . .
+RUN npm install -g ts-node
+
+EXPOSE 8007
+CMD [ "ts-node-esm", "collab_editor_server.ts" ]

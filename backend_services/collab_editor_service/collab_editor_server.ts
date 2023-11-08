@@ -1,5 +1,4 @@
 import { Server, Socket } from "socket.io";
-import { spawn } from "child_process";
 import * as http from "http";
 import { ChangeSet, Text } from "@codemirror/state";
 import { Update } from "@codemirror/collab";
