@@ -8,13 +8,15 @@ import { AnimatePresence, motion } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { Socket, io } from 'socket.io-client'
+import { useShallow } from 'zustand/react/shallow'
 import { getDocument, getLangExtension, peerExtension } from '../../api/codeEditor.ts'
+import { useDocStore } from '../../stores/codeStore'
 import LanguageSelect from './LanguageSelect.tsx'
 
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<Socket | null>(null)
-    const [doc, setDoc] = useState<string>('')
+    const [doc, setDoc] = useDocStore(useShallow((state) => [state.doc, state.setDoc]))
     const [selectedLanguage, setSelectedLanguage] = useState('Javascript') // default to Javascript
     const [version, setVersion] = useState<number | null>(null)
     const [showResetConfirmation, setShowResetConfirmation] = useState(false)
