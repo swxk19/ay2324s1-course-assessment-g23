@@ -22,7 +22,7 @@ export const CodeEditor: React.FC = () => {
     const [fontSize, setFontSize] = useState(14) // Default font size for the editor
 
     useEffect(() => {
-        const socket = io("http://localhost:8007", {
+        const socket = io("http://localhost:8004", {
             path: `/room`
             });
         setSocket(socket)

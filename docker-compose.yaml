@@ -14,7 +14,6 @@ services:
       - matching_api
       - collaboration_api
       - communication_api
-      - collab_editor_api
     networks:
       - client-side
       - backend-apis
@@ -77,26 +76,11 @@ services:
   collaboration_api:
     build:
       context: ./backend_services/collaboration_service
-      dockerfile: Dockerfile
     image: peerprep_collaboration_api
     container_name: collaboration_api
     networks:
       - backend-apis
       - collaboration
-    depends_on:
-      - base_api
-    env_file:
-      - ./backend.conf
-  collab_editor_api:
-    build:
-      context: ./backend_services/collab_editor_service
-    image: peerprep_collab_editor_api
-    container_name: collab_editor_api
-    ports:
-      - 8007:8000
-    networks:
-      - backend-apis
-      - collab_editor
     depends_on:
       - base_api
     env_file:
@@ -172,4 +156,3 @@ networks:
   matching-queue:
   collaboration:
   communication:
-  collab_editor:
