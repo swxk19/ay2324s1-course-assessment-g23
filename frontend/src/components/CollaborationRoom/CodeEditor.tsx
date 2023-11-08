@@ -60,6 +60,7 @@ export const CodeEditor: React.FC = () => {
     const resetCode = () => {
         setShowResetConfirmation(false)
         setDoc('')
+        console.log('reset')
     }
 
     const zoomIn = () => {
@@ -68,6 +69,10 @@ export const CodeEditor: React.FC = () => {
 
     const zoomOut = () => {
         setFontSize((prevFontSize) => Math.max(prevFontSize - 4, 16)) // Prevents font size from going below 4px
+    }
+
+    const handleOnChange = (val: string, viewUpdate: any) => {
+        setDoc(val)
     }
 
     function toggleFullScreen() {
@@ -177,8 +182,10 @@ export const CodeEditor: React.FC = () => {
                 </div>
             </div>
             {socket && version != null?
+            <div style={{ fontSize: `${fontSize}px` }}>
             <CodeMirror
                 value={doc}
+                onChange={handleOnChange}
                 extensions={[getLangExtension(selectedLanguage), peerExtension(socket, version)]}
                 theme={vscodeDarkInit({
                     settings: {
@@ -188,7 +195,7 @@ export const CodeEditor: React.FC = () => {
                     },
                 })}
                 height='auto'
-            /> : null}
+            /></div> : null}
         </div>
     )
 }
