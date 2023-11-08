@@ -338,7 +338,6 @@ ul.listbox {
     padding: 0;
     border-radius: 5px;
     margin-top: 4px;
-    font-family: 'Roboto', sans-serif;
 }
 
 .listbox.isOpen {
@@ -348,8 +347,10 @@ ul.listbox {
 .list-option {
     cursor: pointer;
     text-align: left;
-    padding: 10px 20px;
+    padding: 3px 10px;
     width: auto;
+    border-radius: 5px;
+    margin: 10px;
 }
 
 .list-option.highlighted,
@@ -360,14 +361,17 @@ ul.listbox {
 
 #complexity-Easy {
     color: #00b8a2;
+    font-weight: bold;
 }
 
 #complexity-Medium {
     color: #febf1d;
+    font-weight: bold;
 }
 
 #complexity-Hard {
     color: #fe375f;
+    font-weight: bold;
 }
 
 .call-icon {
