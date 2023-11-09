@@ -12,7 +12,6 @@ import { useShallow } from 'zustand/react/shallow'
 import { getDocument, getLangExtension, peerExtension } from '../../api/codeEditor.ts'
 import { useDocStore, useLanguage } from '../../stores/codeStore'
 import LanguageSelect from './LanguageSelect.tsx'
-import { ViewUpdate } from '@codemirror/view'
 
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
@@ -61,6 +60,7 @@ export const CodeEditor: React.FC = () => {
     const resetCode = () => {
         setShowResetConfirmation(false)
         setDoc('')
+        console.log('reset')
     }
 
     const zoomIn = () => {
@@ -69,6 +69,10 @@ export const CodeEditor: React.FC = () => {
 
     const zoomOut = () => {
         setFontSize((prevFontSize) => Math.max(prevFontSize - 4, 16)) // Prevents font size from going below 4px
+    }
+
+    const handleOnChange = (val: string, viewUpdate: any) => {
+        setDoc(val)
     }
 
     function toggleFullScreen() {
@@ -181,6 +185,7 @@ export const CodeEditor: React.FC = () => {
                 <div style={{ fontSize: `${fontSize}px` }}>
                     <CodeMirror
                         value={doc}
+                        onChange={handleOnChange}
                         extensions={[getLangExtension(language), peerExtension(socket, version)]}
                         theme={vscodeDarkInit({
                             settings: {
