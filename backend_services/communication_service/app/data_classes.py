@@ -34,6 +34,21 @@ class Room:
 
     def is_full(self) -> bool:
         return len(self.clients) > 2
+    
+    def is_empty(self) -> bool:
+        return not bool(self.clients)
+    
+    def remove_user(self, user_id: str) -> None:
+        if user_id in self.clients:
+            del self.clients[user_id]
+            
+    def add_user(self, user: UserWebSocket) -> None:
+        self.clients[user.user_id] = user
+        
+    def delete_if_empty(self, rooms_dict: dict[str, 'Room'], room_id: str) -> None:
+        if self.is_empty():
+            # Optionally, perform any cleanup or additional actions before deleting
+            del rooms_dict[room_id]
 
 
 @dataclass
