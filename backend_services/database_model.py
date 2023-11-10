@@ -1,6 +1,7 @@
-from dataclasses import dataclass
-import psycopg2
 import traceback
+from dataclasses import dataclass
+
+import psycopg2
 from fastapi import HTTPException, status
 
 
@@ -15,11 +16,12 @@ class Database:
     def _connect(self):
         try:
             conn = psycopg2.connect(
-                host = self.host,
-                port = self.port,
-                database = self.database,
-                user = self.user,
-                password = self.password)
+                host=self.host,
+                port=self.port,
+                database=self.database,
+                user=self.user,
+                password=self.password,
+            )
             return conn
         except Exception as e:
             traceback.print_exc()
