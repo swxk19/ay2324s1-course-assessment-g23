@@ -41,7 +41,7 @@ async def join_communication_channel(websocket: WebSocket, room_id: str, user_id
         await websocket.close()
         return
 
-    room.clients[user_websocket.user_id] = user_websocket
+    room.add_user(user_websocket)
 
     chat_messages = room.chat_room.get_messages()
     for sender_id, message, msg_type in chat_messages:
@@ -110,13 +110,14 @@ async def join_communication_channel(websocket: WebSocket, room_id: str, user_id
         if user_websocket.user_id in room.clients:
             for client_id, client in room.clients.items():
                 if client_id != user_websocket.user_id:
-                    await client.websocket.send_json(
-                        {
-                            "event": "leave-room",
-                            "sender": user_websocket.user_id,
-                        }
-                    )
-            del room.clients[user_websocket.user_id]
+                    await client.websocket.send_json({
+                        "event": "leave-room",
+                        "sender": user_websocket.user_id,
+                    })
+            room.remove_user(user_websocket.user_id)
+            
+            if room.is_empty():
+                del rooms[room_id]
 
 
 clients = []
