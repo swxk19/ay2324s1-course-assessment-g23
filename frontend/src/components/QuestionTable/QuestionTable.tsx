@@ -41,7 +41,10 @@ const QuestionTable: React.FC = () => {
     const [sortConfig, setSortConfig] = useState<{
         key: keyof Question
         direction: 'ascending' | 'descending'
-    } | null>(null)
+    } | null>({
+        key: 'complexity',
+        direction: 'ascending',
+    })
     const [complexityFilter, setComplexityFilter] = useState<null | 'Easy' | 'Medium' | 'Hard'>(
         null
     )

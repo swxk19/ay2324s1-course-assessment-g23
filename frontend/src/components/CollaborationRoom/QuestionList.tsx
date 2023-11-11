@@ -6,6 +6,7 @@ import {
     filterByCategory,
     filterByComplexity,
     filterBySearchTerm,
+    sortItems,
 } from '../../api/sortingAndFiltering.ts'
 import useGlobalState, { useAllQuestions } from '../../stores/questionStore.ts'
 import '../../styles/QuestionList.css'
@@ -27,6 +28,15 @@ const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
     const [searchTerm, setSearchTerm] = useState<string>('')
     const containerRef = useRef<HTMLDivElement | null>(null)
     const [showTopBtn, setShowTopBtn] = useState(false)
+    type SortConfig = {
+        key: keyof Question
+        direction: 'ascending' | 'descending'
+    } | null
+
+    const sortConfig: SortConfig = {
+        key: 'complexity',
+        direction: 'ascending',
+    }
 
     const categoriesList: string[] = [
         'Algorithms',
@@ -66,6 +76,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
         filteredItems = filterByComplexity(filteredItems, complexityFilter)
         filteredItems = filterByCategory(filteredItems, categoryFilter)
         filteredItems = filterBySearchTerm(filteredItems, searchTerm)
+        filteredItems = sortItems(filteredItems, sortConfig)
         return filteredItems
     }, [questions, complexityFilter, categoryFilter, searchTerm])
 
