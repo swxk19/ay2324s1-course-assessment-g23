@@ -2,6 +2,9 @@ import { Add, Circle, Remove, VideocamOutlined } from '@mui/icons-material'
 import { motion, useAnimation } from 'framer-motion'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
+import { useShallow } from 'zustand/react/shallow'
+import { Language } from '../../api/codeExecution.ts'
+import { useLanguage } from '../../stores/codeStore'
 import useGlobalState from '../../stores/questionStore.ts'
 import { useCurrentUser } from '../../stores/userStore.ts'
 import '../../styles/Room.css'
@@ -32,9 +35,12 @@ const ChatBox: React.FC = () => {
     const [hasLeft, setHasLeft] = useState(false)
     const [showMessageAlert, setShowMessageAlert] = useState(false)
     const { questionId, setQuestionId } = useGlobalState()
-
+    const { language, setLanguage } = useLanguage(useShallow((state) => ({ ...state })))
     const handleChangeQuestionId = (questionId: string) => {
         setQuestionId(questionId)
+    }
+    const handleChangeLanguage = (language: Language) => {
+        setLanguage(language)
     }
     const [showVideoChat, setShowVideoChat] = useState(false)
     const [showMessageChat, setShowMessageChat] = useState(true)
@@ -98,6 +104,10 @@ const ChatBox: React.FC = () => {
                 socket.close()
             } else if (data.event == 'update-question') {
                 handleChangeQuestionId(data.question_id)
+            } else if (data.event == 'update-language') {
+                if (data.language.id !== language.id) {
+                    handleChangeLanguage(data.language)
+                }
             }
         }
 
@@ -118,7 +128,7 @@ const ChatBox: React.FC = () => {
         }
 
         scrollToBottom()
-    }, [socket])
+    }, [socket, language])
 
     useEffect(() => {
         scrollToBottom()
@@ -134,6 +144,17 @@ const ChatBox: React.FC = () => {
 
         socket.send(payload)
     }, [questionId])
+
+    useEffect(() => {
+        if (!socket) return
+
+        const payload = JSON.stringify({
+            event: 'update-language',
+            language: language,
+        })
+
+        socket.send(payload)
+    }, [language])
 
     const chatBoxVariants = {
         minimized: { height: '50px' },

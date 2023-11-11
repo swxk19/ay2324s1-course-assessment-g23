@@ -105,6 +105,13 @@ async def join_communication_channel(websocket: WebSocket, room_id: str, user_id
                         await client.websocket.send_json(
                             {"event": "update-question", "question_id": question_id}
                         )
+            elif event == "update-language":
+                language = data.get("language")
+                for client_id, client in room.clients.items():
+                    if client_id != user_websocket.user_id:
+                        await client.websocket.send_json(
+                            {"event": "update-language", "language": language}
+                        )
 
     except WebSocketDisconnect:
         if user_websocket.user_id in room.clients:
@@ -118,7 +125,10 @@ async def join_communication_channel(websocket: WebSocket, room_id: str, user_id
             
             if room.is_empty():
                 del rooms[room_id]
-
+    except RuntimeError as e:
+        if "WebSocket is not connected" in str(e):
+            return
+        raise e
 
 clients = []
 
