@@ -25,7 +25,9 @@ export interface LanguageState {
 
 export const useLanguage = create<LanguageState>((set) => ({
     language: DEFAULT_LANGUAGE,
-    setLanguage: (language: Language) => set({ language }),
+    setLanguage: (language: Language) => {
+        set({ language: language })
+    },
 }))
 
 export function useCodeExecutionOutput() {
