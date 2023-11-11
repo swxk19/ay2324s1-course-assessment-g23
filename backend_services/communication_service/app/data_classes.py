@@ -42,13 +42,12 @@ class Room:
         if user_id in self.clients:
             del self.clients[user_id]
             
+            if self.is_empty():
+                del self
+            
     def add_user(self, user: UserWebSocket) -> None:
         self.clients[user.user_id] = user
         
-    def delete_if_empty(self, rooms_dict: dict[str, 'Room'], room_id: str) -> None:
-        if self.is_empty():
-            # Optionally, perform any cleanup or additional actions before deleting
-            del rooms_dict[room_id]
 
 
 @dataclass

@@ -115,6 +115,9 @@ async def join_communication_channel(websocket: WebSocket, room_id: str, user_id
                         "sender": user_websocket.user_id,
                     })
             room.remove_user(user_websocket.user_id)
+            
+            if room.is_empty():
+                del rooms[room_id]
 
 
 clients = []
