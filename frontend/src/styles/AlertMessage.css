@@ -1,8 +1,19 @@
-.alert-error {
+.alert-error,
+.alert-success {
     background-color: #eb4034;
     border-radius: 1rem;
     color: white;
     padding: 0 1rem;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    margin-top: 2rem;
+}
+
+.alert-success {
+    background-color: #22bb33;
 }
 
 @keyframes fade-out {
@@ -16,7 +27,7 @@
 
 @keyframes slide-up {
     0% {
-        transform: translateY(100%) translateX(-50%);
+        transform: translateY(-100%) translateX(-50%);
         opacity: 0;
     }
     100% {
@@ -29,9 +40,10 @@
     animation:
         slide-up 0.3s ease-in-out,
         fade-out 0.5s ease-in-out 2.2s;
-    position: absolute;
+    position: fixed;
     min-width: 30rem;
-    top: 2rem;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 1000;
 }

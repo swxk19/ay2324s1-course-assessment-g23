@@ -27,7 +27,7 @@ const Signup = () => {
             return
         }
         await signupUserMutation.mutateAsync(addNewUser)
-        navigate('/')
+        navigate('/', { state: 'signup' })
     }
 
     const validateEmail = (email: string) => {

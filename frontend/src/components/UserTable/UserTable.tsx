@@ -107,7 +107,6 @@ export const UserTable: React.FC = () => {
                     </tbody>
                 </table>
             </form>
-
             {updateUserMutation.isError && (
                 <AlertMessage variant='error'>
                     <h4>Oops! {updateUserMutation.error.detail}</h4>
@@ -118,43 +117,14 @@ export const UserTable: React.FC = () => {
                     <h4>Oops! {deleteUserMutation.error.detail}</h4>
                 </AlertMessage>
             )}
-            <h2>Add a User</h2>
-            <form className='userForm' onSubmit={handleAddFormSubmit}>
-                <input
-                    name='id'
-                    disabled
-                    placeholder='ID'
-                    onChange={handleAddFormChange}
-                    value={'—'}
-                />
-                <input
-                    name='username'
-                    required
-                    placeholder='Username'
-                    onChange={handleAddFormChange}
-                    value={addFormData.username}
-                />
-                <input
-                    name='password'
-                    required
-                    placeholder='Password'
-                    onChange={handleAddFormChange}
-                    value={addFormData.password}
-                />
-                <input
-                    name='email'
-                    required
-                    placeholder='Email'
-                    onChange={handleAddFormChange}
-                    value={addFormData.email}
-                />
-                <div>
-                    <button type='submit'>Add</button>
-                </div>
-            </form>
-            {storeUserMutation.isError && (
-                <AlertMessage variant='error'>
-                    <h4>Oops! {storeUserMutation.error.detail}</h4>
+            {updateUserMutation.isSuccess && (
+                <AlertMessage variant='success'>
+                    <h4>User details successfully updated!</h4>
+                </AlertMessage>
+            )}
+            {deleteUserMutation.isSuccess && (
+                <AlertMessage variant='success'>
+                    <h4>User successfully deleted!</h4>
                 </AlertMessage>
             )}
         </div>
