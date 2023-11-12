@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import AlertMessage from '../components/AlertMessage'
 import { useLoginUser } from '../stores/sessionStore'
 import { useCurrentUser } from '../stores/userStore'
@@ -12,6 +12,7 @@ const Login = () => {
     const navigate = useNavigate()
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    let location = useLocation()
 
     // Redirect if already logged in.
     useEffect(() => {
@@ -65,6 +66,11 @@ const Login = () => {
             {loginUserMutation.isError && (
                 <AlertMessage variant='error'>
                     <h4>Oops! {loginUserMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
+            {location.state === 'signup' && (
+                <AlertMessage variant='success'>
+                    <h4>Sign up successful!</h4>
                 </AlertMessage>
             )}
         </motion.div>

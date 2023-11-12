@@ -244,25 +244,33 @@ const QuestionTable: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredAndSortedQuestions.map((question) => (
-                            <Fragment key={question.question_id}>
-                                {editFormData &&
-                                editFormData.question_id === question.question_id ? (
-                                    <QuestionEditableRow
-                                        editFormData={editFormData}
-                                        handleEditFormChange={handleEditFormChange}
-                                        handleCancelClick={handleCancelClick}
-                                    />
-                                ) : (
-                                    <QuestionReadOnlyRow
-                                        question={question}
-                                        handleEditClick={handleEditClick}
-                                        handleDeleteClick={handleDeleteClick}
-                                        hasActions={isMaintainer}
-                                    />
-                                )}
-                            </Fragment>
-                        ))}
+                        {filteredAndSortedQuestions.length > 0 ? (
+                            filteredAndSortedQuestions.map((question) => (
+                                <Fragment key={question.question_id}>
+                                    {editFormData &&
+                                    editFormData.question_id === question.question_id ? (
+                                        <QuestionEditableRow
+                                            editFormData={editFormData}
+                                            handleEditFormChange={handleEditFormChange}
+                                            handleCancelClick={handleCancelClick}
+                                        />
+                                    ) : (
+                                        <QuestionReadOnlyRow
+                                            question={question}
+                                            handleEditClick={handleEditClick}
+                                            handleDeleteClick={handleDeleteClick}
+                                            hasActions={isMaintainer}
+                                        />
+                                    )}
+                                </Fragment>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={isMaintainer ? 5 : 4} style={{ textAlign: 'center' }}>
+                                    No results found
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </form>
@@ -289,6 +297,21 @@ const QuestionTable: React.FC = () => {
             {storeQuestionMutation.isError && (
                 <AlertMessage variant='error'>
                     <h4>Oops! {storeQuestionMutation.error.detail}</h4>
+                </AlertMessage>
+            )}
+            {updateQuestionMutation.isSuccess && (
+                <AlertMessage variant='success'>
+                    <h4>Question successfully edited!</h4>
+                </AlertMessage>
+            )}
+            {deleteQuestionMutation.isSuccess && (
+                <AlertMessage variant='success'>
+                    <h4>Question successfully deleted!</h4>
+                </AlertMessage>
+            )}
+            {storeQuestionMutation.isSuccess && (
+                <AlertMessage variant='success'>
+                    <h4>Question successfully added!</h4>
                 </AlertMessage>
             )}
         </div>

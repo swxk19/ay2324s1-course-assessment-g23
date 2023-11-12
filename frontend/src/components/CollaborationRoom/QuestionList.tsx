@@ -152,15 +152,20 @@ const QuestionList: React.FC<QuestionListProps> = ({ onClose }) => {
                     )}
                 </div>
                 <ul className='question-list'>
-                    {filteredAndSortedQuestions?.map((question) => (
-                        <QuestionRow
-                            key={question.question_id}
-                            question={question}
-                            selectedQuestionId={questionId}
-                            onClick={() => handleQuestionClick(question?.question_id)}
-                        />
-                    ))}
+                    {filteredAndSortedQuestions.length > 0 ? (
+                        filteredAndSortedQuestions.map((question) => (
+                            <QuestionRow
+                                key={question.question_id}
+                                question={question}
+                                selectedQuestionId={questionId}
+                                onClick={() => handleQuestionClick(question?.question_id)}
+                            />
+                        ))
+                    ) : (
+                        <div style={{ textAlign: 'center' }}>No results found</div>
+                    )}
                 </ul>
+
                 {showTopBtn && (
                     <button onClick={goToTop} className='back-to-top'>
                         Back to top
