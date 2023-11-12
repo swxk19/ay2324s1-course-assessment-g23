@@ -1,9 +1,9 @@
-import { EditorState, Compartment } from '@codemirror/state'
+import { indentWithTab } from '@codemirror/commands'
+import { Compartment, EditorState } from '@codemirror/state'
+import { EditorView, keymap } from '@codemirror/view'
 import { Error, Fullscreen, ZoomIn, ZoomOut } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import { basicSetup } from 'codemirror'
-import {EditorView, keymap} from "@codemirror/view"
-import {indentWithTab} from "@codemirror/commands"
 
 import { basicDark } from 'cm6-theme-basic-dark'
 
@@ -17,7 +17,6 @@ import { useShallow } from 'zustand/react/shallow'
 import { getDocument, getLangExtension, peerExtension } from '../../api/codeEditor.ts'
 import { useDocStore, useLanguage } from '../../stores/codeStore'
 import LanguageSelect from './LanguageSelect.tsx'
-import {StateEffect} from "@codemirror/state"
 
 const lang = new Compartment()
 export const CodeEditor: React.FC = () => {
@@ -37,8 +36,6 @@ export const CodeEditor: React.FC = () => {
         { tag: tags.comment, color: '#000', fontStyle: 'italic' },
     ])
 
-
-
     useEffect(() => {
         if (socket == null || version == null) return
         setEditorView(
@@ -54,7 +51,7 @@ export const CodeEditor: React.FC = () => {
                         keymap.of([indentWithTab]),
                         basicSetup,
                         syntaxHighlighting(myHighlightStyle), // syntax highlighting colors
-                        basicDark // theme
+                        basicDark, // theme
                     ],
                 }),
                 parent: ref.current,
@@ -65,7 +62,7 @@ export const CodeEditor: React.FC = () => {
     useEffect(() => {
         editorView?.dispatch({
             effects: lang.reconfigure(getLangExtension(language)),
-          })
+        })
     }, [language, editorView])
 
     useEffect(() => {
