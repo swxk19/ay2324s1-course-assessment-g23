@@ -1,4 +1,4 @@
-import { CallEnd, Message, Mic, SpeakerNotesOff, Videocam } from '@mui/icons-material'
+import { CallEnd, Message, Mic, MicOff, SpeakerNotesOff, Videocam } from '@mui/icons-material'
 import Peer from 'peerjs'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
@@ -24,6 +24,7 @@ const VideoChat: React.FC<VideoChatProps> = ({
     const remoteVideoRef = useRef(null)
     const currentUserVideoRef = useRef(null)
     const peerInstance = useRef(null)
+    const [isMicMuted, setIsMicMuted] = useState(false)
 
     const { roomId } = useParams()
     const [socket, setSocket] = useState<WebSocket | null>(null)
@@ -117,6 +118,18 @@ const VideoChat: React.FC<VideoChatProps> = ({
         })
     }
 
+    const toggleMic = () => {
+        const localStream = currentUserVideoRef.current.srcObject
+
+        // Toggle the mute status
+        setIsMicMuted(!isMicMuted)
+
+        // Mute or unmute the audio track
+        localStream.getAudioTracks().forEach((track) => {
+            track.enabled = !isMicMuted
+        })
+    }
+
     return (
         <div>
             <div className='video-chat-box'>
@@ -131,8 +144,8 @@ const VideoChat: React.FC<VideoChatProps> = ({
                 <button className='videocam-icon'>
                     <Videocam />
                 </button>
-                <button className='mic-icon'>
-                    <Mic />
+                <button className='mic-icon' onClick={toggleMic}>
+                    {isMicMuted ? <MicOff /> : <Mic />}
                 </button>
                 {messageIconStatus ? (
                     <button className='message-icon' onClick={toggleMessages}>
