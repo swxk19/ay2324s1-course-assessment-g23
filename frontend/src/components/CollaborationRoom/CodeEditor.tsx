@@ -1,8 +1,9 @@
 import { EditorState } from '@codemirror/state'
 import { Error, Fullscreen, ZoomIn, ZoomOut } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
-import { EditorView, basicSetup } from 'codemirror'
-import 'quill/dist/quill.snow.css'
+import { basicSetup } from 'codemirror'
+import {EditorView, keymap} from "@codemirror/view"
+import {indentWithTab} from "@codemirror/commands"
 
 import { basicDark } from 'cm6-theme-basic-dark'
 
@@ -16,6 +17,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { getDocument, getLangExtension, peerExtension } from '../../api/codeEditor.ts'
 import { useDocStore, useLanguage } from '../../stores/codeStore'
 import LanguageSelect from './LanguageSelect.tsx'
+
 
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
@@ -46,6 +48,7 @@ export const CodeEditor: React.FC = () => {
                         EditorView.updateListener.of(({ state }) => {
                             setDoc(state.doc.toString())
                         }),
+                        keymap.of([indentWithTab]),
                         basicSetup,
                         syntaxHighlighting(myHighlightStyle), // syntax highlighting colors
                         basicDark, // modify theme here (dont forget to change the theme of the other copy of this code below also)
@@ -57,23 +60,23 @@ export const CodeEditor: React.FC = () => {
         )
     }, [socket, version])
 
-    useEffect(() => {
-        editorView?.setState(
-            EditorState.create({
-                doc: doc,
-                extensions: [
-                    getLangExtension(language),
-                    peerExtension(socket, version),
-                    EditorView.updateListener.of(({ state }) => {
-                        setDoc(state.doc.toString())
-                    }),
-                    basicSetup,
-                    syntaxHighlighting(myHighlightStyle), //update here if themes updated above
-                    basicDark,
-                ],
-            })
-        )
-    }, [language])
+    // useEffect(() => {
+    //     editorView?.setState(
+    //         EditorState.create({
+    //             doc: doc,
+    //             extensions: [
+    //                 getLangExtension(language),
+    //                 peerExtension(socket, version),
+    //                 EditorView.updateListener.of(({ state }) => {
+    //                     setDoc(state.doc.toString())
+    //                 }),
+    //                 basicSetup,
+    //                 syntaxHighlighting(myHighlightStyle), //update here if themes updated above
+    //                 basicDark,
+    //             ],
+    //         })
+    //     )
+    // }, [language])
 
     useEffect(() => {
         const socket = io('http://localhost:8004', {
