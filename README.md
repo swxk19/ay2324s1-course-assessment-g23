@@ -1,2 +1,19 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/6BOvYMwN)
-# AssignmentTemplate
+# PeerPrep - CS3219 Grp 23
+
+## Assignments
+
+To view/run the assignment codes, checkout to the tagged commits:
+
+```bash
+git checkout tags/Assignment-X  # where X = 1, 2, 3, 4, 5
+```
+
+And follow the setup instructions found in the `README.md` of the tagged commit.
+
+For convenience, here are the links to the tagged commits on GitHub:
+
+- [Assignment-1](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g23/tree/Assignment-1)
+- [Assignment-2](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g23/tree/Assignment-2)
+- [Assignment-3](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g23/tree/Assignment-3)
+- [Assignment-4](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g23/tree/Assignment-4)
+- [Assignment-5](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g23/tree/Assignment-5)
