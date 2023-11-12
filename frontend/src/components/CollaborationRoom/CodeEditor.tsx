@@ -1,14 +1,10 @@
 import { indentWithTab } from '@codemirror/commands'
+import { syntaxHighlighting } from '@codemirror/language'
 import { Compartment, EditorState } from '@codemirror/state'
 import { EditorView, keymap } from '@codemirror/view'
 import { Error, Fullscreen, ZoomIn, ZoomOut } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import { basicSetup } from 'codemirror'
-
-import { basicDark } from 'cm6-theme-basic-dark'
-
-import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
-import { tags } from '@lezer/highlight'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
@@ -16,6 +12,7 @@ import { Socket, io } from 'socket.io-client'
 import { useShallow } from 'zustand/react/shallow'
 import { getDocument, getLangExtension, peerExtension } from '../../api/codeEditor.ts'
 import { useDocStore, useLanguage } from '../../stores/codeStore'
+import { codeEditorTheme, myHighlightStyle } from './CodeEditorTheme.ts'
 import LanguageSelect from './LanguageSelect.tsx'
 
 const lang = new Compartment()
@@ -25,16 +22,10 @@ export const CodeEditor: React.FC = () => {
     const [doc, setDoc] = useDocStore(useShallow((state) => [state.doc, state.setDoc]))
     const [version, setVersion] = useState<number | null>(null)
     const [showResetConfirmation, setShowResetConfirmation] = useState(false)
-    const [fontSize, setFontSize] = useState(14) // Default font size for the editor
+    const [fontSize, setFontSize] = useState(14)
     const language = useLanguage((state) => state.language)
     const [editorView, setEditorView] = useState<EditorView | null>(null)
     const ref = useRef()
-
-    // define colors for syntax here
-    const myHighlightStyle = HighlightStyle.define([
-        { tag: tags.keyword, color: '#fc6' },
-        { tag: tags.comment, color: '#000', fontStyle: 'italic' },
-    ])
 
     useEffect(() => {
         if (socket == null || version == null) return
@@ -43,6 +34,7 @@ export const CodeEditor: React.FC = () => {
                 state: EditorState.create({
                     doc: doc,
                     extensions: [
+                        codeEditorTheme,
                         lang.of(getLangExtension(language)),
                         peerExtension(socket, version),
                         EditorView.updateListener.of(({ state }) => {
@@ -50,8 +42,7 @@ export const CodeEditor: React.FC = () => {
                         }),
                         keymap.of([indentWithTab]),
                         basicSetup,
-                        syntaxHighlighting(myHighlightStyle), // syntax highlighting colors
-                        basicDark, // theme
+                        syntaxHighlighting(myHighlightStyle),
                     ],
                 }),
                 parent: ref.current,
@@ -141,7 +132,7 @@ export const CodeEditor: React.FC = () => {
                 <LanguageSelect />
                 <div className='editor-header-controls'>
                     <Tooltip
-                        title='Zoom Out'
+                        title='Zoom out'
                         placement='bottom'
                         componentsProps={{
                             tooltip: {
@@ -160,7 +151,7 @@ export const CodeEditor: React.FC = () => {
                         </div>
                     </Tooltip>
                     <Tooltip
-                        title='Zoom In'
+                        title='Zoom in'
                         placement='bottom'
                         componentsProps={{
                             tooltip: {
@@ -198,7 +189,7 @@ export const CodeEditor: React.FC = () => {
                         </div>
                     </Tooltip> */}
                     <Tooltip
-                        title='Enter fullscreen mode'
+                        title='Toggle full screen mode'
                         placement='bottom'
                         componentsProps={{
                             tooltip: {
