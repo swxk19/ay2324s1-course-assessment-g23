@@ -1,11 +1,16 @@
-import CodeMirror from '@uiw/react-codemirror'
-import 'quill/dist/quill.snow.css'
-
-import { Error, Fullscreen, Restore, ZoomIn, ZoomOut } from '@mui/icons-material'
+import { indentWithTab } from '@codemirror/commands'
+import { Compartment, EditorState } from '@codemirror/state'
+import { EditorView, keymap } from '@codemirror/view'
+import { Error, Fullscreen, ZoomIn, ZoomOut } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
-import { vscodeDarkInit } from '@uiw/codemirror-theme-vscode'
+import { basicSetup } from 'codemirror'
+
+import { basicDark } from 'cm6-theme-basic-dark'
+
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
+import { tags } from '@lezer/highlight'
 import { AnimatePresence, motion } from 'framer-motion'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import { Socket, io } from 'socket.io-client'
 import { useShallow } from 'zustand/react/shallow'
@@ -13,6 +18,7 @@ import { getDocument, getLangExtension, peerExtension } from '../../api/codeEdit
 import { useDocStore, useLanguage } from '../../stores/codeStore'
 import LanguageSelect from './LanguageSelect.tsx'
 
+const lang = new Compartment()
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<Socket | null>(null)
@@ -21,6 +27,43 @@ export const CodeEditor: React.FC = () => {
     const [showResetConfirmation, setShowResetConfirmation] = useState(false)
     const [fontSize, setFontSize] = useState(14) // Default font size for the editor
     const language = useLanguage((state) => state.language)
+    const [editorView, setEditorView] = useState<EditorView | null>(null)
+    const ref = useRef()
+
+    // define colors for syntax here
+    const myHighlightStyle = HighlightStyle.define([
+        { tag: tags.keyword, color: '#fc6' },
+        { tag: tags.comment, color: '#000', fontStyle: 'italic' },
+    ])
+
+    useEffect(() => {
+        if (socket == null || version == null) return
+        setEditorView(
+            new EditorView({
+                state: EditorState.create({
+                    doc: doc,
+                    extensions: [
+                        lang.of(getLangExtension(language)),
+                        peerExtension(socket, version),
+                        EditorView.updateListener.of(({ state }) => {
+                            setDoc(state.doc.toString())
+                        }),
+                        keymap.of([indentWithTab]),
+                        basicSetup,
+                        syntaxHighlighting(myHighlightStyle), // syntax highlighting colors
+                        basicDark, // theme
+                    ],
+                }),
+                parent: ref.current,
+            })
+        )
+    }, [socket, version])
+
+    useEffect(() => {
+        editorView?.dispatch({
+            effects: lang.reconfigure(getLangExtension(language)),
+        })
+    }, [language, editorView])
 
     useEffect(() => {
         const socket = io('http://localhost:8004', {
@@ -59,8 +102,6 @@ export const CodeEditor: React.FC = () => {
 
     const resetCode = () => {
         setShowResetConfirmation(false)
-        setDoc('')
-        console.log('reset')
     }
 
     const zoomIn = () => {
@@ -69,10 +110,6 @@ export const CodeEditor: React.FC = () => {
 
     const zoomOut = () => {
         setFontSize((prevFontSize) => Math.max(prevFontSize - 4, 16)) // Prevents font size from going below 4px
-    }
-
-    const handleOnChange = (val: string, viewUpdate: any) => {
-        setDoc(val)
     }
 
     function toggleFullScreen() {
@@ -141,7 +178,7 @@ export const CodeEditor: React.FC = () => {
                             <ZoomIn />
                         </div>
                     </Tooltip>
-                    <Tooltip
+                    {/* <Tooltip
                         title='Reset code'
                         placement='bottom'
                         componentsProps={{
@@ -159,7 +196,7 @@ export const CodeEditor: React.FC = () => {
                         <div className='reset-icon' onClick={() => setShowResetConfirmation(true)}>
                             <Restore />
                         </div>
-                    </Tooltip>
+                    </Tooltip> */}
                     <Tooltip
                         title='Enter fullscreen mode'
                         placement='bottom'
@@ -181,23 +218,10 @@ export const CodeEditor: React.FC = () => {
                     </Tooltip>
                 </div>
             </div>
-            {socket && version != null ? (
-                <div style={{ fontSize: `${fontSize}px` }}>
-                    <CodeMirror
-                        value={doc}
-                        onChange={handleOnChange}
-                        extensions={[getLangExtension(language), peerExtension(socket, version)]}
-                        theme={vscodeDarkInit({
-                            settings: {
-                                background: '#242424',
-                                gutterBackground: '#242424',
-                                lineHighlight: 'transparent',
-                            },
-                        })}
-                        height='auto'
-                    />
-                </div>
-            ) : null}
+
+            <div style={{ fontSize: `${fontSize}px` }}>
+                <div ref={ref} />
+            </div>
         </div>
     )
 }
