@@ -1,4 +1,12 @@
-import { CallEnd, Message, Mic, MicOff, SpeakerNotesOff, Videocam } from '@mui/icons-material'
+import {
+    CallEnd,
+    Message,
+    Mic,
+    MicOff,
+    SpeakerNotesOff,
+    Videocam,
+    VideocamOff,
+} from '@mui/icons-material'
 import Peer from 'peerjs'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
@@ -21,10 +29,11 @@ const VideoChat: React.FC<VideoChatProps> = ({
 }) => {
     const [peerId, setPeerId] = useState('')
     const [remotePeerIdValue, setRemotePeerIdValue] = useState('')
-    const remoteVideoRef = useRef(null)
-    const currentUserVideoRef = useRef(null)
+    const remoteVideoRef = useRef<HTMLVideoElement>(null)
+    const currentUserVideoRef = useRef<HTMLVideoElement>(null)
     const peerInstance = useRef(null)
     const [isMicMuted, setIsMicMuted] = useState(false)
+    const [isCameraOn, setIsCameraOn] = useState(true)
 
     const { roomId } = useParams()
     const [socket, setSocket] = useState<WebSocket | null>(null)
@@ -61,7 +70,11 @@ const VideoChat: React.FC<VideoChatProps> = ({
 
                 getUserMedia({ video: true, audio: true }, (mediaStream) => {
                     currentUserVideoRef.current.srcObject = mediaStream
-                    currentUserVideoRef.current.play()
+
+                    currentUserVideoRef.current.addEventListener('loadeddata', () => {
+                        currentUserVideoRef.current.play()
+                    })
+
                     call.answer(mediaStream)
                     call.on('stream', function (remoteStream) {
                         remoteVideoRef.current.srcObject = remoteStream
@@ -131,6 +144,19 @@ const VideoChat: React.FC<VideoChatProps> = ({
         })
     }
 
+    const toggleCamera = () => {
+        const localStream = currentUserVideoRef.current.srcObject
+
+        // Toggle the camera status
+        const newCameraOnState = !isCameraOn
+        setIsCameraOn(newCameraOnState)
+
+        // Enable or disable the video track
+        localStream.getVideoTracks().forEach((track) => {
+            track.enabled = newCameraOnState // Use the updated state directly
+        })
+    }
+
     return (
         <div>
             <div className='video-chat-box'>
@@ -142,8 +168,8 @@ const VideoChat: React.FC<VideoChatProps> = ({
                 </div>
             </div>
             <div className='video-controls'>
-                <button className='videocam-icon'>
-                    <Videocam />
+                <button className='videocam-icon' onClick={toggleCamera}>
+                    {isCameraOn ? <Videocam /> : <VideocamOff />}
                 </button>
                 <button className='mic-icon' onClick={toggleMic}>
                     {isMicMuted ? <MicOff /> : <Mic />}
