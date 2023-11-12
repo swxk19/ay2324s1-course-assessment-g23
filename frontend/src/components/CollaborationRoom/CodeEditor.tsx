@@ -1,4 +1,4 @@
-import { EditorState } from '@codemirror/state'
+import { EditorState, Compartment } from '@codemirror/state'
 import { Error, Fullscreen, ZoomIn, ZoomOut } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import { basicSetup } from 'codemirror'
@@ -17,8 +17,9 @@ import { useShallow } from 'zustand/react/shallow'
 import { getDocument, getLangExtension, peerExtension } from '../../api/codeEditor.ts'
 import { useDocStore, useLanguage } from '../../stores/codeStore'
 import LanguageSelect from './LanguageSelect.tsx'
+import {StateEffect} from "@codemirror/state"
 
-
+const lang = new Compartment()
 export const CodeEditor: React.FC = () => {
     const { roomId } = useParams()
     const [socket, setSocket] = useState<Socket | null>(null)
@@ -36,6 +37,8 @@ export const CodeEditor: React.FC = () => {
         { tag: tags.comment, color: '#000', fontStyle: 'italic' },
     ])
 
+
+
     useEffect(() => {
         if (socket == null || version == null) return
         setEditorView(
@@ -43,7 +46,7 @@ export const CodeEditor: React.FC = () => {
                 state: EditorState.create({
                     doc: doc,
                     extensions: [
-                        getLangExtension(language),
+                        lang.of(getLangExtension(language)),
                         peerExtension(socket, version),
                         EditorView.updateListener.of(({ state }) => {
                             setDoc(state.doc.toString())
@@ -60,23 +63,27 @@ export const CodeEditor: React.FC = () => {
         )
     }, [socket, version])
 
-    // useEffect(() => {
-    //     editorView?.setState(
-    //         EditorState.create({
-    //             doc: doc,
-    //             extensions: [
-    //                 getLangExtension(language),
-    //                 peerExtension(socket, version),
-    //                 EditorView.updateListener.of(({ state }) => {
-    //                     setDoc(state.doc.toString())
-    //                 }),
-    //                 basicSetup,
-    //                 syntaxHighlighting(myHighlightStyle), //update here if themes updated above
-    //                 basicDark,
-    //             ],
-    //         })
-    //     )
-    // }, [language])
+    useEffect(() => {
+        console.log(language, editorView)
+        editorView?.dispatch({
+            effects: lang.reconfigure(getLangExtension(language)),
+          })
+        // editorView?.setState(
+        //     EditorState.create({
+        //         doc: doc,
+        //         extensions: [
+        //             getLangExtension(language),
+        //             peerExtension(socket, version),
+        //             EditorView.updateListener.of(({ state }) => {
+        //                 setDoc(state.doc.toString())
+        //             }),
+        //             basicSetup,
+        //             syntaxHighlighting(myHighlightStyle), //update here if themes updated above
+        //             basicDark,
+        //         ],
+        //     })
+        // )
+    }, [language, editorView])
 
     useEffect(() => {
         const socket = io('http://localhost:8004', {
