@@ -54,8 +54,7 @@ export const CodeEditor: React.FC = () => {
                         keymap.of([indentWithTab]),
                         basicSetup,
                         syntaxHighlighting(myHighlightStyle), // syntax highlighting colors
-                        basicDark, // modify theme here (dont forget to change the theme of the other copy of this code below also)
-                        // vvvvvvvvvv if changed theme, update the theme in the below block also vvvvvvvvvv
+                        basicDark // theme
                     ],
                 }),
                 parent: ref.current,
@@ -64,25 +63,9 @@ export const CodeEditor: React.FC = () => {
     }, [socket, version])
 
     useEffect(() => {
-        console.log(language, editorView)
         editorView?.dispatch({
             effects: lang.reconfigure(getLangExtension(language)),
           })
-        // editorView?.setState(
-        //     EditorState.create({
-        //         doc: doc,
-        //         extensions: [
-        //             getLangExtension(language),
-        //             peerExtension(socket, version),
-        //             EditorView.updateListener.of(({ state }) => {
-        //                 setDoc(state.doc.toString())
-        //             }),
-        //             basicSetup,
-        //             syntaxHighlighting(myHighlightStyle), //update here if themes updated above
-        //             basicDark,
-        //         ],
-        //     })
-        // )
     }, [language, editorView])
 
     useEffect(() => {
