@@ -122,11 +122,12 @@ const VideoChat: React.FC<VideoChatProps> = ({
         const localStream = currentUserVideoRef.current.srcObject
 
         // Toggle the mute status
-        setIsMicMuted(!isMicMuted)
+        const newMicMutedState = !isMicMuted
+        setIsMicMuted(newMicMutedState)
 
         // Mute or unmute the audio track
         localStream.getAudioTracks().forEach((track) => {
-            track.enabled = !isMicMuted
+            track.enabled = !newMicMutedState // Use the updated state directly
         })
     }
 
