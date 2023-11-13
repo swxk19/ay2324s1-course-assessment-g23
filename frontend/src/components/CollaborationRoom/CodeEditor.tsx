@@ -57,8 +57,8 @@ export const CodeEditor: React.FC = () => {
     }, [language, editorView])
 
     useEffect(() => {
-        const socket = io('http://localhost:8004', {
-            path: `/room`,
+        const socket = io('', {
+            path: `/api/collaboration/room`,
         })
         setSocket(socket)
 
