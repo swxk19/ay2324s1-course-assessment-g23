@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  api_gateway:
+    container_name: api_gateway
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx_params_handle_websockets:/etc/nginx/nginx_params_handle_websockets:ro
+      - nginx_logs:/var/log/nginx
+      - goaccess_data:/var/www/goaccess
+    depends_on:
+      - users_api
+      - questions_api
+      - matching_api
+      - collaboration_api
+      - communication_api
+      - code_execution_api
+    networks:
+      - client-side
+      - backend-apis
+
+  traffic_monitor:
+    container_name: traffic_monitor
+    image: allinurl/goaccess:latest
+    volumes:
+      - ./goaccess.conf:/etc/goaccess/goaccess.conf:ro
+      - nginx_logs:/var/log/nginx
+      - goaccess_data:/var/www/goaccess
+    ports:
+      - "7890:7890"
+    command: ["--config-file=/etc/goaccess/goaccess.conf"]
+    depends_on:
+      - api_gateway
+
+volumes:
+  nginx_logs:
+  goaccess_data:
