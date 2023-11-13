@@ -63,7 +63,7 @@ const MatchingScreen = () => {
                                 variants={fadeInOut}
                                 style={{ marginBottom: '2rem' }}
                             >
-                                Matched with {matchedUser!.username}
+                                Matched{matchedUser ? ` with ${matchedUser.username}` : ''}
                             </motion.h2>
                         )}
                     </div>
