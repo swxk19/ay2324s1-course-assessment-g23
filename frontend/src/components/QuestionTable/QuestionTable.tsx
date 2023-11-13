@@ -1,5 +1,6 @@
-import { Add, ArrowUpward, Cancel, UnfoldMoreOutlined } from '@mui/icons-material'
-import React, { ChangeEvent, FormEvent, Fragment, useEffect, useState } from 'react'
+import { Add, ArrowUpward, Cancel, Error, UnfoldMoreOutlined } from '@mui/icons-material'
+import { AnimatePresence, motion } from 'framer-motion'
+import React, { FormEvent, Fragment, useEffect, useState } from 'react'
 import { type Question } from '../../api/questions.ts'
 import {
     createRequestSort,
@@ -20,7 +21,7 @@ import '../../styles/QuestionTable.css'
 import AlertMessage from '../AlertMessage.tsx'
 import DropdownSelect from './DropdownSelect.tsx'
 import DropdownTabs from './DropdownTabs.tsx'
-import QuestionEditableRow from './QuestionEditableRow.tsx'
+import { EditQuestionForm } from './EditQuestionForm.tsx'
 import { QuestionForm } from './QuestionForm.tsx'
 import QuestionReadOnlyRow from './QuestionReadOnlyRow.tsx'
 
@@ -36,8 +37,22 @@ const QuestionTable: React.FC = () => {
         category: '',
         complexity: 'Easy',
     })
-    const [editFormData, setEditFormData] = useState<Question | null>(null)
+    const [editFormData, setEditFormData] = useState<Question>({
+        question_id: '',
+        title: '',
+        description: '',
+        category: '',
+        complexity: 'Easy',
+    })
+    const blankQuestion: Question = {
+        question_id: '',
+        title: '',
+        description: '',
+        category: '',
+        complexity: 'Easy',
+    }
     const [showQuestionForm, setShowQuestionForm] = useState(false)
+    const [showEditQuestionForm, setShowEditQuestionForm] = useState(false)
     const [sortConfig, setSortConfig] = useState<{
         key: keyof Question
         direction: 'ascending' | 'descending'
@@ -61,6 +76,8 @@ const QuestionTable: React.FC = () => {
     ]
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [showTopBtn, setShowTopBtn] = useState(false)
+    const [idToDelete, setIdToDelete] = useState('')
+    const [showDeleteQuestionPrompt, setShowDeleteQuestionPrompt] = useState(false)
     const requestSort = createRequestSort(setSortConfig)
 
     useEffect(() => {
@@ -82,13 +99,8 @@ const QuestionTable: React.FC = () => {
         return filteredItems
     }, [questions, sortConfig, complexityFilter, categoryFilter, searchTerm])
 
-    const handleEditFormChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = event.target
-        // @ts-ignore
-        setEditFormData({
-            ...editFormData,
-            [name]: value,
-        })
+    const handleEditFormChange = (updatedData: Question) => {
+        setEditFormData(updatedData)
     }
 
     const handleAddFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -109,23 +121,34 @@ const QuestionTable: React.FC = () => {
 
         if (!editFormData) return
         await updateQuestionMutation.mutateAsync(editFormData)
-        setEditFormData(null)
+        setEditFormData(blankQuestion)
+        setShowEditQuestionForm(false)
     }
 
     const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>, question: Question) => {
         event.preventDefault()
         setEditFormData(question)
+        setShowEditQuestionForm(true)
     }
 
     const handleCancelClick = () => {
-        setEditFormData(null)
+        setEditFormData(blankQuestion)
+        setShowEditQuestionForm(false)
     }
 
     const handleFormChange = (updatedData: Omit<Question, 'question_id'>) => {
         setAddFormData(updatedData)
     }
 
-    const handleDeleteClick = (questionId: string) => deleteQuestionMutation.mutate(questionId)
+    const handleDeleteClick = (questionId: string) => {
+        setIdToDelete(questionId)
+        setShowDeleteQuestionPrompt(true)
+    }
+
+    const handleDelete = () => {
+        deleteQuestionMutation.mutate(idToDelete)
+        setShowDeleteQuestionPrompt(false)
+    }
 
     const goToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -146,14 +169,24 @@ const QuestionTable: React.FC = () => {
                             Add a Question
                             <Add fontSize={'small'} />
                         </button>
-                        {showQuestionForm && (
-                            <QuestionForm
-                                initialData={addFormData}
-                                onFormChange={handleFormChange}
-                                onSubmit={handleAddFormSubmit}
-                                onClose={() => setShowQuestionForm(false)}
-                            />
-                        )}
+                        <AnimatePresence>
+                            {showQuestionForm && (
+                                <QuestionForm
+                                    initialData={addFormData}
+                                    onFormChange={handleFormChange}
+                                    onSubmit={handleAddFormSubmit}
+                                    onClose={() => setShowQuestionForm(false)}
+                                />
+                            )}
+                            {showEditQuestionForm && (
+                                <EditQuestionForm
+                                    initialData={editFormData}
+                                    onFormChange={handleEditFormChange}
+                                    onSubmit={handleEditFormSubmit}
+                                    onClose={handleCancelClick}
+                                />
+                            )}
+                        </AnimatePresence>
                     </>
                 )}
                 <DropdownSelect
@@ -247,21 +280,12 @@ const QuestionTable: React.FC = () => {
                         {filteredAndSortedQuestions.length > 0 ? (
                             filteredAndSortedQuestions.map((question) => (
                                 <Fragment key={question.question_id}>
-                                    {editFormData &&
-                                    editFormData.question_id === question.question_id ? (
-                                        <QuestionEditableRow
-                                            editFormData={editFormData}
-                                            handleEditFormChange={handleEditFormChange}
-                                            handleCancelClick={handleCancelClick}
-                                        />
-                                    ) : (
-                                        <QuestionReadOnlyRow
-                                            question={question}
-                                            handleEditClick={handleEditClick}
-                                            handleDeleteClick={handleDeleteClick}
-                                            hasActions={isMaintainer}
-                                        />
-                                    )}
+                                    <QuestionReadOnlyRow
+                                        question={question}
+                                        handleEditClick={handleEditClick}
+                                        handleDeleteClick={handleDeleteClick}
+                                        hasActions={isMaintainer}
+                                    />
                                 </Fragment>
                             ))
                         ) : (
@@ -274,6 +298,12 @@ const QuestionTable: React.FC = () => {
                     </tbody>
                 </table>
             </form>
+            {showDeleteQuestionPrompt && (
+                <DeletePrompt
+                    onDelete={handleDelete}
+                    onClose={() => setShowDeleteQuestionPrompt(false)}
+                />
+            )}
             {showTopBtn && (
                 <button
                     onClick={goToTop}
@@ -319,3 +349,47 @@ const QuestionTable: React.FC = () => {
 }
 
 export default QuestionTable
+
+interface DeletePromptProps {
+    onDelete: () => void
+    onClose: () => void
+}
+
+const DeletePrompt: React.FC<DeletePromptProps> = ({ onDelete, onClose }) => {
+    return (
+        <div className='dark-overlay' style={{ zIndex: 4 }}>
+            <motion.div
+                className='reset-confirmation'
+                key='reset'
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+            >
+                <span className='reset-title'>
+                    <Error
+                        sx={{
+                            marginRight: '10px',
+                            color: '#febf1d',
+                            height: '20px',
+                            width: '20px',
+                        }}
+                    />
+                    <h3 style={{ margin: '0' }}>Are you sure?</h3>
+                </span>
+                <div style={{ padding: '10px' }}>Question will be permanently deleted!</div>
+                <span className='reset-buttons'>
+                    <button
+                        style={{ backgroundColor: '#fe375f', marginRight: '5px' }}
+                        onClick={onDelete}
+                    >
+                        Delete
+                    </button>
+                    <button style={{ backgroundColor: 'transparent' }} onClick={onClose}>
+                        Cancel
+                    </button>
+                </span>
+            </motion.div>
+        </div>
+    )
+}

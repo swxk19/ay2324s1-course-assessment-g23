@@ -2,20 +2,9 @@ import { motion } from 'framer-motion'
 import React, { useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { Question } from '../../api/questions.ts'
 import '../../styles/QuestionForm.css'
 import CategoryButton from './CategoryButton.tsx'
-
-export interface Question {
-    question_id: string
-    title: string
-    description: string
-    category: string
-    complexity: Complexity
-}
-
-type Complexity = 'Easy' | 'Medium' | 'Hard'
-
-type FormData = Omit<Question, 'question_id'>
 
 const categoriesList: string[] = [
     'Algorithms',
@@ -31,19 +20,19 @@ const categoriesList: string[] = [
 ]
 
 interface QuestionFormProps {
-    initialData: FormData
-    onFormChange: (data: FormData) => void
+    initialData: Question
+    onFormChange: (data: Question) => void
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
     onClose: () => void
 }
 
-export const QuestionForm: React.FC<QuestionFormProps> = ({
+export const EditQuestionForm: React.FC<QuestionFormProps> = ({
     initialData,
     onFormChange,
     onSubmit,
     onClose,
 }) => {
-    const [formData, setFormData] = useState<FormData>(initialData)
+    const [formData, setFormData] = useState<Question>(initialData)
     const [isWrite, setIsWrite] = useState(true)
 
     const handleInputChange = (
@@ -88,7 +77,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
             >
-                <h2>Add a question</h2>
+                <h2 style={{ marginLeft: '10px' }}>Edit question</h2>
                 <form onSubmit={onSubmit}>
                     <div className='split-container'>
                         <div className='form-pane'>
@@ -185,7 +174,7 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
                             style={{ backgroundColor: '#00b8a2', marginRight: '5px' }}
                             type='submit'
                         >
-                            Add
+                            Edit
                         </button>
                         <button
                             style={{ backgroundColor: 'transparent' }}

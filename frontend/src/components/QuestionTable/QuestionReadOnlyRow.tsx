@@ -1,14 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    Tooltip,
-    Typography,
-} from '@mui/material'
+import { Dialog, DialogContent, DialogTitle, IconButton, Tooltip, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -33,22 +25,14 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editedDescription, setEditedDescription] = useState(question.description)
     const updateQuestionMutation = useUpdateQuestion()
-    const [isWrite, setIsWrite] = useState(true)
 
     const openModal = () => {
         setEditedDescription(question.description)
         setIsModalOpen(true)
-        setIsWrite(true)
     }
 
     const handleClose = () => {
         setIsModalOpen(false)
-    }
-
-    const handleEditDescription = async () => {
-        question.description = editedDescription
-        await updateQuestionMutation.mutateAsync(question)
-        handleClose()
     }
 
     return (
@@ -104,72 +88,23 @@ const QuestionReadOnlyRow: React.FC<ReadOnlyRowProps> = ({
                     </td>
                 )}
             </tr>
+
             <Dialog
                 open={isModalOpen}
                 onClose={handleClose}
                 maxWidth='md'
                 PaperProps={{
-                    sx: { borderRadius: '1rem', backgroundColor: '#242424', padding: '1rem' },
+                    sx: { borderRadius: '1rem', backgroundColor: '#242424', padding: '2rem 1rem' },
                 }}
             >
-                <DialogTitle style={{ color: 'white', paddingLeft: '32px' }}>
+                <DialogTitle style={{ color: 'white', padding: ' 0 24px 10px 24px' }}>
                     {question.title}
                 </DialogTitle>
                 <DialogContent style={{ backgroundColor: '#242424' }}>
-                    {hasActions ? (
-                        <>
-                            <div className='description-header'>
-                                <p>Description</p>
-                                <button
-                                    onClick={() => setIsWrite(true)}
-                                    className={`write-button${isWrite ? '-active' : ''}`}
-                                    style={{ marginLeft: 'auto' }}
-                                    type='button'
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => setIsWrite(false)}
-                                    className={`preview-button${!isWrite ? '-active' : ''}`}
-                                    type='button'
-                                >
-                                    Preview
-                                </button>
-                            </div>
-                            {isWrite ? (
-                                <textarea
-                                    className='edit-description-text'
-                                    value={editedDescription}
-                                    onChange={(e) => setEditedDescription(e.target.value)}
-                                />
-                            ) : (
-                                <div className='markdown-container' style={{ padding: ' 0 10px' }}>
-                                    <Markdown className='markdown' remarkPlugins={[remarkGfm]}>
-                                        {editedDescription}
-                                    </Markdown>
-                                </div>
-                            )}
-                        </>
-                    ) : (
-                        <Markdown className='markdown' remarkPlugins={[remarkGfm]}>
-                            {editedDescription}
-                        </Markdown>
-                    )}
+                    <Markdown className='markdown' remarkPlugins={[remarkGfm]}>
+                        {editedDescription}
+                    </Markdown>
                 </DialogContent>
-                {hasActions && (
-                    <DialogActions style={{ backgroundColor: '#242424' }}>
-                        <button className='cancel-button' onClick={handleClose}>
-                            <Typography variant='subtitle1' sx={{ fontWeight: 'bold' }}>
-                                Cancel
-                            </Typography>
-                        </button>
-                        <button className='save-button' onClick={handleEditDescription}>
-                            <Typography variant='subtitle1' sx={{ fontWeight: 'bold' }}>
-                                Save
-                            </Typography>
-                        </button>
-                    </DialogActions>
-                )}
 
                 {updateQuestionMutation.isError && (
                     <AlertMessage variant='error'>
