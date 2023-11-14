@@ -105,12 +105,28 @@ export const peerExtension = (socket: Socket, startVersion: number) => {
 
 export const getLangExtension = (language: Language) => {
     switch (language.name) {
+        case 'C':
+            return langs.c()
+        case 'C#':
+            return langs.csharp()
+        case 'C++':
+            return langs.cpp()
+        case 'Go':
+            return langs.go()
         case 'JavaScript':
             return langs.javascript()
         case 'Java':
             return langs.java()
+        case 'Kotlin':
+            return langs.kotlin()
         case 'Python':
             return langs.python()
+        case 'Rust':
+            return langs.rust()
+        case 'SQL':
+            return langs.sql()
+        case 'Swift':
+            return langs.swift()
     }
     throw new TypeError(`Unknown language: ${language.name}`)
 }
