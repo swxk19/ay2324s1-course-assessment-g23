@@ -6,8 +6,6 @@ import useGlobalState, { useQuestion } from '../../stores/questionStore'
 const QuestionDescription: React.FC = () => {
     const { questionId } = useGlobalState()
     const { data: question } = useQuestion(questionId)
-    // const easyQuestions = questions.filter((question) => question.complexity === 'Easy')
-    // const randomQuestion = easyQuestions[Math.floor(Math.random() * easyQuestions.length)]
 
     return (
         <div

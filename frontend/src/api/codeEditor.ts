@@ -11,6 +11,8 @@ import { langs } from '@uiw/codemirror-extensions-langs'
 import { Socket } from 'socket.io-client'
 import { Language } from '../api/codeExecution'
 
+// Note: All functions in this file are adapted from https://codemirror.net/examples/collab/
+
 function pushUpdates(
     socket: Socket,
     version: number,

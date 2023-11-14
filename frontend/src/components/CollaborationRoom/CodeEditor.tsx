@@ -169,25 +169,6 @@ export const CodeEditor: React.FC = () => {
                             <ZoomIn />
                         </div>
                     </Tooltip>
-                    {/* <Tooltip
-                        title='Reset code'
-                        placement='bottom'
-                        componentsProps={{
-                            tooltip: {
-                                sx: {
-                                    backgroundColor: '#c2c2c2',
-                                    color: '#242424',
-                                    fontSize: '15px',
-                                    maxWidth: '100%',
-                                    height: 'auto',
-                                },
-                            },
-                        }}
-                    >
-                        <div className='reset-icon' onClick={() => setShowResetConfirmation(true)}>
-                            <Restore />
-                        </div>
-                    </Tooltip> */}
                     <Tooltip
                         title='Toggle full screen mode'
                         placement='bottom'
