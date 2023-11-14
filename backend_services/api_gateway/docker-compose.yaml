@@ -3,7 +3,12 @@ version: "3"
 services:
   api_gateway:
     container_name: api_gateway
-    image: nginx:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NGINX_DEV_USERNAME=${NGINX_DEV_USERNAME:-admin}
+        - NGINX_DEV_PASSWORD=${NGINX_DEV_PASSWORD:-password}
     ports:
       - "80:80"
     volumes:
