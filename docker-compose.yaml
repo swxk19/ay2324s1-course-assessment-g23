@@ -8,6 +8,8 @@ services:
     build:
       context: ./frontend
     image: peerprep_frontend
+    volumes:
+      - frontend_dist:/app/dist
     ports:
       - 8006:8006
     networks:
@@ -145,6 +147,7 @@ services:
     env_file:
       - ./backend.conf
 volumes:
+  frontend_dist:
   users-data:
     external: true
   questions-data:
