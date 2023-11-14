@@ -213,7 +213,7 @@
     background-color: #3d1c1c;
     color: #db4242;
     height: 100%;
-    margin: 5px 0;
+    margin: 15px;
     padding: 10px;
     border-radius: 5px;
     font-family: 'Roboto Mono', serif;
@@ -228,6 +228,15 @@
     border-radius: 5px;
     font-family: 'Roboto Mono', serif;
     white-space: pre-wrap;
+}
+
+.empty-result {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 24px;
 }
 
 .problem-button {
