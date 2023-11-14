@@ -78,6 +78,21 @@ const ChatBox: React.FC = () => {
             }
 
             setChatMessages((prevChatMessages) => [...prevChatMessages, newMessage])
+
+            if (questionId === '') {
+                const payload = JSON.stringify({
+                    event: 'get-question',
+                })
+
+                socket.send(payload)
+            } else {
+                const payload = JSON.stringify({
+                    event: 'update-question',
+                    question_id: questionId,
+                })
+
+                socket.send(payload)
+            }
         }
 
         socket.onmessage = (event) => {

@@ -31,6 +31,7 @@ class Room:
     # clients: list[UserWebSocket] = field(default_factory=list)
     clients: dict[str, UserWebSocket] = field(default_factory=dict)
     chat_room: ChatRoom = field(default_factory=ChatRoom)
+    question_id: str = ""
 
     def is_full(self) -> bool:
         return len(self.clients) > 2
@@ -47,6 +48,10 @@ class Room:
             
     def add_user(self, user: UserWebSocket) -> None:
         self.clients[user.user_id] = user
+        
+    def get_question_id(self) -> str:
+        """Get the question ID."""
+        return self.question_id
         
 
 
