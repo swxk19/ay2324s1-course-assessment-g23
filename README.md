@@ -23,8 +23,8 @@ bash start_containers.sh
 (Note: You might need to use sudo according to the permissions on your machine)
 
 4. If you are deploying on a remote server, make sure to open port 80.
-5. Access the website on your browser at `http://<your ip address>:80` (80 is the default port for a website). 
-6. Since we're using http instead of https, you'll need to edit the permissions of the site to access all the features (specifically, for video chatting). Type `<your browser>://flags/#unsafely-treat-insecure-origin-as-secure` into your browser url (replace `<your browser>` with `chrome` for google chrome). This will bring you to the relevant settings. Add the url of your deployment (`http://<your ip address>:80` or `http://peerprep.xyz`) in the text box and enable this setting.
+5. Access the website on your browser at `http://<your ip address>:80` (80 is the default port for a website).
+6. (Note: This step is not required if you're deploying the application on your localhost.) Since we're using http instead of https, you'll need to edit the permissions of the site to access all the features (specifically, for video chatting). Type `<your browser>://flags/#unsafely-treat-insecure-origin-as-secure` into your browser url (replace `<your browser>` with `chrome` for google chrome). This will bring you to the relevant settings. Add the url of your deployment (`http://<your ip address>:80` or `http://peerprep.xyz`) in the text box and enable this setting.
 
 ## Assignments
 
