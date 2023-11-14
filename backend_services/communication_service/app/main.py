@@ -100,11 +100,18 @@ async def join_communication_channel(websocket: WebSocket, room_id: str, user_id
                         )
             elif event == "update-question":
                 question_id = data.get("question_id")
+                room.question_id = str(question_id)
                 for client_id, client in room.clients.items():
                     if client_id != user_websocket.user_id:
                         await client.websocket.send_json(
                             {"event": "update-question", "question_id": question_id}
                         )
+            elif event == "get-question":
+                question_id = room.get_question_id()
+                for client_id, client in room.clients.items():
+                    await client.websocket.send_json(
+                        {"event": "update-question", "question_id": question_id}
+                    )
             elif event == "update-language":
                 language = data.get("language")
                 for client_id, client in room.clients.items():
