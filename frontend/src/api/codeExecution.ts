@@ -115,7 +115,7 @@ const JUDGE0_LANGUAGES: Language[] = [
 ]
 
 const DEFAULT_LANGUAGE_ID = 63
-const AVAILABLE_LANGUAGE_IDS = [DEFAULT_LANGUAGE_ID, 62, 71]
+const AVAILABLE_LANGUAGE_IDS = [50, 51, 54, 60, DEFAULT_LANGUAGE_ID, 62, 78, 71, 73, 82, 83]
 const removeLanguageVersion = (languageName: string) => languageName.replace(/\s+\(.+\)$/, '')
 
 /** Languages available to the user. */
