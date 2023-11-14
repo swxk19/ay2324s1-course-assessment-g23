@@ -7,7 +7,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.${ENV_TYPE:-dev}.conf:/etc/nginx/nginx.conf:ro
       - ./nginx_params_handle_websockets:/etc/nginx/nginx_params_handle_websockets:ro
       - nginx_logs:/var/log/nginx
       - goaccess_data:/var/www/goaccess

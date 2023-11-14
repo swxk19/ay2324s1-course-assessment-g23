@@ -13,4 +13,4 @@ RUN npm install
 COPY . .
 
 # Start the app in development mode
-CMD ["npm", "run", "dev"]
+CMD ["npx", "vite", "build"]
