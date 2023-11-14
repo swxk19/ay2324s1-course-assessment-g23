@@ -3,7 +3,7 @@
     line-height: 1.5;
     font-weight: 500;
 
-    color-scheme: light dark;
+    color-scheme: dark;
     background-color: #1d1d1d;
 
     font-synthesis: none;
@@ -43,21 +43,6 @@ button {
     font-family: inherit;
     background-color: #1a1a1a;
     cursor: pointer;
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        color: white;
-        background-color: #ffffff;
-    }
-
-    a:hover {
-        color: #747bff;
-    }
-
-    button {
-        background-color: #f9f9f9;
-    }
 }
 
 .complexity-color-Easy {
