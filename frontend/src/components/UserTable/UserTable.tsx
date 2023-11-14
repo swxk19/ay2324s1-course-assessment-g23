@@ -38,7 +38,6 @@ export const UserTable: React.FC = () => {
 
         if (!validEmailRegex.test(editFormData?.email as string)) {
             setEmailError('Invalid email format')
-            console.log(emailError)
             return
         }
 
