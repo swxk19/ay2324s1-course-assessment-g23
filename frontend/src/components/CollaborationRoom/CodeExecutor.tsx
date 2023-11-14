@@ -8,14 +8,20 @@ const CodeExecutor: React.FC = () => {
     const executeCodeMutation = useExecuteCode()
     const [isOutputOpen, setIsOutputOpen] = useState(false)
     const { isLoading: isExecuting } = executeCodeMutation
+    const [hasCodeResult, setHasCodeResult] = useState(false)
 
     const handleExecute = async () => {
         setIsOutputOpen(true)
+        setHasCodeResult(true)
         await executeCodeMutation.mutateAsync()
     }
 
     const handleMinimise = () => {
         setIsOutputOpen(false)
+    }
+
+    const handleMaximise = () => {
+        setIsOutputOpen(true)
     }
 
     const heightVariants = {
@@ -85,9 +91,7 @@ const CodeExecutor: React.FC = () => {
                             </div>
                         ) : (
                             <>
-                                <div className='result-header-success'>Code Run Successfully</div>
-                                <div className='code-output'>{codeExecutionOutput?.stdout}</div>
-                                {codeExecutionOutput?.stderr && (
+                                {codeExecutionOutput?.stderr ? (
                                     <>
                                         <div className='result-header-error'>
                                             Code Execution Failed
@@ -96,18 +100,40 @@ const CodeExecutor: React.FC = () => {
                                             {codeExecutionOutput.stderr}
                                         </div>
                                     </>
+                                ) : (
+                                    <>
+                                        {!hasCodeResult ? (
+                                            <div className='empty-result'>
+                                                To execute code, click 'Run'
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className='result-header-success'>
+                                                    Code Execution Success
+                                                </div>
+                                                <div className='code-output'>
+                                                    {codeExecutionOutput?.stdout}
+                                                </div>
+                                            </>
+                                        )}
+                                    </>
                                 )}
                             </>
                         )}
                     </div>
                 </div>
             ) : (
-                <button
-                    onClick={handleExecute}
-                    style={{ height: '35px', backgroundColor: '#00b8a2', margin: '5px 10px' }}
-                >
-                    Run
-                </button>
+                <div>
+                    <button onClick={handleMaximise} style={{ height: '35px', marginLeft: 'auto' }}>
+                        Open
+                    </button>
+                    <button
+                        onClick={handleExecute}
+                        style={{ height: '35px', backgroundColor: '#00b8a2', margin: '5px 10px' }}
+                    >
+                        Run
+                    </button>
+                </div>
             )}
         </motion.div>
     )
