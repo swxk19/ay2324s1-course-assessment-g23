@@ -91,6 +91,11 @@ const VideoChat: React.FC<VideoChatProps> = ({
             const data = JSON.parse(event.data)
             if (data.event == 'join-video') {
                 setRemotePeerIdValue(data.p2pId)
+            } else if (data.event == 'terminate-call') {
+                terminate_call()
+                offCamera()
+                offMic()
+                closeVideoChat()
             }
         }
 
@@ -144,6 +149,16 @@ const VideoChat: React.FC<VideoChatProps> = ({
         })
     }
 
+    const offMic = () => {
+        const localStream = currentUserVideoRef.current.srcObject
+
+        setIsMicMuted(true)
+
+        localStream.getAudioTracks().forEach((track) => {
+            track.enabled = false // Use the updated state directly
+        })
+    }
+
     const toggleCamera = () => {
         const localStream = currentUserVideoRef.current.srcObject
 
@@ -155,6 +170,40 @@ const VideoChat: React.FC<VideoChatProps> = ({
         localStream.getVideoTracks().forEach((track) => {
             track.enabled = newCameraOnState // Use the updated state directly
         })
+    }
+
+    const offCamera = () => {
+        const localStream = currentUserVideoRef.current.srcObject
+
+        setIsCameraOn(false)
+
+        localStream.getVideoTracks().forEach((track) => {
+            track.enabled = false // Use the updated state directly
+        })
+    }
+
+    const terminate_call = () => {
+        if (peerInstance.current && peerInstance.current.connections[remotePeerIdValue]) {
+            const call = peerInstance.current.connections[remotePeerIdValue][0] // Get the call object
+            if (call) {
+                call.close() // Close the call
+            }
+        }
+    }
+
+    const endCall = () => {
+        if (socket == null) return
+
+        socket.send(
+            JSON.stringify({
+                event: 'terminate-call',
+            })
+        )
+
+        offMic()
+        offCamera()
+        terminate_call()
+        closeVideoChat()
     }
 
     return (
@@ -184,7 +233,7 @@ const VideoChat: React.FC<VideoChatProps> = ({
                     </button>
                 )}
 
-                <button className='callend-icon' onClick={closeVideoChat}>
+                <button className='callend-icon' onClick={endCall}>
                     <CallEnd />
                 </button>
             </div>

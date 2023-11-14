@@ -153,6 +153,14 @@ async def join_video_channel(websocket: WebSocket, room_id: str, user_id: str):
                                 "p2pId": p2p_id,
                             }
                         )
+            elif event == "terminate-call":
+                for client in clients:
+                    if client is not websocket:
+                        await client.send_json(
+                            {
+                                "event": "terminate-call"
+                            }
+                        )
     except WebSocketDisconnect:
         websocket.close()
         clients.remove(websocket)
